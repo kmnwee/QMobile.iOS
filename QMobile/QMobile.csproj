@@ -1,0 +1,332 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{6AEFEE8F-EE60-4EE5-903C-07D557EA9FAE}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>QMobile</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>QMobile</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchArch>i386</MtouchArch>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchArch>i386</MtouchArch>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignProvision>73d2e76d-2718-4362-9d11-f91babae1b98</CodesignProvision>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <MtouchI18n>
+    </MtouchI18n>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignProvision>73d2e76d-2718-4362-9d11-f91babae1b98</CodesignProvision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <IpaIncludeArtwork>true</IpaIncludeArtwork>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignProvision>73d2e76d-2718-4362-9d11-f91babae1b98</CodesignProvision>
+    <BuildIpa>true</BuildIpa>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\AppStore</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <CodesignProvision>57b33ba6-c424-4ff2-990c-4a62f590a439</CodesignProvision>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <MtouchI18n>
+    </MtouchI18n>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Xamarin.iOS" />
+    <Reference Include="Xamarin.Auth.iOS">
+      <HintPath>..\..\..\..\Downloads\xamarin.auth-1.2.3.1\lib\ios-unified\Xamarin.Auth.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Json" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="GoogleMaps">
+      <HintPath>..\..\..\..\Downloads\googlemapsios-1.9.1\lib\ios-unified\GoogleMaps.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="TimesSquare.iOS">
+      <HintPath>..\..\..\..\Downloads\timessquare-1.0.5\lib\ios-unified\TimesSquare.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Messaging.iOS">
+      <HintPath>..\Components\azure-messaging-1.1.5.3\lib\ios-unified\Microsoft.WindowsAzure.Messaging.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Mobile">
+      <HintPath>..\packages\WindowsAzure.MobileServices.1.3.2\lib\Xamarin.iOS10\Microsoft.WindowsAzure.Mobile.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Mobile.Ext">
+      <HintPath>..\packages\WindowsAzure.MobileServices.1.3.2\lib\Xamarin.iOS10\Microsoft.WindowsAzure.Mobile.Ext.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Platform.iOS">
+      <HintPath>..\packages\Xamarin.Forms.1.4.2.6359\lib\Xamarin.iOS10\Xamarin.Forms.Platform.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Core">
+      <HintPath>..\packages\Xamarin.Forms.1.4.2.6359\lib\Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Xaml">
+      <HintPath>..\packages\Xamarin.Forms.1.4.2.6359\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Platform">
+      <HintPath>..\packages\Xamarin.Forms.1.4.2.6359\lib\Xamarin.iOS10\Xamarin.Forms.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageCircle.Forms.Plugin.iOS">
+      <HintPath>..\packages\Xam.Plugins.Forms.ImageCircle.1.0.11\lib\Xamarin.iOS10\ImageCircle.Forms.Plugin.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageCircle.Forms.Plugin.Abstractions">
+      <HintPath>..\packages\Xam.Plugins.Forms.ImageCircle.1.0.11\lib\Xamarin.iOS10\ImageCircle.Forms.Plugin.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
+    <InterfaceDefinition Include="MainStoryboard.storyboard" />
+    <InterfaceDefinition Include="MerchantCustomCell_iPhone.xib" />
+    <InterfaceDefinition Include="MerchantCustomCell_iPad.xib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+    <None Include="Entitlements.plist" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="QMobileViewController.cs" />
+    <Compile Include="QMobileViewController.designer.cs">
+      <DependentUpon>QMobileViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DashBoardController.cs" />
+    <Compile Include="DashBoardController.designer.cs">
+      <DependentUpon>DashBoardController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Item.cs" />
+    <Compile Include="SearchResultsTableSource.cs" />
+    <Compile Include="TFMerchants.cs" />
+    <Compile Include="FavoritesTableController.cs" />
+    <Compile Include="FavoritesTableController.designer.cs">
+      <DependentUpon>FavoritesTableController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TFMemberFavorites.cs" />
+    <Compile Include="TFOLReservation.cs" />
+    <Compile Include="TFScheduledReservation.cs" />
+    <Compile Include="TFMemberRegistry.cs" />
+    <Compile Include="FavoritesTableSource.cs" />
+    <Compile Include="SearchViewController.cs" />
+    <Compile Include="SearchViewController.designer.cs">
+      <DependentUpon>SearchViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MerchantCustomCell.cs" />
+    <Compile Include="MerchantCustomCell.designer.cs">
+      <DependentUpon>MerchantCustomCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DashTabController.cs" />
+    <Compile Include="DashTabController.designer.cs">
+      <DependentUpon>DashTabController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FeaturedViewController.cs" />
+    <Compile Include="FeaturedViewController.designer.cs">
+      <DependentUpon>FeaturedViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FeaturedTableSource.cs" />
+    <Compile Include="TFBusinessTypes.cs" />
+    <Compile Include="LoadingOverlay.cs" />
+    <Compile Include="TicketsTableController.cs" />
+    <Compile Include="TicketsTableController.designer.cs">
+      <DependentUpon>TicketsTableController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TicketsTableSource.cs" />
+    <Compile Include="TFTicket.cs" />
+    <Compile Include="BranchViewController.cs" />
+    <Compile Include="BranchViewController.designer.cs">
+      <DependentUpon>BranchViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TFColor.cs" />
+    <Compile Include="ProfileViewController.cs" />
+    <Compile Include="ProfileViewController.designer.cs">
+      <DependentUpon>ProfileViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TFAccount.cs" />
+    <Compile Include="BranchViewOptionsSource.cs" />
+    <Compile Include="TFBranchOption.cs" />
+    <Compile Include="AppointmentViewController.cs" />
+    <Compile Include="AppointmentViewController.designer.cs">
+      <DependentUpon>AppointmentViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TFProcessOption.cs" />
+    <Compile Include="AppointmentOptionsSource.cs" />
+    <Compile Include="TFAvailableSchedule.cs" />
+    <Compile Include="TFTransactionTypes.cs" />
+    <Compile Include="TicketViewController.cs" />
+    <Compile Include="TicketViewController.designer.cs">
+      <DependentUpon>TicketViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TicketDetailsSource.cs" />
+    <Compile Include="CompanyViewController.cs" />
+    <Compile Include="CompanyViewController.designer.cs">
+      <DependentUpon>CompanyViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CompanyTableSource.cs" />
+    <Compile Include="TFScheduledAppointment.cs" />
+    <Compile Include="TFMobileNotificationLog.cs" />
+    <Compile Include="TFGetTicketResponse.cs" />
+    <Compile Include="TFCurrentServingResponse.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="TFCurrentServingListResponse.cs" />
+    <Compile Include="CurrentServingViewController.cs" />
+    <Compile Include="CurrentServingViewController.designer.cs">
+      <DependentUpon>CurrentServingViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CurrentServingTableSource.cs" />
+    <Compile Include="TFContentFetchFlags.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Import Project="..\packages\Xamarin.Forms.1.4.2.6359\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.1.4.2.6359\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
+  <ItemGroup>
+    <Folder Include="Resources\socialicons\" />
+    <Folder Include="Resources\icons\" />
+    <Folder Include="Resources\Iconsx2\" />
+    <Folder Include="Resources\Icons3\" />
+    <Folder Include="Resources\ticketcolors\" />
+    <Folder Include="Sounds\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\socialicons\signinfb.png" />
+    <BundleResource Include="Resources\socialicons\signinfblg.png" />
+    <BundleResource Include="Resources\socialicons\signingpluslg.png" />
+    <BundleResource Include="Resources\socialicons\singingplus.png" />
+    <BundleResource Include="Resources\Default.png" />
+    <BundleResource Include="Resources\Default%402x.png" />
+    <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Resources\Icon.png" />
+    <BundleResource Include="Resources\Icon%402x.png" />
+    <BundleResource Include="Resources\Icon-60%402x.png" />
+    <BundleResource Include="Resources\Icon-Small.png" />
+    <BundleResource Include="Resources\Icon-Small%402x.png" />
+    <BundleResource Include="Resources\Icon-Small-40%402x.png" />
+    <BundleResource Include="Resources\icons\ic_loyalty_black_24dp.png" />
+    <BundleResource Include="Resources\icons\ic_loyalty_black_48dp.png" />
+    <BundleResource Include="Resources\icons\ic_star_rate_black_24dp.png" />
+    <BundleResource Include="Resources\icons\ic_star_rate_black_48dp.png" />
+    <BundleResource Include="Resources\icons\ic_store_black_24dp.png" />
+    <BundleResource Include="Resources\icons\ic_store_black_48dp.png" />
+    <BundleResource Include="Resources\icons\ic_assignment_ind_black_24dp.png" />
+    <BundleResource Include="Resources\icons\ic_assignment_ind_black_48dp.png" />
+    <BundleResource Include="Resources\icons\ic_search_black_24dp.png" />
+    <BundleResource Include="Resources\icons\ic_search_black_48dp.png" />
+    <BundleResource Include="Resources\icons\ic_speaker_notes_black_24dp.png" />
+    <BundleResource Include="Resources\icons\ic_speaker_notes_black_48dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_account_circle_black_24dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_account_circle_black_48dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_loyalty_black_24dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_loyalty_black_48dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_search_black_24dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_search_black_48dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_star_rate_black_24dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_star_rate_black_48dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_store_black_24dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_store_black_48dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_speaker_notes_black_24dp.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_speaker_notes_black_48dp.png" />
+    <BundleResource Include="Resources\.DS_Store" />
+    <BundleResource Include="Resources\icons\ic_account_circle_black_24dp.png" />
+    <BundleResource Include="Resources\icons\ic_account_circle_black_48dp.png" />
+    <BundleResource Include="Resources\LogoWithOutBackground.png" />
+    <BundleResource Include="Resources\iconx30.png" />
+    <BundleResource Include="Resources\iconx32.png" />
+    <BundleResource Include="Resources\Icons3\happy_64px.png" />
+    <BundleResource Include="Resources\Icons3\flag_32px.png" />
+    <BundleResource Include="Resources\Icons3\happy_32px.png" />
+    <BundleResource Include="Resources\Icons3\magnifying-glass_32px.png" />
+    <BundleResource Include="Resources\Icons3\pricetags_32px.png" />
+    <BundleResource Include="Resources\Icons3\profile-male_32px.png" />
+    <BundleResource Include="Resources\Icons3\ribbon_32px.png" />
+    <BundleResource Include="Resources\ticketcolors\ticketBlue.png" />
+    <BundleResource Include="Resources\ticketcolors\ticketGreen.png" />
+    <BundleResource Include="Resources\ticketcolors\ticketRed.png" />
+    <BundleResource Include="Resources\ticketcolors\ticketYellow.png" />
+    <BundleResource Include="Resources\Icons3\happy_64pxWhite.png" />
+    <BundleResource Include="Resources\Iconsx2\ic_autorenew_black_48dp.png" />
+    <BundleResource Include="Sounds\tap.aif" />
+    <BundleResource Include="Sounds\blop.aiff" />
+  </ItemGroup>
+  <ItemGroup>
+    <XamarinComponentReference Include="azure-messaging">
+      <Version>1.1.5.3</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+  </ItemGroup>
+</Project>

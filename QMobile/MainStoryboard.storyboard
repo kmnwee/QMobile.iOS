@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="27">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+    </dependencies>
+    <scenes>
+        <!--Login-->
+        <scene sceneID="ufC-wZ-h7g">
+            <objects>
+                <viewController title="Login" id="vXZ-lx-hvc" customClass="QMobileViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="3"/>
+                        <viewControllerLayoutGuide type="bottom" id="4"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="15">
+                                <rect key="frame" x="102" y="84" width="171" height="47"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="171" id="1112"/>
+                                    <constraint firstAttribute="height" constant="47" id="1113"/>
+                                </constraints>
+                                <state key="normal" title="Login using Facebook">
+                                    <color key="titleShadowColor" red="0.49803921568627452" green="0.49803921568627452" blue="0.49803921568627452" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleAspectFit" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="16">
+                                <rect key="frame" x="102" y="139" width="171" height="47"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="47" id="1153"/>
+                                </constraints>
+                                <state key="normal" title="Login using Google+">
+                                    <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="15" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="1110"/>
+                            <constraint firstItem="15" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="84" id="1111"/>
+                            <constraint firstItem="16" firstAttribute="leading" secondItem="15" secondAttribute="leading" id="1150"/>
+                            <constraint firstItem="15" firstAttribute="trailing" secondItem="16" secondAttribute="trailing" id="1151"/>
+                            <constraint firstItem="16" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="120" id="1152"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Login" id="51"/>
+                    <connections>
+                        <outlet property="fbButton" destination="15" id="name-outlet-15"/>
+                        <outlet property="gpButton" destination="16" id="name-outlet-16"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3198" y="825"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="26">
+            <objects>
+                <navigationController definesPresentationContext="YES" id="27" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="30">
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="341" kind="relationship" relationship="rootViewController" id="1185"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="31" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="17" y="27"/>
+        </scene>
+        <!--Dashboard-->
+        <scene sceneID="60">
+            <objects>
+                <viewController storyboardIdentifier="DashBoardController" title="Dashboard" id="61" customClass="DashBoardController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="58"/>
+                        <viewControllerLayoutGuide type="bottom" id="59"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="62">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="Name" lineBreakMode="wordWrap" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="65">
+                                <rect key="frame" x="20" y="80" width="280" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="73">
+                                <rect key="frame" x="20" y="153" width="280" height="30"/>
+                                <color key="backgroundColor" red="0.91764705882352937" green="0.14117647058823529" blue="0.21568627450980393" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="My Favorites">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="78">
+                                <rect key="frame" x="20" y="190" width="280" height="30"/>
+                                <color key="backgroundColor" red="0.27058823529411763" green="0.74117647058823533" blue="0.78823529411764703" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="My Tickets">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="270">
+                                <rect key="frame" x="20" y="115" width="280" height="30"/>
+                                <color key="backgroundColor" red="0.39215686274509803" green="0.83921568627450982" blue="0.62745098039215685" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Search">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="NameLabel" destination="65" id="name-outlet-65"/>
+                        <outlet property="favoritesButton" destination="73" id="name-outlet-73"/>
+                        <outlet property="myTicketsButton" destination="78" id="name-outlet-78"/>
+                        <outlet property="searchButton" destination="270" id="name-outlet-270"/>
+                        <outlet property="searchDisplayController" destination="82" id="81"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="63" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="82">
+                    <connections>
+                        <outlet property="delegate" destination="61" id="83"/>
+                        <outlet property="searchContentsController" destination="61" id="85"/>
+                        <outlet property="searchResultsDataSource" destination="61" id="86"/>
+                        <outlet property="searchResultsDelegate" destination="61" id="87"/>
+                    </connections>
+                </searchDisplayController>
+            </objects>
+            <point key="canvasLocation" x="3178" y="84"/>
+        </scene>
+        <!--Favorites-->
+        <scene sceneID="169">
+            <objects>
+                <tableViewController storyboardIdentifier="FavoritesTableController" title="Favorites" id="170" customClass="FavoritesTableController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" id="171">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <connections>
+                            <outlet property="dataSource" destination="170" id="172"/>
+                            <outlet property="delegate" destination="170" id="173"/>
+                        </connections>
+                    </tableView>
+                    <tabBarItem key="tabBarItem" title="Favorites" image="Icons3/ribbon_32px.png" id="415"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="FavoritesTableView" destination="171" id="name-outlet-171"/>
+                        <outlet property="favoritesButtonTab" destination="415" id="name-outlet-415"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="176" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="582" y="846"/>
+        </scene>
+        <!--Search-->
+        <scene sceneID="244">
+            <objects>
+                <viewController storyboardIdentifier="SearchViewController" title="Search" id="245" customClass="SearchViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="242"/>
+                        <viewControllerLayoutGuide type="bottom" id="243"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="246">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <searchBar contentMode="redraw" ambiguous="YES" searchBarStyle="minimal" placeholder="Where do you want to line up?" translatesAutoresizingMaskIntoConstraints="NO" id="249">
+                                <rect key="frame" x="0.0" y="64" width="375" height="44"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </searchBar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" placeholderIntrinsicWidth="320" placeholderIntrinsicHeight="461" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="250">
+                                <rect key="frame" x="0.0" y="116" width="375" height="502"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="249" secondAttribute="trailing" id="1016"/>
+                            <constraint firstItem="249" firstAttribute="top" secondItem="246" secondAttribute="top" constant="64" id="1017"/>
+                            <constraint firstItem="249" firstAttribute="leading" secondItem="246" secondAttribute="leading" id="1020"/>
+                            <constraint firstItem="250" firstAttribute="bottom" secondItem="243" secondAttribute="top" id="1021"/>
+                            <constraint firstItem="250" firstAttribute="leading" secondItem="246" secondAttribute="leading" id="1022"/>
+                            <constraint firstItem="250" firstAttribute="top" secondItem="249" secondAttribute="bottom" id="1023"/>
+                            <constraint firstItem="250" firstAttribute="trailing" secondItem="246" secondAttribute="trailing" id="1056"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Search" image="Icons3/magnifying-glass_32px.png" id="386"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="resultsTable" destination="250" id="name-outlet-250"/>
+                        <outlet property="searchBarMain" destination="249" id="name-outlet-249"/>
+                        <outlet property="searchButtonTab" destination="386" id="name-outlet-386"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="247" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1166" y="50"/>
+        </scene>
+        <!--Dash Tab Controller-->
+        <scene sceneID="340">
+            <objects>
+                <tabBarController storyboardIdentifier="DashTabController" definesPresentationContext="YES" id="341" customClass="DashTabController" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="436"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="346">
+                        <rect key="frame" x="0.0" y="618" width="375" height="49"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <color key="selectedImageTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <outlet property="DashTabBar" destination="346" id="name-outlet-346"/>
+                        <segue destination="486" kind="relationship" relationship="viewControllers" id="530"/>
+                        <segue destination="245" kind="relationship" relationship="viewControllers" id="544"/>
+                        <segue destination="170" kind="relationship" relationship="viewControllers" id="578"/>
+                        <segue destination="632" kind="relationship" relationship="viewControllers" id="657"/>
+                        <segue destination="905" kind="relationship" relationship="viewControllers" id="938"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="347" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="559" y="37"/>
+        </scene>
+        <!--Featured-->
+        <scene sceneID="485">
+            <objects>
+                <viewController storyboardIdentifier="FeaturedViewController" title="Featured" id="486" customClass="FeaturedViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="483"/>
+                        <viewControllerLayoutGuide type="bottom" id="484"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="487">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="580">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="515"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="580" secondAttribute="trailing" id="1069"/>
+                            <constraint firstItem="580" firstAttribute="leading" secondItem="487" secondAttribute="leading" id="1070"/>
+                            <constraint firstItem="580" firstAttribute="top" secondItem="487" secondAttribute="top" id="1071"/>
+                            <constraint firstItem="484" firstAttribute="top" secondItem="580" secondAttribute="bottom" id="1072"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Featured" image="Icons3/flag_32px.png" id="510"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="featuredTable" destination="580" id="name-outlet-580"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="488" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1685" y="54"/>
+        </scene>
+        <!--My Tickets-->
+        <scene sceneID="631">
+            <objects>
+                <tableViewController title="My Tickets" id="632" customClass="TicketsTableController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" id="633">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <connections>
+                            <outlet property="dataSource" destination="632" id="634"/>
+                            <outlet property="delegate" destination="632" id="635"/>
+                        </connections>
+                    </tableView>
+                    <tabBarItem key="tabBarItem" title="My Tickets" image="Icons3/pricetags_32px.png" id="656"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="ticketsTable" destination="633" id="name-outlet-633"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="638" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1098" y="865"/>
+        </scene>
+        <!--Branch View Controller-->
+        <scene sceneID="866">
+            <objects>
+                <viewController storyboardIdentifier="BranchViewController" id="867" customClass="BranchViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="864"/>
+                        <viewControllerLayoutGuide type="bottom" id="865"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="868">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" pitchEnabled="NO" showsBuildings="NO" showsPointsOfInterest="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1269">
+                                <rect key="frame" x="0.0" y="64" width="375" height="240"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="375" id="1310"/>
+                                    <constraint firstAttribute="height" constant="240" id="1311"/>
+                                </constraints>
+                            </mapView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1276">
+                                <rect key="frame" x="0.0" y="304" width="375" height="60"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="Branch Name" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1284">
+                                        <rect key="frame" x="12" y="8" width="350" height="29"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="company Name" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1291">
+                                        <rect key="frame" x="12" y="30" width="350" height="21"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1814">
+                                        <rect key="frame" x="325" y="10" width="40" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="1821"/>
+                                            <constraint firstAttribute="height" constant="40" id="1822"/>
+                                        </constraints>
+                                        <state key="normal" image="Iconsx2/ic_loyalty_black_48dp.png">
+                                            <color key="titleColor" red="0.19215686274509805" green="0.30588235294117649" blue="0.52156862745098043" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="375" id="1279"/>
+                                    <constraint firstAttribute="height" constant="60" id="1280"/>
+                                    <constraint firstItem="1284" firstAttribute="leading" secondItem="1276" secondAttribute="leading" constant="12" id="1292"/>
+                                    <constraint firstItem="1284" firstAttribute="top" secondItem="1276" secondAttribute="top" constant="8" id="1293"/>
+                                    <constraint firstItem="1291" firstAttribute="leading" secondItem="1276" secondAttribute="leading" constant="12" id="1294"/>
+                                    <constraint firstAttribute="bottom" secondItem="1291" secondAttribute="bottom" constant="9" id="1295"/>
+                                    <constraint firstAttribute="trailing" secondItem="1814" secondAttribute="trailing" constant="10" id="1819"/>
+                                    <constraint firstAttribute="bottom" secondItem="1814" secondAttribute="bottom" constant="10" id="1820"/>
+                                </constraints>
+                            </view>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1413">
+                                <rect key="frame" x="207" y="75" width="158" height="21"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" bounces="NO" dataMode="prototypes" style="plain" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="1422">
+                                <rect key="frame" x="0.0" y="366" width="375" height="301"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="1276" secondAttribute="trailing" id="1277"/>
+                            <constraint firstItem="1276" firstAttribute="leading" secondItem="868" secondAttribute="leading" id="1282"/>
+                            <constraint firstAttribute="trailing" secondItem="1269" secondAttribute="trailing" id="1308"/>
+                            <constraint firstItem="1269" firstAttribute="top" secondItem="868" secondAttribute="top" constant="64" id="1309"/>
+                            <constraint firstItem="1269" firstAttribute="leading" secondItem="868" secondAttribute="leading" id="1312"/>
+                            <constraint firstItem="1276" firstAttribute="top" secondItem="1269" secondAttribute="bottom" id="1313"/>
+                            <constraint firstItem="1269" firstAttribute="trailing" secondItem="1413" secondAttribute="trailing" constant="10" id="1414"/>
+                            <constraint firstItem="1422" firstAttribute="top" secondItem="1276" secondAttribute="bottom" id="1429"/>
+                            <constraint firstItem="1422" firstAttribute="trailing" secondItem="868" secondAttribute="trailing" id="1430"/>
+                            <constraint firstItem="1422" firstAttribute="leading" secondItem="868" secondAttribute="leading" id="1431"/>
+                            <constraint firstItem="1422" firstAttribute="bottom" secondItem="868" secondAttribute="bottom" id="1432"/>
+                            <constraint firstItem="1413" firstAttribute="top" secondItem="1269" secondAttribute="top" constant="11" id="1435"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="BranchViewOptionsTable" destination="1422" id="name-outlet-1422"/>
+                        <outlet property="branchDetailsView" destination="1276" id="name-outlet-1276"/>
+                        <outlet property="branchLabel" destination="1284" id="name-outlet-1284"/>
+                        <outlet property="companyLabel" destination="1291" id="name-outlet-1291"/>
+                        <outlet property="distanceView" destination="1413" id="name-outlet-1413"/>
+                        <outlet property="favButton" destination="1814" id="name-outlet-1814"/>
+                        <outlet property="mapView" destination="1269" id="name-outlet-1269"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="869" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2092" y="66"/>
+        </scene>
+        <!--Profile-->
+        <scene sceneID="904">
+            <objects>
+                <viewController title="Profile" id="905" customClass="ProfileViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="902"/>
+                        <viewControllerLayoutGuide type="bottom" id="903"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="906">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="jt@tfi.com" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1389">
+                                <rect key="frame" x="58" y="248" width="259" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" image="Icons3/happy_64pxWhite.png" translatesAutoresizingMaskIntoConstraints="NO" id="1090" misplaced="YES">
+                                <rect key="frame" x="128" y="120" width="120" height="120"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="120" id="1400"/>
+                                    <constraint firstAttribute="height" constant="120" id="1401"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Juan T." textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1086">
+                                <rect key="frame" x="58" y="90" width="259" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="259" id="1383"/>
+                                    <constraint firstAttribute="height" constant="21" id="1384"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleAspectFit" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1156">
+                                <rect key="frame" x="88" y="550" width="200" height="30"/>
+                                <state key="normal" title="Logout">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="215" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1721">
+                                <rect key="frame" x="50" y="274" width="118" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="53" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1722">
+                                <rect key="frame" x="50" y="295" width="118" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="512" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1723">
+                                <rect key="frame" x="50" y="316" width="118" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="5" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1724">
+                                <rect key="frame" x="50" y="337" width="118" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="Tickets" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1725">
+                                <rect key="frame" x="180" y="274" width="150" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="italicSystem" pointSize="13"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="Appointments" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1726">
+                                <rect key="frame" x="180" y="295" width="150" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="italicSystem" pointSize="13"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="Notifications" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1727">
+                                <rect key="frame" x="180" y="316" width="150" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="italicSystem" pointSize="13"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="Favorites" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1728">
+                                <rect key="frame" x="180" y="337" width="150" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="italicSystem" pointSize="13"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="1086" firstAttribute="centerX" secondItem="906" secondAttribute="centerX" id="1381"/>
+                            <constraint firstItem="1086" firstAttribute="top" secondItem="906" secondAttribute="top" constant="90" id="1382"/>
+                            <constraint firstItem="903" firstAttribute="top" secondItem="1156" secondAttribute="bottom" constant="10" id="1396"/>
+                            <constraint firstItem="1090" firstAttribute="centerX" secondItem="906" secondAttribute="centerX" id="1402"/>
+                            <constraint firstItem="1090" firstAttribute="top" secondItem="1086" secondAttribute="bottom" constant="9" id="1403"/>
+                            <constraint firstItem="1156" firstAttribute="centerX" secondItem="906" secondAttribute="centerX" id="1404"/>
+                            <constraint firstItem="1389" firstAttribute="centerX" secondItem="1090" secondAttribute="centerX" id="1443"/>
+                            <constraint firstItem="1389" firstAttribute="top" secondItem="1090" secondAttribute="bottom" constant="8" id="1444"/>
+                            <constraint firstItem="1721" firstAttribute="top" secondItem="1389" secondAttribute="bottom" constant="4" id="1733"/>
+                            <constraint firstItem="1722" firstAttribute="top" secondItem="1721" secondAttribute="bottom" id="1734"/>
+                            <constraint firstItem="1723" firstAttribute="top" secondItem="1722" secondAttribute="bottom" id="1735"/>
+                            <constraint firstItem="1724" firstAttribute="top" secondItem="1723" secondAttribute="bottom" id="1736"/>
+                            <constraint firstItem="1725" firstAttribute="centerY" secondItem="1721" secondAttribute="centerY" id="1741"/>
+                            <constraint firstItem="1726" firstAttribute="centerY" secondItem="1722" secondAttribute="centerY" id="1742"/>
+                            <constraint firstItem="1727" firstAttribute="centerY" secondItem="1723" secondAttribute="centerY" id="1743"/>
+                            <constraint firstItem="1728" firstAttribute="centerY" secondItem="1724" secondAttribute="centerY" id="1744"/>
+                            <constraint firstItem="1389" firstAttribute="centerX" secondItem="1721" secondAttribute="trailing" constant="19" id="1772"/>
+                            <constraint firstItem="1389" firstAttribute="centerX" secondItem="1725" secondAttribute="leading" constant="9" id="1773"/>
+                            <constraint firstItem="1389" firstAttribute="centerX" secondItem="1722" secondAttribute="trailing" constant="19" id="1789"/>
+                            <constraint firstItem="1389" firstAttribute="centerX" secondItem="1726" secondAttribute="leading" constant="7" id="1790"/>
+                            <constraint firstItem="1389" firstAttribute="centerX" secondItem="1723" secondAttribute="trailing" constant="19" id="1791"/>
+                            <constraint firstItem="1389" firstAttribute="centerX" secondItem="1727" secondAttribute="leading" constant="7" id="1792"/>
+                            <constraint firstItem="1389" firstAttribute="centerX" secondItem="1724" secondAttribute="trailing" constant="19" id="1793"/>
+                            <constraint firstItem="1389" firstAttribute="centerX" secondItem="1728" secondAttribute="leading" constant="7" id="1794"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Profile" image="Icons3/profile-male_32px.png" id="937"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="appointmentCount" destination="1722" id="name-outlet-1722"/>
+                        <outlet property="appointmentsLabel" destination="1726" id="name-outlet-1726"/>
+                        <outlet property="emailLabel" destination="1389" id="name-outlet-1389"/>
+                        <outlet property="favoritesCount" destination="1724" id="name-outlet-1724"/>
+                        <outlet property="favoritesLabel" destination="1728" id="name-outlet-1728"/>
+                        <outlet property="logoutButton" destination="1156" id="name-outlet-1156"/>
+                        <outlet property="notifCount" destination="1723" id="name-outlet-1723"/>
+                        <outlet property="notifLabel" destination="1727" id="name-outlet-1727"/>
+                        <outlet property="profileImageView" destination="1090" id="name-outlet-1090"/>
+                        <outlet property="profileNameLabel" destination="1086" id="name-outlet-1086"/>
+                        <outlet property="ticketCount" destination="1721" id="name-outlet-1721"/>
+                        <outlet property="ticketsLabel" destination="1725" id="name-outlet-1725"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="907" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="87" y="848"/>
+        </scene>
+        <!--Appointment View Controller-->
+        <scene sceneID="1459">
+            <objects>
+                <viewController storyboardIdentifier="AppointmentViewController" id="1460" customClass="AppointmentViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="1457"/>
+                        <viewControllerLayoutGuide type="bottom" id="1458"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1461">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" dataMode="prototypes" style="plain" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="1501">
+                                <rect key="frame" x="0.0" y="124" width="375" height="543"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1469">
+                                <rect key="frame" x="0.0" y="64" width="375" height="60"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="Schedule an Appointment" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1475">
+                                        <rect key="frame" x="12" y="8" width="350" height="29"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="company Name" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1484">
+                                        <rect key="frame" x="12" y="30" width="350" height="21"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="1475" firstAttribute="leading" secondItem="1469" secondAttribute="leading" constant="12" id="1476"/>
+                                    <constraint firstItem="1475" firstAttribute="top" secondItem="1469" secondAttribute="top" constant="8" id="1477"/>
+                                    <constraint firstAttribute="width" constant="375" id="1480"/>
+                                    <constraint firstAttribute="height" constant="60" id="1481"/>
+                                    <constraint firstItem="1484" firstAttribute="leading" secondItem="1469" secondAttribute="leading" constant="12" id="1485"/>
+                                    <constraint firstAttribute="bottom" secondItem="1484" secondAttribute="bottom" constant="9" id="1486"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="1469" secondAttribute="trailing" id="1482"/>
+                            <constraint firstItem="1469" firstAttribute="leading" secondItem="1461" secondAttribute="leading" id="1500"/>
+                            <constraint firstItem="1501" firstAttribute="bottom" secondItem="1461" secondAttribute="bottom" id="1521"/>
+                            <constraint firstItem="1501" firstAttribute="leading" secondItem="1461" secondAttribute="leading" id="1534"/>
+                            <constraint firstItem="1501" firstAttribute="trailing" secondItem="1461" secondAttribute="trailing" id="1535"/>
+                            <constraint firstItem="1469" firstAttribute="top" secondItem="1461" secondAttribute="top" constant="64" id="1545"/>
+                            <constraint firstItem="1501" firstAttribute="top" secondItem="1469" secondAttribute="bottom" id="1548"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="appointmentOptionsTable" destination="1501" id="name-outlet-1501"/>
+                        <outlet property="branchDetailsView" destination="1469" id="name-outlet-1469"/>
+                        <outlet property="branchLabel" destination="1475" id="name-outlet-1475"/>
+                        <outlet property="companyLabel" destination="1484" id="name-outlet-1484"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1462" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2510" y="66"/>
+        </scene>
+        <!--Ticket-->
+        <scene sceneID="1564">
+            <objects>
+                <viewController storyboardIdentifier="TicketViewController" title="Ticket" id="1565" customClass="TicketViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="1562"/>
+                        <viewControllerLayoutGuide type="bottom" id="1563"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1566">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="1582">
+                                <rect key="frame" x="0.0" y="64" width="375" height="160"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="Ticket No" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1589">
+                                        <rect key="frame" x="88" y="6" width="200" height="21"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="21234" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1592">
+                                        <rect key="frame" x="28" y="35" width="320" height="70"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="66"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="Currently Serving " textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1838">
+                                        <rect key="frame" x="48" y="126" width="150" height="21"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="0000" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1841">
+                                        <rect key="frame" x="223" y="121" width="100" height="29"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="375" id="1585"/>
+                                    <constraint firstAttribute="height" constant="160" id="1586"/>
+                                    <constraint firstItem="1589" firstAttribute="centerX" secondItem="1582" secondAttribute="centerX" id="1590"/>
+                                    <constraint firstItem="1589" firstAttribute="top" secondItem="1582" secondAttribute="top" constant="6" id="1591"/>
+                                    <constraint firstItem="1592" firstAttribute="centerX" secondItem="1582" secondAttribute="centerX" id="1593"/>
+                                    <constraint firstItem="1592" firstAttribute="top" secondItem="1589" secondAttribute="bottom" constant="8" id="1594"/>
+                                    <constraint firstAttribute="bottom" secondItem="1838" secondAttribute="bottom" constant="13" id="1840"/>
+                                    <constraint firstItem="1841" firstAttribute="centerY" secondItem="1838" secondAttribute="centerY" id="1843"/>
+                                    <constraint firstAttribute="bottom" secondItem="1841" secondAttribute="bottom" constant="10" id="1844"/>
+                                    <constraint firstItem="1841" firstAttribute="leading" secondItem="1838" secondAttribute="trailing" constant="25" id="1866"/>
+                                    <constraint firstItem="1841" firstAttribute="leading" secondItem="1592" secondAttribute="centerX" constant="35" id="1882"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" dataMode="prototypes" style="plain" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="1595">
+                                <rect key="frame" x="0.0" y="284" width="375" height="383"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1602">
+                                <rect key="frame" x="0.0" y="224" width="375" height="60"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="Branch Name" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1615">
+                                        <rect key="frame" x="12" y="8" width="350" height="29"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="company Name" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1616">
+                                        <rect key="frame" x="12" y="30" width="350" height="21"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1859">
+                                        <rect key="frame" x="325" y="10" width="40" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="1862"/>
+                                            <constraint firstAttribute="height" constant="40" id="1863"/>
+                                        </constraints>
+                                        <state key="normal" image="Iconsx2/ic_autorenew_black_48dp.png">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="375" id="1605"/>
+                                    <constraint firstAttribute="height" constant="60" id="1606"/>
+                                    <constraint firstAttribute="bottom" secondItem="1616" secondAttribute="bottom" constant="9" id="1617"/>
+                                    <constraint firstItem="1616" firstAttribute="leading" secondItem="1602" secondAttribute="leading" constant="12" id="1618"/>
+                                    <constraint firstItem="1615" firstAttribute="top" secondItem="1602" secondAttribute="top" constant="8" id="1619"/>
+                                    <constraint firstItem="1615" firstAttribute="leading" secondItem="1602" secondAttribute="leading" constant="12" id="1620"/>
+                                    <constraint firstAttribute="trailing" secondItem="1859" secondAttribute="trailing" constant="10" id="1860"/>
+                                    <constraint firstAttribute="bottom" secondItem="1859" secondAttribute="bottom" constant="10" id="1861"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="1582" secondAttribute="trailing" id="1583"/>
+                            <constraint firstItem="1582" firstAttribute="top" secondItem="1566" secondAttribute="top" constant="64" id="1584"/>
+                            <constraint firstItem="1582" firstAttribute="leading" secondItem="1566" secondAttribute="leading" id="1588"/>
+                            <constraint firstAttribute="trailing" secondItem="1602" secondAttribute="trailing" id="1603"/>
+                            <constraint firstItem="1602" firstAttribute="top" secondItem="1582" secondAttribute="bottom" id="1607"/>
+                            <constraint firstItem="1602" firstAttribute="leading" secondItem="1566" secondAttribute="leading" id="1608"/>
+                            <constraint firstItem="1602" firstAttribute="trailing" secondItem="1566" secondAttribute="trailing" id="1609"/>
+                            <constraint firstItem="1595" firstAttribute="top" secondItem="1602" secondAttribute="bottom" id="1610"/>
+                            <constraint firstItem="1595" firstAttribute="leading" secondItem="1566" secondAttribute="leading" id="1611"/>
+                            <constraint firstItem="1595" firstAttribute="trailing" secondItem="1566" secondAttribute="trailing" id="1612"/>
+                            <constraint firstItem="1595" firstAttribute="bottom" secondItem="1566" secondAttribute="bottom" id="1613"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="branchDetailsView" destination="1602" id="name-outlet-1602"/>
+                        <outlet property="branchLabel" destination="1615" id="name-outlet-1615"/>
+                        <outlet property="companyLabel" destination="1616" id="name-outlet-1616"/>
+                        <outlet property="currentlyServingLabel" destination="1838" id="name-outlet-1838"/>
+                        <outlet property="currentlyServingValue" destination="1841" id="name-outlet-1841"/>
+                        <outlet property="refreshButton" destination="1859" id="name-outlet-1859"/>
+                        <outlet property="ticketContainerView" destination="1582" id="name-outlet-1582"/>
+                        <outlet property="ticketDetailsTable" destination="1595" id="name-outlet-1595"/>
+                        <outlet property="ticketNoLabel" destination="1592" id="name-outlet-1592"/>
+                        <outlet property="ticketTitleLabel" destination="1589" id="name-outlet-1589"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1567" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1671" y="861"/>
+        </scene>
+        <!--Company View Controller-->
+        <scene sceneID="1651">
+            <objects>
+                <viewController storyboardIdentifier="CompanyViewController" id="1652" customClass="CompanyViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="1649"/>
+                        <viewControllerLayoutGuide type="bottom" id="1650"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1653">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="1656">
+                                <rect key="frame" x="0.0" y="64" width="375" height="240"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="375" id="1664"/>
+                                    <constraint firstAttribute="height" constant="240" id="1665"/>
+                                </constraints>
+                            </mapView>
+                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1666">
+                                <rect key="frame" x="0.0" y="304" width="375" height="60"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="Company Name" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1670">
+                                        <rect key="frame" x="12" y="8" width="350" height="29"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" ambiguous="YES" misplaced="YES" text="Stores" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1671">
+                                        <rect key="frame" x="12" y="30" width="350" height="21"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="1670" firstAttribute="top" secondItem="1666" secondAttribute="top" constant="8" id="1672"/>
+                                    <constraint firstItem="1670" firstAttribute="leading" secondItem="1666" secondAttribute="leading" constant="12" id="1673"/>
+                                    <constraint firstAttribute="bottom" secondItem="1671" secondAttribute="bottom" constant="9" id="1674"/>
+                                    <constraint firstItem="1671" firstAttribute="leading" secondItem="1666" secondAttribute="leading" constant="12" id="1675"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="1683">
+                                <rect key="frame" x="0.0" y="364" width="375" height="304"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="1656" secondAttribute="trailing" id="1662"/>
+                            <constraint firstItem="1656" firstAttribute="top" secondItem="1653" secondAttribute="top" constant="64" id="1663"/>
+                            <constraint firstItem="1666" firstAttribute="top" secondItem="1656" secondAttribute="bottom" id="1667"/>
+                            <constraint firstItem="1666" firstAttribute="leading" secondItem="1653" secondAttribute="leading" id="1668"/>
+                            <constraint firstItem="1666" firstAttribute="trailing" secondItem="1653" secondAttribute="trailing" id="1669"/>
+                            <constraint firstItem="1683" firstAttribute="leading" secondItem="1653" secondAttribute="leading" id="1690"/>
+                            <constraint firstItem="1683" firstAttribute="trailing" secondItem="1653" secondAttribute="trailing" id="1691"/>
+                            <constraint firstItem="1683" firstAttribute="bottom" secondItem="1653" secondAttribute="bottom" id="1692"/>
+                            <constraint firstItem="1683" firstAttribute="top" secondItem="1666" secondAttribute="bottom" id="1693"/>
+                            <constraint firstItem="1656" firstAttribute="leading" secondItem="1653" secondAttribute="leading" id="1900"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="branchDetailsView" destination="1666" id="name-outlet-1666"/>
+                        <outlet property="branchLabel" destination="1670" id="name-outlet-1670"/>
+                        <outlet property="branchListTable" destination="1683" id="name-outlet-1683"/>
+                        <outlet property="companyLabel" destination="1671" id="name-outlet-1671"/>
+                        <outlet property="mapView" destination="1656" id="name-outlet-1656"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1654" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2125" y="855"/>
+        </scene>
+        <scene sceneID="1918">
+            <objects>
+                <viewController id="1919" sceneMemberID="viewController" customClass="CurrentServingViewController" storyboardIdentifier="CurrentServingViewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="1916"/>
+                        <viewControllerLayoutGuide type="bottom" id="1917"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1920">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" id="1939" translatesAutoresizingMaskIntoConstraints="NO">
+                                <rect key="frame" x="0.0" y="64" width="375" height="120"/>
+                                <color key="backgroundColor" customColorSpace="calibratedWhite" colorSpace="calibratedWhite" white="0.666666666666667" alpha="1"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Last Ticket No Called" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="2000" misplaced="YES">
+                                        <rect key="frame" x="88" y="6" width="200" height="21"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="D9999" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="2005" misplaced="YES" textAlignment="center">
+                                        <rect key="frame" x="28" y="35" width="320" height="70"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="66"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint id="1965" firstAttribute="width" constant="375"/>
+                                    <constraint id="1966" firstAttribute="height" constant="120"/>
+                                    <constraint firstItem="2000" firstAttribute="centerX" secondItem="1939" secondAttribute="centerX" constant="0.0" id="2003"/>
+                                    <constraint firstItem="2000" firstAttribute="top" secondItem="1939" secondAttribute="top" constant="6" id="2004"/>
+                                    <constraint firstItem="2005" firstAttribute="centerX" secondItem="1939" secondAttribute="centerX" constant="0.0" id="2006"/>
+                                    <constraint firstItem="2005" firstAttribute="top" secondItem="2000" secondAttribute="bottom" constant="8" id="2007"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1946">
+                                <rect key="frame" x="0.0" y="184" width="375" height="60"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Branch Name" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1947" misplaced="YES">
+                                        <rect key="frame" x="12" y="8" width="350" height="29"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="company Name" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="1948" misplaced="YES">
+                                        <rect key="frame" x="12" y="30" width="350" height="21"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1949">
+                                        <rect key="frame" x="325" y="10" width="40" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="1950"/>
+                                            <constraint firstAttribute="height" constant="40" id="1951"/>
+                                        </constraints>
+                                        <state key="normal" image="Iconsx2/ic_autorenew_black_48dp.png">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="1946" firstAttribute="trailing" secondItem="1949" secondAttribute="trailing" constant="10" id="1960"/>
+                                    <constraint id="1969" firstAttribute="width" constant="375"/>
+                                    <constraint id="1970" firstAttribute="height" constant="60"/>
+                                    <constraint firstItem="1947" firstAttribute="top" secondItem="1946" secondAttribute="top" constant="8" id="1971"/>
+                                    <constraint firstItem="1947" firstAttribute="leading" secondItem="1946" secondAttribute="leading" constant="12" id="1972"/>
+                                    <constraint firstItem="1946" firstAttribute="bottom" secondItem="1948" secondAttribute="bottom" constant="9" id="1973"/>
+                                    <constraint firstItem="1948" firstAttribute="leading" secondItem="1946" secondAttribute="leading" constant="12" id="1974"/>
+                                    <constraint firstItem="1946" firstAttribute="bottom" secondItem="1949" secondAttribute="bottom" constant="10" id="2024"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" dataMode="prototypes" style="plain" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" id="1982" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES" bounces="NO">
+                                <rect key="frame" x="0.0" y="244" width="375" height="422"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <constraints>
+                            <constraint id="1963" constant="0.0" firstItem="1920" firstAttribute="trailing" secondItem="1939" secondAttribute="trailing"/>
+                            <constraint id="1964" constant="64" firstItem="1939" firstAttribute="top" secondItem="1920" secondAttribute="top"/>
+                            <constraint id="1967" constant="0.0" firstItem="1920" firstAttribute="trailing" secondItem="1946" secondAttribute="trailing"/>
+                            <constraint firstItem="1982" firstAttribute="top" secondItem="1946" secondAttribute="bottom" constant="0.0" id="1989"/>
+                            <constraint firstItem="1982" firstAttribute="leading" secondItem="1920" secondAttribute="leading" constant="0.0" id="1990"/>
+                            <constraint firstItem="1982" firstAttribute="trailing" secondItem="1920" secondAttribute="trailing" constant="0.0" id="1991"/>
+                            <constraint firstItem="1982" firstAttribute="bottom" secondItem="1920" secondAttribute="bottom" constant="0.0" id="1992"/>
+                            <constraint firstItem="1946" firstAttribute="leading" secondItem="1920" secondAttribute="leading" constant="0.0" id="1999"/>
+                            <constraint firstItem="1946" firstAttribute="top" secondItem="1939" secondAttribute="bottom" constant="0.0" id="2027"/>
+                            <constraint firstItem="1939" firstAttribute="leading" secondItem="1920" secondAttribute="leading" constant="0.0" id="2028"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="refreshButton" destination="1949" id="name-outlet-1949"/>
+                        <outlet property="branchNameLabel" destination="1947" id="name-outlet-1947"/>
+                        <outlet property="companyLabel" destination="1948" id="name-outlet-1948"/>
+                        <outlet property="currentServingTable" destination="1982" id="name-outlet-1982"/>
+                        <outlet property="lastTicketCalledContainer" destination="1939" id="name-outlet-1939"/>
+                        <outlet property="branchDetailsView" destination="1946" id="name-outlet-1946"/>
+                        <outlet property="lastTicketNoLabel" destination="2005" id="name-outlet-2005"/>
+                        <outlet property="ticketTitleLabel" destination="2000" id="name-outlet-2000"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1921" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2570" y="855"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Icons3/flag_32px.png" width="28" height="32"/>
+        <image name="Icons3/happy_64pxWhite.png" width="64" height="64"/>
+        <image name="Icons3/magnifying-glass_32px.png" width="32" height="32"/>
+        <image name="Icons3/pricetags_32px.png" width="42" height="32"/>
+        <image name="Icons3/profile-male_32px.png" width="36" height="32"/>
+        <image name="Icons3/ribbon_32px.png" width="28" height="32"/>
+        <image name="Iconsx2/ic_autorenew_black_48dp.png" width="48" height="48"/>
+        <image name="Iconsx2/ic_loyalty_black_48dp.png" width="96" height="96"/>
+        <image name="socialicons/signinfb.png" width="216" height="80"/>
+        <image name="socialicons/signinfblg.png" width="496" height="80"/>
+        <image name="socialicons/signingpluslg.png" width="496" height="80"/>
+        <image name="socialicons/singingplus.png" width="216" height="80"/>
+        <image name="Default.png" width="320" height="480"/>
+        <image name="Default-568h.png" width="640" height="1136"/>
+        <image name="Icon.png" width="57" height="57"/>
+        <image name="Icon-60.png" width="120" height="120"/>
+        <image name="Icon-Small.png" width="29" height="29"/>
+        <image name="Icon-Small-40.png" width="80" height="80"/>
+        <image name="icons/ic_loyalty_black_24dp.png" width="24" height="24"/>
+        <image name="icons/ic_loyalty_black_48dp.png" width="48" height="48"/>
+        <image name="icons/ic_star_rate_black_24dp.png" width="24" height="24"/>
+        <image name="icons/ic_star_rate_black_48dp.png" width="48" height="48"/>
+        <image name="icons/ic_store_black_24dp.png" width="24" height="24"/>
+        <image name="icons/ic_store_black_48dp.png" width="48" height="48"/>
+        <image name="icons/ic_assignment_ind_black_24dp.png" width="24" height="24"/>
+        <image name="icons/ic_assignment_ind_black_48dp.png" width="48" height="48"/>
+        <image name="icons/ic_search_black_24dp.png" width="24" height="24"/>
+        <image name="icons/ic_search_black_48dp.png" width="48" height="48"/>
+        <image name="icons/ic_speaker_notes_black_24dp.png" width="24" height="24"/>
+        <image name="icons/ic_speaker_notes_black_48dp.png" width="48" height="48"/>
+        <image name="Iconsx2/ic_account_circle_black_24dp.png" width="48" height="48"/>
+        <image name="Iconsx2/ic_account_circle_black_48dp.png" width="96" height="96"/>
+        <image name="Iconsx2/ic_loyalty_black_24dp.png" width="48" height="48"/>
+        <image name="Iconsx2/ic_search_black_24dp.png" width="48" height="48"/>
+        <image name="Iconsx2/ic_search_black_48dp.png" width="96" height="96"/>
+        <image name="Iconsx2/ic_star_rate_black_24dp.png" width="48" height="48"/>
+        <image name="Iconsx2/ic_star_rate_black_48dp.png" width="96" height="96"/>
+        <image name="Iconsx2/ic_store_black_24dp.png" width="48" height="48"/>
+        <image name="Iconsx2/ic_store_black_48dp.png" width="96" height="96"/>
+        <image name="Iconsx2/ic_speaker_notes_black_24dp.png" width="48" height="48"/>
+        <image name="Iconsx2/ic_speaker_notes_black_48dp.png" width="96" height="96"/>
+        <image name="icons/ic_account_circle_black_24dp.png" width="24" height="24"/>
+        <image name="icons/ic_account_circle_black_48dp.png" width="48" height="48"/>
+        <image name="LogoWithOutBackground.png" width="512" height="512"/>
+        <image name="iconx30.png" width="30" height="30"/>
+        <image name="iconx32.png" width="32" height="32"/>
+        <image name="Icons3/happy_64px.png" width="64" height="64"/>
+        <image name="Icons3/happy_32px.png" width="32" height="32"/>
+        <image name="ticketcolors/ticketBlue.png" width="32" height="32"/>
+        <image name="ticketcolors/ticketGreen.png" width="32" height="32"/>
+        <image name="ticketcolors/ticketRed.png" width="32" height="32"/>
+        <image name="ticketcolors/ticketYellow.png" width="32" height="32"/>
+    </resources>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina47"/>
+    </simulatedMetricsContainer>
+</document>
