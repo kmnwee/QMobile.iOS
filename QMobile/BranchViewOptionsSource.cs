@@ -23,6 +23,8 @@ namespace QMobile
 			return tableItems.Length;
 		}
 
+
+
 		public override void RowSelected (UITableView tableView, Foundation.NSIndexPath indexPath)
 		{			
 			tableView.DeselectRow (indexPath, true);
@@ -45,9 +47,14 @@ namespace QMobile
 
 					}
 				} else {
-					servingView.merchant = tableItems [indexPath.Row].merchant;
-					Console.WriteLine (tableItems [indexPath.Row].merchant.COMPANY_NAME + " - " + tableItems [indexPath.Row].merchant.BRANCH_NAME);
-					viewControllerLocal.NavigationController.PushViewController (servingView, true);	
+					if (!tableItems [indexPath.Row].merchant.edition.Equals ("DEMO") && !tableItems [indexPath.Row].merchant.edition.Equals ("DESKTOP")) {
+						servingView.merchant = tableItems [indexPath.Row].merchant;
+						Console.WriteLine (tableItems [indexPath.Row].merchant.COMPANY_NAME + " - " + tableItems [indexPath.Row].merchant.BRANCH_NAME);
+						viewControllerLocal.NavigationController.PushViewController (servingView, true);	
+					} else {
+						new UIAlertView ("Alert", "This site is running QApps " + tableItems [indexPath.Row].merchant.edition + " Edition! Mobile Transactions are not yet supported.", null, "Got It!", null).Show ();
+					}
+
 					//new UIAlertView ("Launch Current Serving Window", "View Counter Activity!", null, "Got It!", null).Show ();
 				}
 

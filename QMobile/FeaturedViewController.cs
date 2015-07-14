@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CoreGraphics;
 using System.Globalization;
+using MBProgressHUD;
 
 namespace QMobile
 {
@@ -15,6 +16,7 @@ namespace QMobile
 		public List<TFMerchants> TFFeaturedMerchants;
 		public UIEdgeInsets featuredInsets;
 		LoadingOverlay _loadPop;
+		MTMBProgressHUD hud;
 
 		public FeaturedViewController (IntPtr handle) : base (handle)
 		{
@@ -26,6 +28,26 @@ namespace QMobile
 		{
 			base.ViewDidLoad ();
 			Console.WriteLine ("Featured Tab Loaded");
+			hud = new MTMBProgressHUD (View) {
+				LabelText = "Fetching Stores...",
+				RemoveFromSuperViewOnHide = true,
+				AnimationType = MBProgressHUDAnimation.Fade,
+				//DetailsLabelText = "loading profile details...",
+				Mode = MBProgressHUDMode.Indeterminate,
+				Color = UIColor.Gray,
+				Opacity = 60,
+				DimBackground = true
+			};
+
+//			//------LOADING Screen--------------------------
+//			// Determine the correct size to start the overlay (depending on device orientation)
+//			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+//			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+//				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+//			}
+//			// show the loading overlay on the UI thread using the correct orientation sizing
+//			this._loadPop = new LoadingOverlay (bounds);
+
 //			//------LOADING Screen--------------------------
 //			// Determine the correct size to start the overlay (depending on device orientation)
 //			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
@@ -66,15 +88,12 @@ namespace QMobile
 
 		public override void ViewDidAppear (bool animated)
 		{
-			//------LOADING Screen--------------------------
-			// Determine the correct size to start the overlay (depending on device orientation)
-			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
-			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
-				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+			if (AppDelegate.initialLoadFeatured) {
+
+				//this.View.Add (this._loadPop);
+				View.AddSubview (hud);
+				hud.Show (animated: true);
 			}
-			// show the loading overlay on the UI thread using the correct orientation sizing
-			this._loadPop = new LoadingOverlay (bounds);
-			this.View.Add (this._loadPop);
 			//------LOADING Screen--------------------------
 			InvokeOnMainThread (async () => {
 				if (AppDelegate.tfAccount.loggedIn) {
@@ -88,15 +107,20 @@ namespace QMobile
 						TFFeaturedMerchants = TFMerchantList.GroupBy (c => c.COMPANY_NO).Select (grp => grp.FirstOrDefault ()).OrderBy (f => f.featured_flag).ToList ();
 						featuredTable.Source = new FeaturedTableSource (TFFeaturedMerchants.ToArray (), this);
 						featuredTable.ReloadData ();
+
+						hud.Hide(true);
 						//------LOADING Screen END----------------------
-						this._loadPop.Hide ();
+						//this._loadPop.Hide ();
 						//------LOADING Screen END----------------------
+						AppDelegate.initialLoadFeatured = false;
 					} catch (Exception e) {
 						new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+						Console.Out.WriteLine(e.Message);
+						Console.Out.WriteLine(e.StackTrace);
 					}
 				} else {
 					//------LOADING Screen END----------------------
-					this._loadPop.Hide ();
+					if (AppDelegate.initialLoadFeatured) hud.Hide(true);//this._loadPop.Hide ();
 					//------LOADING Screen END----------------------
 					new UIAlertView ("Profile Needed", "To receive updates/notifications please login in the profile tab.", null, "OK", null).Show ();
 				}
@@ -108,8 +132,8 @@ namespace QMobile
 		public override void ViewDidLayoutSubviews ()
 		{
 			base.ViewDidLayoutSubviews ();
-			if (featuredTable != null)
-				featuredTable.ContentInset = new UIEdgeInsets (64, 0, 0, 0);
+//			if (featuredTable != null)
+//				featuredTable.ContentInset = new UIEdgeInsets (64, 0, 0, 0);
 			
 		}
 

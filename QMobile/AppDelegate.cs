@@ -28,6 +28,9 @@ namespace QMobile
 		public static TFAccount tfAccount;
 		public static TFContentFetchFlags contentFlags;
 		public static bool allowRunBGTasks;
+		public static bool initialLoadFeatured;
+		public static bool initialLoadTix;
+		public static bool initialLoadFav;
 		NSUrl url;
 		SystemSound systemSound;
 		LoadingOverlay _loadPop;
@@ -48,6 +51,9 @@ namespace QMobile
 		public override bool FinishedLaunching (UIApplication application, NSDictionary launchOptions)
 		{
 			allowRunBGTasks = false;
+			initialLoadFeatured = true;
+			initialLoadTix = true;
+			initialLoadFav = true;
 			contentFlags = new TFContentFetchFlags ();
 			contentFlags.listenForNewContent = false;
 			contentFlags.newContentAvailable = false;
@@ -55,6 +61,9 @@ namespace QMobile
 			contentFlags.branch_id = 0;
 			var platform = new Microsoft.WindowsAzure.MobileServices.CurrentPlatform ();
 			System.Diagnostics.Debug.WriteLine (platform);
+			var uID = UIKit.UIDevice.CurrentDevice.IdentifierForVendor.AsString ();
+			Console.Out.WriteLine ("Device ID: " + uID);
+			UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
 
 			try {
 				MobileService = new MobileServiceClient (
@@ -83,12 +92,20 @@ namespace QMobile
 		{
 			try {
 				IEnumerable<Account> accounts = AccountStore.Create ().FindAccountsForService ("Facebook");
+				IEnumerable<Account> accounts2 = AccountStore.Create ().FindAccountsForService ("Anonymous");
 				tfAccount = new TFAccount ();
-				int x = 0;
+				int x = 0, y = 0;
 
 				foreach (Account a in accounts) {
 					x++;
 					Console.WriteLine ("Accounts: " + x);
+					Console.WriteLine ("Account username: " + a.Username);
+					Console.WriteLine ("Account toString: " + a.ToString ());
+				}
+
+				foreach (Account a in accounts2) {
+					y++;
+					Console.WriteLine ("Accounts: " + y);
 					Console.WriteLine ("Account username: " + a.Username);
 					Console.WriteLine ("Account toString: " + a.ToString ());
 				}
@@ -119,41 +136,58 @@ namespace QMobile
 									tfAccount.birthday = Convert.ToString (parsed ["birthday"]);
 									tfAccount.account = currentAcct;
 									tfAccount.id = Convert.ToString (parsed ["id"]);
+									tfAccount.loginType = 1;
 								});
 							} catch (Exception ex) {
 								tfAccount.loggedIn = false;
 							}
-							//ContinueWith (t => {
-//							if (t.IsFaulted){
-//								new UIAlertView("Login", "There seems to be a problem loading your profile.", null, "Login", null).Show ();
-//								tfAccount.loggedIn = false;
-//							}
-//							else {
-//								string json = t.Result.GetResponseText();
-//								Console.WriteLine (json);
-//								var parsed = JObject.Parse(json);
-//								Console.WriteLine(parsed["first_name"]);
-//								Console.WriteLine(parsed["last_name"]);
-//								Console.WriteLine(parsed["id"]);
-//								Console.WriteLine(Convert.ToString(parsed["first_name"]));
-//								InvokeOnMainThread (() => {
-//									tfAccount.loggedIn = true;
-//									tfAccount.name = Convert.ToString(parsed["first_name"]);
-//									tfAccount.lastname = Convert.ToString(parsed["last_name"]);
-//									if(!String.IsNullOrEmpty(Convert.ToString(parsed["email"]))) tfAccount.email = Convert.ToString(parsed["email"]);
-//									else tfAccount.email = Convert.ToString(parsed["id"]);
-//									tfAccount.birthday = Convert.ToString(parsed["birthday"]);
-//									tfAccount.account = currentAcct;
-//									tfAccount.id = Convert.ToString(parsed["id"]);
-//								});
-//							}
-							//});
 
 						}
 					}
+				} else if (y > 0) {
+					//Anonymous Login
+
+					Console.WriteLine ("Appdelegate Anonymous Pasok Account!");
+					using (IEnumerator<Account> enumer = accounts2.GetEnumerator ()) {
+						if (enumer.MoveNext ()) {
+							currentAcct = enumer.Current;
+							Console.WriteLine ("Current Account toString: " + currentAcct.ToString ());
+							string uEmail = string.Empty;
+							string uID = string.Empty;
+							string uType = string.Empty;
+							string uName = string.Empty;
+							string uLastName = string.Empty;
+							currentAcct.Properties.TryGetValue("uID", out uEmail);
+							currentAcct.Properties.TryGetValue("uID", out uID);
+							currentAcct.Properties.TryGetValue("uType", out uType);
+							currentAcct.Properties.TryGetValue("uName", out uName);
+							currentAcct.Properties.TryGetValue("uLastName", out uLastName);
+
+							InvokeOnMainThread (() => {
+								tfAccount.loggedIn = true;
+								tfAccount.email = uEmail;
+								tfAccount.account = currentAcct;
+								tfAccount.id = uID;
+								tfAccount.name = uName;
+								tfAccount.lastname = uLastName;
+								tfAccount.loginType = 2;
+								Console.WriteLine ("email : " + tfAccount.email);
+								Console.WriteLine ("id : " + tfAccount.id);
+								Console.WriteLine ("name : " + tfAccount.name);
+								Console.WriteLine ("lastname : " + tfAccount.lastname);
+							});
+						}
+					}
+
 				} else {
-					tfAccount.loggedIn = false;
-					Console.WriteLine ("Appdelegate Labas Account!");
+					if (tfAccount.loginType == 2 && String.IsNullOrEmpty (tfAccount.email)) {
+						tfAccount.loggedIn = true;
+						Console.WriteLine ("Appdelegate In Type 2");
+					} else {
+						tfAccount.loggedIn = false;
+						Console.WriteLine ("Appdelegate Labas Account!");
+					}
+					
 				}
 			} catch (Exception fs) {
 				new UIAlertView ("Account Prompt", fs.Message, null, "OK", null).Show ();
@@ -236,7 +270,7 @@ namespace QMobile
 					return;
 				}
 
-				url = NSUrl.FromFilename ("Sounds/blop.aiff");
+				url = NSUrl.FromFilename ("Sounds/3.mp3");
 
 				systemSound = new SystemSound (url);
 

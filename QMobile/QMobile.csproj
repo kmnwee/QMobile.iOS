@@ -48,7 +48,7 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignProvision>73d2e76d-2718-4362-9d11-f91babae1b98</CodesignProvision>
+    <CodesignProvision>d1ffb4c2-ab42-4461-a02c-9cdb5efa65e7</CodesignProvision>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <MtouchI18n>
     </MtouchI18n>
@@ -145,6 +145,18 @@
     </Reference>
     <Reference Include="ImageCircle.Forms.Plugin.Abstractions">
       <HintPath>..\packages\Xam.Plugins.Forms.ImageCircle.1.0.11\lib\Xamarin.iOS10\ImageCircle.Forms.Plugin.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="SDWebImage">
+      <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
+    </Reference>
+    <Reference Include="ModernHttpClient">
+      <HintPath>..\packages\modernhttpclient.2.2.0\lib\Xamarin.iOS10\ModernHttpClient.dll</HintPath>
+    </Reference>
+    <Reference Include="WebP.Touch">
+      <HintPath>..\packages\WebP.Touch.1.0.0\lib\Xamarin.iOS10\WebP.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="MBProgressHUD">
+      <HintPath>..\Components\mbprogresshud-0.9.0.2\lib\ios-unified\MBProgressHUD.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -251,6 +263,7 @@
     </Compile>
     <Compile Include="CurrentServingTableSource.cs" />
     <Compile Include="TFContentFetchFlags.cs" />
+    <Compile Include="FeaturedTableCell.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -322,10 +335,28 @@
     <BundleResource Include="Resources\Iconsx2\ic_autorenew_black_48dp.png" />
     <BundleResource Include="Sounds\tap.aif" />
     <BundleResource Include="Sounds\blop.aiff" />
+    <BundleResource Include="Sounds\3.mp3" />
+    <BundleResource Include="Resources\ic_person_add_white_48dp.png" />
+    <BundleResource Include="Resources\Icons3\anonymous.png" />
+    <BundleResource Include="Resources\Icons3\user-icon.png" />
+    <BundleResource Include="Resources\placeholder_store.jpg" />
+    <BundleResource Include="Resources\Iconsx2\ic_refresh_white_48dp.png" />
+    <BundleResource Include="Resources\ticketcolors\tag_blue.png" />
+    <BundleResource Include="Resources\ticketcolors\tag_red.png" />
+    <BundleResource Include="Resources\ticketcolors\tag_yellow.png" />
+    <BundleResource Include="Resources\ticketcolors\tag_green.png" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="azure-messaging">
       <Version>1.1.5.3</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="sdwebimage">
+      <Version>3.7.1.4</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="mbprogresshud">
+      <Version>0.9.0.2</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

@@ -14,6 +14,7 @@ namespace QMobile
 		public bool loggedIn { get; set;}
 		public string gender {get;set;}
 		public string timezone {get;set;}
+		public int loginType { get; set;}
 
 	}
 }

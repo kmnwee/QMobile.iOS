@@ -6,6 +6,7 @@ using CoreGraphics;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using MBProgressHUD;
 
 namespace QMobile
 {
@@ -15,6 +16,7 @@ namespace QMobile
 		public List<TFTicket> TFTickets = new List<TFTicket> ();
 		public List<TFScheduledReservation> TFSchedList = new List<TFScheduledReservation> ();
 		public List<TFOLReservation> TFReserveList = new List<TFOLReservation> ();
+		MTMBProgressHUD hud;
 
 		public TicketsTableController (IntPtr handle) : base (handle)
 		{
@@ -28,6 +30,27 @@ namespace QMobile
 			DashTabController dashTab = this.ParentViewController as DashTabController;
 			Console.WriteLine ("Tix View Loaded");
 			Console.WriteLine (String.Format ("Tix Tab : {0}, {1}, {2}", AppDelegate.tfAccount.name, AppDelegate.tfAccount.email, AppDelegate.tfAccount.birthday));
+
+			//------LOADING Screen--------------------------
+			// Determine the correct size to start the overlay (depending on device orientation)
+//			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+//			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+//				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+//			}
+//			// show the loading overlay on the UI thread using the correct orientation sizing
+//			this._loadPop = new LoadingOverlay (bounds);
+			//------LOADING Screen--------------------------
+
+			hud = new MTMBProgressHUD (View) {
+				LabelText = "Loading tickets...",
+				RemoveFromSuperViewOnHide = true,
+				AnimationType = MBProgressHUDAnimation.Fade,
+				//DetailsLabelText = "loading profile details...",
+				Mode = MBProgressHUDMode.Indeterminate,
+				Color = UIColor.Gray,
+				Opacity = 60,
+				DimBackground = true
+			};
 
 			RefreshControl = new UIRefreshControl ();
 			RefreshControl.ValueChanged += (object sender, EventArgs e) => {
@@ -56,24 +79,24 @@ namespace QMobile
 				try {
 					TFSchedList = await AppDelegate.MobileService.GetTable<TFScheduledReservation> ().Take (100)
 					.Where (TFScheduledReservation => TFScheduledReservation.email == email)
-					.OrderBy (TFScheduledReservation => TFScheduledReservation.reservation_date)
+					.OrderByDescending (TFScheduledReservation => TFScheduledReservation.reservation_date)
 					.ThenBy (TFScheduledReservation => TFScheduledReservation.reservation_time)
 					.ToListAsync ();
 
-					TFReserveList = await AppDelegate.MobileService.GetTable<TFOLReservation> ().Take (500)
+					TFReserveList = await AppDelegate.MobileService.GetTable<TFOLReservation> ().Take (100)
 					.Where (TFOLReservation => TFOLReservation.remarks.Contains (email))
-					.OrderBy (TFOLReservation => TFOLReservation.date_in)
+					.OrderByDescending (TFOLReservation => TFOLReservation.date_in)
 					.ToListAsync ();
 
 					//TFFeaturedMerchants = TFMerchantList.GroupBy(c => c.COMPANY_NO).Select(grp => grp.FirstOrDefault()).OrderBy(f => f.featured_flag).ToList();
 					TFTicket tix = new TFTicket ();
 					foreach (TFScheduledReservation sr in TFSchedList) {
 						tix = new TFTicket ();
-						tfmerchants = new List<TFMerchants> ();
-						tfmerchants = await AppDelegate.MobileService.GetTable<TFMerchants> ()
-						.Where (TFMerchants => TFMerchants.COMPANY_NO == sr.company_id && TFMerchants.BRANCH_NO == sr.branch_id).Take (1).ToListAsync ();
-						if (tfmerchants.Any ())
-							tix.merchant = tfmerchants.ToArray () [0];
+//						tfmerchants = new List<TFMerchants> ();
+//						tfmerchants = await AppDelegate.MobileService.GetTable<TFMerchants> ()
+//						.Where (TFMerchants => TFMerchants.COMPANY_NO == sr.company_id && TFMerchants.BRANCH_NO == sr.branch_id).Take (1).ToListAsync ();
+//						if (tfmerchants.Any ())
+//							tix.merchant = tfmerchants.ToArray () [0];
 						tix.branch_id = sr.branch_id;
 						tix.company_id = sr.company_id;
 						tix.id = Convert.ToString (sr.id);
@@ -88,17 +111,17 @@ namespace QMobile
 						tix.type = "APPOINTMENT";
 						if (DateTime.ParseExact (sr.reservation_date, "yyyy-MM-dd", CultureInfo.InvariantCulture).CompareTo (dateNow) >= 0) {
 							TFTickets.Add (tix);
-							Console.WriteLine("APPT : " + tix.id + ",  " + tix.company_id + ":"+tix.branch_id);
+							Console.WriteLine ("APPT : " + tix.id + ",  " + tix.company_id + ":" + tix.branch_id);
 						}
 					}
 
 					foreach (TFOLReservation sr in TFReserveList) {
 						tix = new TFTicket ();
-						tfmerchants = new List<TFMerchants> ();
-						tfmerchants = await AppDelegate.MobileService.GetTable<TFMerchants> ()
-						.Where (TFMerchants => TFMerchants.COMPANY_NO == sr.company_id && TFMerchants.BRANCH_NO == sr.branch_id).Take (1).ToListAsync ();
-						if (tfmerchants.Any ())
-							tix.merchant = tfmerchants.ToArray () [0];
+//						tfmerchants = new List<TFMerchants> ();
+//						tfmerchants = await AppDelegate.MobileService.GetTable<TFMerchants> ()
+//						.Where (TFMerchants => TFMerchants.COMPANY_NO == sr.company_id && TFMerchants.BRANCH_NO == sr.branch_id).Take (1).ToListAsync ();
+//						if (tfmerchants.Any ())
+//							tix.merchant = tfmerchants.ToArray () [0];
 						tix.branch_id = sr.branch_id;
 						tix.company_id = sr.company_id;
 						tix.id = Convert.ToString (sr.id);
@@ -112,7 +135,7 @@ namespace QMobile
 						tix.type = "RESERVATION";
 						if (DateTime.ParseExact (sr.date_in, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture).CompareTo (dateNow) >= 0) {
 							TFTickets.Add (tix);
-							Console.WriteLine("RSVN : " + sr.user_refno + ",  " + tix.company_id + ":"+tix.branch_id);
+							Console.WriteLine ("RSVN : " + sr.user_refno + ",  " + tix.company_id + ":" + tix.branch_id);
 						}
 					}
 
@@ -120,16 +143,18 @@ namespace QMobile
 					ticketsTable.Source = new TicketsTableSource (TFTickets.ToArray (), this);
 					ticketsTable.ReloadData ();
 
-					if(!TFTickets.Any())
-					{
+					if (!TFTickets.Any ()) {
 						new UIAlertView ("No Tickets!", "You currently have no active tickets.", null, "OK", null).Show ();
 					}
 				} catch (Exception exex) {
 					new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet right now.", null, "OK", null).Show ();
-					Console.WriteLine(" >>>> " + exex.Message + " : " + exex.StackTrace);
+					Console.WriteLine (exex.Message);
+					Console.WriteLine (" >>>> " + exex.Message + " : " + exex.StackTrace);
 				}
+
+				hud.Hide (true);
 				//------LOADING Screen END----------------------
-				this._loadPop.Hide ();
+				//this._loadPop.Hide ();
 				//------LOADING Screen END----------------------
 			});
 		}
@@ -144,23 +169,23 @@ namespace QMobile
 		public override void ViewDidAppear (bool animated)
 		{
 			Console.WriteLine ("Tix view: " + AppDelegate.tfAccount.email + "/ " + AppDelegate.tfAccount.loggedIn);
-			//------LOADING Screen--------------------------
-			// Determine the correct size to start the overlay (depending on device orientation)
-			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
-			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
-				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
-			}
-			// show the loading overlay on the UI thread using the correct orientation sizing
-			this._loadPop = new LoadingOverlay (bounds);
-			this.View.Add (this._loadPop);
-			//------LOADING Screen--------------------------
+
+			View.AddSubview (hud);
+			hud.Show (animated: true);
+
+//			if (AppDelegate.initialLoadTix) {
+//				this.View.Add (this._loadPop);
+//				//------LOADING Screen--------------------------
+//			}
 
 			if (AppDelegate.tfAccount.loggedIn) {
 				RefreshTicketsTable (AppDelegate.tfAccount.email);
+				AppDelegate.initialLoadTix = false;
 			} else {
 
+				hud.Hide (true);
 				//------LOADING Screen END----------------------
-				this._loadPop.Hide ();
+				//this._loadPop.Hide ();
 				//------LOADING Screen END----------------------
 				RefreshTicketsTable ("");
 				InvokeOnMainThread (() => {

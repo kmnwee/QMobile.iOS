@@ -9,6 +9,8 @@ using Newtonsoft.Json.Linq;
 using Microsoft.WindowsAzure.MobileServices;
 using System.Collections.Generic;
 using System.Linq;
+using SDWebImage;
+using MBProgressHUD;
 
 namespace QMobile
 {
@@ -17,6 +19,7 @@ namespace QMobile
 		LoadingOverlay _loadPop;
 		bool loggedIn;
 		TFMemberRegistry memberRegistry;
+		MTMBProgressHUD hud;
 
 		public ProfileViewController (IntPtr handle) : base (handle)
 		{
@@ -31,32 +34,139 @@ namespace QMobile
 			Console.WriteLine ("Profile View Loaded");
 			Console.WriteLine (String.Format ("Tix Tab : {0}, {1}, {2}, {3}", AppDelegate.tfAccount.name, AppDelegate.tfAccount.email, AppDelegate.tfAccount.birthday, AppDelegate.tfAccount.id));
 
-			//------LOADING Screen--------------------------
-			// Determine the correct size to start the overlay (depending on device orientation)
-			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
-			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
-				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
-			}
-			// show the loading overlay on the UI thread using the correct orientation sizing
-			this._loadPop = new LoadingOverlay (bounds);
-			this.View.Add (this._loadPop);
-			//------LOADING Screen--------------------------
+////			//------LOADING Screen--------------------------
+//			// Determine the correct size to start the overlay (depending on device orientation)
+//			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+//			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+//				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+//			}
+//			// show the loading overlay on the UI thread using the correct orientation sizing
+//			this._loadPop = new LoadingOverlay (bounds);
+////			this.View.Add (this._loadPop);
+////			//------LOADING Screen--------------------------
+			hud = new MTMBProgressHUD (View) {
+				LabelText = "Loading profile details...",
+				RemoveFromSuperViewOnHide = true,
+				AnimationType = MBProgressHUDAnimation.Fade,
+				//DetailsLabelText = "loading profile details...",
+				Mode = MBProgressHUDMode.Indeterminate,
+				Color = UIColor.Gray,
+				Opacity = 60,
+				DimBackground = true
+			};
+
+			View.AddSubview (hud);
+			hud.Show (animated: true);
+
 			initiateProfileView ();
 
+			hud.Hide (animated: true, delay: 1);
+
 			//------LOADING Screen END----------------------
-			this._loadPop.Hide ();
+			//this._loadPop.Hide ();
 			//------LOADING Screen END----------------------
+
+
+
+			loginAnonymousButton.TouchUpInside += (object sender, EventArgs e) => {
+				Console.Out.WriteLine ("Login Anonymously pressed");
+
+				var proceedAlert = new UIAlertView ("Login as Guest?", "Notifications and updates will be sent to this device only.", null, "Continue", new string[] { "Cancel" });
+				proceedAlert.Clicked += (s, b) => {
+					if (b.ButtonIndex.ToString ().Equals ("0")) {
+						var uID = UIKit.UIDevice.CurrentDevice.IdentifierForVendor.AsString ();
+						Console.Out.WriteLine ("Device ID: " + uID);
+
+						AppDelegate.tfAccount.name = "Guest";
+						Console.WriteLine (AppDelegate.tfAccount.name);
+						Account anoAcc = new Account ();
+						anoAcc.Properties.Add ("uID", uID);
+						anoAcc.Properties.Add ("uType", "2");
+						anoAcc.Properties.Add ("uName", "Guest");
+						anoAcc.Properties.Add ("uLastName", "Visitor");
+						anoAcc.Properties.Add ("uEmail", uID);
+
+						InvokeOnMainThread (async () => {
+							AppDelegate.tfAccount.loginType = 2;
+							AppDelegate.tfAccount.name = "Guest";
+							AppDelegate.tfAccount.lastname = "Visitor";
+							AppDelegate.tfAccount.email = uID;
+							AppDelegate.tfAccount.birthday = "01/01/1900";
+							AppDelegate.tfAccount.account = anoAcc;
+							AppDelegate.tfAccount.id = uID;
+							AppDelegate.tfAccount.loggedIn = true;
+							AppDelegate.tfAccount.gender = "Undefined";
+							AppDelegate.tfAccount.timezone = "8";
+							AppDelegate.registerForRemoteNotifications ();
+							AccountStore.Create ().Save (anoAcc, "Anonymous");
+							long memberCheck = 0;
+
+							try {
+								memberCheck = (await AppDelegate.MobileService.GetTable<TFMemberRegistry> ().Take (0).IncludeTotalCount ()
+									.Where (m => m.email == AppDelegate.tfAccount.email && m.device_type == "iOS")
+									.ToListAsync () as ITotalCountProvider).TotalCount;
+								if (memberCheck < 1) {
+									Console.WriteLine ("Member does not exist!");
+									memberRegistry = new TFMemberRegistry ();
+									memberRegistry.app_id = AppDelegate.tfAccount.id;
+									memberRegistry.birthday = AppDelegate.tfAccount.birthday;
+									memberRegistry.device_type = "iOS";
+									memberRegistry.email = AppDelegate.tfAccount.email;
+									memberRegistry.first_name = AppDelegate.tfAccount.name;
+									memberRegistry.full_name = AppDelegate.tfAccount.name + " " + AppDelegate.tfAccount.lastname;
+									memberRegistry.gender = AppDelegate.tfAccount.gender;
+									memberRegistry.last_name = AppDelegate.tfAccount.lastname;
+									memberRegistry.reg_date = DateTime.Now.ToString ();
+									memberRegistry.timezone = AppDelegate.tfAccount.timezone;
+									await AppDelegate.MobileService.GetTable<TFMemberRegistry> ().InsertAsync (memberRegistry);
+
+								} else {
+									Console.WriteLine ("Member does exists!");
+								}
+
+//								//------LOADING Screen--------------------------
+//								// Determine the correct size to start the overlay (depending on device orientation)
+//								bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+//								if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+//									bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+//								}
+//								// show the loading overlay on the UI thread using the correct orientation sizing
+//								this._loadPop = new LoadingOverlay (bounds);
+//								this.View.Add (this._loadPop);
+//								//------LOADING Screen--------------------------
+
+								View.AddSubview (hud);
+								hud.Show (animated: true);
+
+								initiateProfileView ();
+
+								hud.Hide(animated: true, delay: 1);
+								//------LOADING Screen END----------------------
+//								this._loadPop.Hide ();
+								//------LOADING Screen END----------------------
+
+								dashTab.SelectedIndex = 0;
+							} catch (Exception ess) {
+								Console.WriteLine ("Problem loading Member...");
+								Console.WriteLine (ess.Message);
+								Console.WriteLine (ess.StackTrace);
+							}
+						});
+
+					} else if (b.ButtonIndex.ToString ().Equals ("1")) {
+						Console.WriteLine ("Cancel");
+					}
+				};
+				proceedAlert.Show ();
+
+
+			};
 
 			logoutButton.TouchUpInside += (object sender, EventArgs e) => {
 				Console.WriteLine ("Log button was pressed");
 				Console.WriteLine ("App Delegate " + AppDelegate.tfAccount.loggedIn);
 				//Console.WriteLine ("App Delegate2 " + AppDelegate.tfAccount.loggedIn);
 				//logout account
-//				AccountStore.Create ().Delete(dashTab.acct, "Facebook");
-//
-//				logoutButton.SetTitle("Login using Facebook", UIControlState.Normal);
-//
-//				new UIAlertView("Alert", tableItems[indexPath.Row].COMPANY_NAME + " | " + tableItems[indexPath.Row].COUNTRY, null, "Got It!", null).Show ();
 
 				if (AppDelegate.tfAccount.loggedIn) {
 					var logoutAlert = new UIAlertView ("Logout", "Are you sure you want to logout?", null, "Yes", new string[] { "Cancel" });
@@ -64,20 +174,31 @@ namespace QMobile
 						if (b.ButtonIndex.ToString ().Equals ("0")) {
 							Console.WriteLine ("Proceed with logout");
 							InvokeOnMainThread (() => {
-								profileImageView.Image = UIImage.FromBundle ("Icons3/happy_64pxWhite.png");
+								profileImageView.Image = UIImage.FromBundle ("Icons3/user-icon.png");
 								profileNameLabel.Text = "Profile";
 								emailLabel.Text = "";
 								logoutButton.SetTitleColor (UIColor.White, UIControlState.Normal);
 								logoutButton.SetTitle ("Login using Facebook", UIControlState.Normal);
+								loginAnonymousButton.Hidden = false;
+								loginAnonymousButton.SetTitle ("Login as Guest", UIControlState.Normal);
 								ticketCount.Text = "0";
 								appointmentCount.Text = "0";
 								notifCount.Text = "0";
 								favoritesCount.Text = "0";
 							});
-							AccountStore.Create ().Delete (AppDelegate.tfAccount.account, "Facebook");
-							AppDelegate.tfAccount = new TFAccount ();
-							AppDelegate.tfAccount.loggedIn = false;
-							AppDelegate.unregisterForRemoteNotifications ();
+
+							try {
+								if(AppDelegate.tfAccount.loginType == 1)
+									AccountStore.Create ().Delete (AppDelegate.tfAccount.account, "Facebook");
+								else if(AppDelegate.tfAccount.loginType == 2)
+									AccountStore.Create ().Delete (AppDelegate.tfAccount.account, "Anonymous");
+								AppDelegate.tfAccount = new TFAccount ();
+								AppDelegate.tfAccount.loggedIn = false;
+								AppDelegate.unregisterForRemoteNotifications ();
+							} catch (Exception ex) {
+								Console.Out.WriteLine(ex.StackTrace);
+								Console.Out.WriteLine(ex.Message);
+							}
 							//ViewDidLoad();
 						} else if (b.ButtonIndex.ToString ().Equals ("1")) {
 							Console.WriteLine ("cancel logout");
@@ -119,6 +240,7 @@ namespace QMobile
 										AppDelegate.tfAccount.name = Convert.ToString (parsed ["first_name"]);
 										Console.WriteLine (AppDelegate.tfAccount.name);
 										InvokeOnMainThread (async () => {
+											AppDelegate.tfAccount.loginType = 1;
 											AppDelegate.tfAccount.name = Convert.ToString (parsed ["first_name"]);
 											AppDelegate.tfAccount.lastname = Convert.ToString (parsed ["last_name"]);
 											if (!String.IsNullOrEmpty (Convert.ToString (parsed ["email"])))
@@ -157,7 +279,26 @@ namespace QMobile
 													Console.WriteLine ("Member does exists!");
 												}
 
+//												//------LOADING Screen--------------------------
+//												// Determine the correct size to start the overlay (depending on device orientation)
+//												bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+//												if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+//													bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+//												}
+//												// show the loading overlay on the UI thread using the correct orientation sizing
+//												this._loadPop = new LoadingOverlay (bounds);
+//												this.View.Add (this._loadPop);
+//												//------LOADING Screen--------------------------
+
+												View.AddSubview (hud);
+												hud.Show (animated: true);
+
 												initiateProfileView ();
+
+												hud.Hide(animated: true);
+												//------LOADING Screen END----------------------
+												//this._loadPop.Hide ();
+												//------LOADING Screen END----------------------
 												dashTab.SelectedIndex = 0;
 											} catch (Exception ess) {
 												Console.WriteLine ("Problem loading Member...");
@@ -197,11 +338,24 @@ namespace QMobile
 				int favCount = 0;
 				InvokeOnMainThread (async () => {
 					Console.WriteLine ("Profile True");
+					loginAnonymousButton.Hidden = true;
 					profileNameLabel.Text = AppDelegate.tfAccount.name + " " + AppDelegate.tfAccount.lastname.Substring (0, 1) + ".";
-					emailLabel.Text = AppDelegate.tfAccount.email;
+					if (AppDelegate.tfAccount.loginType == 1)
+						emailLabel.Text = AppDelegate.tfAccount.email;
+					else
+						emailLabel.Hidden = true;
 					this.View.BackgroundColor = TFColor.FromHexString ("#0097a9", 1.0f);
 					try {
-						profileImageView.Image = FromURL ("https://graph.facebook.com/" + AppDelegate.tfAccount.id + "/picture?type=large");
+						if (AppDelegate.tfAccount.loginType == 1){
+							//profileImageView.Image = FromURL ("https://graph.facebook.com/" + AppDelegate.tfAccount.id + "/picture?type=large");
+							profileImageView.SetImage (
+								url: new NSUrl ("https://graph.facebook.com/" + AppDelegate.tfAccount.id + "/picture?type=large"),
+								placeholder: UIImage.FromBundle ("Icons3/user-icon.png"),
+								options: SDWebImageOptions.RefreshCached
+							);
+						}
+						else if(AppDelegate.tfAccount.loginType == 2)
+							profileImageView.Image = UIImage.FromBundle ("Icons3/anonymous.png");
 						profileImageView.TintColor = null;
 						logoutButton.SetTitleColor (UIColor.White, UIControlState.Normal);
 						logoutButton.SetTitle ("Logout", UIControlState.Normal);
@@ -216,7 +370,7 @@ namespace QMobile
 						.Where (TFMobileNotificationLog => TFMobileNotificationLog.email == AppDelegate.tfAccount.email)
 						.ToListAsync () as ITotalCountProvider).TotalCount);
 
-						tffavorites = await AppDelegate.MobileService.GetTable<TFMemberFavorites> ().Where (TFMemberFavorites => TFMemberFavorites.email == AppDelegate.tfAccount.email)
+						tffavorites = await AppDelegate.MobileService.GetTable<TFMemberFavorites> ().Where (TFMemberFavorites => TFMemberFavorites.email == AppDelegate.tfAccount.email && TFMemberFavorites.__deleted == "False")
 						.ToListAsync ();
 						int ci = 0;
 						int bi = 0;
@@ -247,12 +401,15 @@ namespace QMobile
 			} else {
 				InvokeOnMainThread (() => {
 					Console.WriteLine ("Profile False");
-					profileImageView.Image = UIImage.FromBundle ("Icons3/happy_64pxWhite.png");
+					profileImageView.Image = UIImage.FromBundle ("Icons3/user-icon.png");
 					profileNameLabel.Text = "Profile";
 					emailLabel.Text = "";
 					this.View.BackgroundColor = TFColor.FromHexString ("#0097a9", 1.0f);
 					logoutButton.SetTitleColor (UIColor.White, UIControlState.Normal);
 					logoutButton.SetTitle ("Login using Facebook", UIControlState.Normal);
+
+					loginAnonymousButton.Hidden = false;
+					loginAnonymousButton.SetTitle ("Login as Guest", UIControlState.Normal);
 
 					ticketCount.Text = "0";
 					appointmentCount.Text = "0";
@@ -276,6 +433,7 @@ namespace QMobile
 
 		public override void ViewDidAppear (bool animated)
 		{
+			initiateProfileView ();
 			base.ViewDidAppear (animated);
 		}
 

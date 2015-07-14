@@ -34,7 +34,8 @@ namespace QMobile
 			titleAttributes.ForegroundColor = UIColor.White;
 			UIColor bgColor = TFColor.FromHexString("#00bcd4", 1.0f);
 
-			this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+			//this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+			this.NavigationItem.TitleView = new UIImageView (FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("LogoWithOutBackground.png"), 50, 50));
 			this.NavigationController.NavigationBar.TintColor = UIColor.White;
 			this.NavigationController.NavigationBar.BarTintColor = bgColor;
 			//this.NavigationController.NavigationBar.ShadowImage = new UIImage ();
@@ -42,7 +43,16 @@ namespace QMobile
 			this.NavigationController.NavigationBar.TitleTextAttributes = titleAttributes;
 			this.TabBar.Translucent = false;
 			this.TabBar.SelectedImageTintColor = TFColor.FromHexString("#0097a7", 1.0f);
-
+//			this.TabBar.Items[0].Image = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("LogoWithOutBackground.png"), 32, 32);
+//			this.TabBar.Items[0].SelectedImage = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("LogoWithOutBackground.png"), 32, 32);
+//			this.TabBar.Items[1].Image = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("Iconsx2/ic_search_black_48dp.png"), 32, 32);
+//			this.TabBar.Items[1].SelectedImage = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("Iconsx2/ic_search_black_48dp.png"), 32, 32);
+//			this.TabBar.Items[2].Image = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("Iconsx2/ic_star_rate_black_48dp.png"), 32, 32);
+//			this.TabBar.Items[2].SelectedImage = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("Iconsx2/ic_star_rate_black_48dp.png"), 32, 32);
+//			this.TabBar.Items[3].Image = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("Iconsx2/ic_speaker_notes_black_48dp.png"), 32, 32);
+//			this.TabBar.Items[3].SelectedImage = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("Iconsx2/ic_speaker_notes_black_48dp.png"), 32, 32);
+//			this.TabBar.Items[4].Image = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("Iconsx2/ic_account_circle_black_48dp.png"), 32, 32);
+//			this.TabBar.Items[4].SelectedImage = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("Iconsx2/ic_account_circle_black_48dp.png"), 32, 32);
 			//try select default tab
 			//this.SelectedIndex = 2;
 

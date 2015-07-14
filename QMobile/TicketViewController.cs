@@ -31,6 +31,7 @@ namespace QMobile
 			base.ViewDidLoad ();
 			ticketContainerView.BackgroundColor = TFColor.FromHexString ("#00bcd4", 1.0f);
 			branchDetailsView.BackgroundColor = TFColor.FromHexString ("#0097a9", 1.0f);
+
 			//-------Details List-----------------------
 			TFProcessOption option1 = new TFProcessOption ();
 			TFProcessOption option2 = new TFProcessOption ();
@@ -72,7 +73,8 @@ namespace QMobile
 			//-------Details List-----------------------
 
 			InvokeOnMainThread (() => {
-				this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+				//this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+				this.NavigationItem.TitleView = new UIImageView (FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("LogoWithOutBackground.png"), 50, 50));
 
 				//ticketIconView.Image = UIImage.FromBundle(ticketColor);
 				branchLabel.Text = ticket.merchant.BRANCH_NAME;
@@ -95,7 +97,9 @@ namespace QMobile
 			refreshButton.TouchUpInside += async (object sender, EventArgs e) => {
 				Console.WriteLine ("refresh button was pressed");
 				getCurrentServingByTran ();
-
+				refreshButton.Hidden = true;
+				await Task.Delay (20000);
+				refreshButton.Hidden = false;
 			};
 
 		}
@@ -108,7 +112,7 @@ namespace QMobile
 			}
 		}
 
-		void getCurrentServingByTran ()
+		async void getCurrentServingByTran ()
 		{
 			
 			Console.WriteLine (">> GetCurrentServing Tran : " + ticket.tran_id_local + " - " + ticket.tran_type_name);
@@ -125,7 +129,7 @@ namespace QMobile
 				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
 				request.ContentType = "application/json";
 				request.Method = "GET";
-				using (HttpWebResponse response = request.GetResponse () as HttpWebResponse) {
+				using (HttpWebResponse response = await request.GetResponseAsync () as HttpWebResponse) {
 					if (response.StatusCode != HttpStatusCode.OK) {
 						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", response.StatusCode);
 						new UIAlertView ("No Internet", "We can't seem to connect to the internet.", null, "OK", null).Show ();
@@ -145,7 +149,7 @@ namespace QMobile
 									Console.WriteLine ("Counter : " + currentServing.getCurrentServingByTranMobileJSONResult.CurrentServing.counterNo);
 									Console.WriteLine ("Queue No : " + currentServing.getCurrentServingByTranMobileJSONResult.CurrentServing.queueNo);
 									Console.WriteLine ("tranType : " + currentServing.getCurrentServingByTranMobileJSONResult.CurrentServing.tranType);
-									refreshButton.Hidden = false;
+									//refreshButton.Hidden = false;
 									currentlyServingLabel.Text = "Currently Serving";
 									currentlyServingValue.Text = 
 										String.IsNullOrEmpty (currentServing.getCurrentServingByTranMobileJSONResult.CurrentServing.queueNo) ? "None" : currentServing.getCurrentServingByTranMobileJSONResult.CurrentServing.queueNo;

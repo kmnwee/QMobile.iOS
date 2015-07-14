@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Xamarin.Forms;
 using ImageCircle.Forms.Plugin.iOS;
 using CoreGraphics;
+using MBProgressHUD;
 
 namespace QMobile
 {
@@ -14,6 +15,7 @@ namespace QMobile
 		public List<TFMerchants> TFMerchants;
 		public string initialText;
 		LoadingOverlay _loadPop;
+		MTMBProgressHUD hud;
 
 		public SearchViewController (IntPtr handle) : base (handle)
 		{
@@ -30,17 +32,30 @@ namespace QMobile
 			this.searchBarMain.Frame = frame;
 			this.searchBarMain.Translucent = true;
 			Console.WriteLine ("Search View Loaded");
-			//------LOADING Screen--------------------------
-			// Determine the correct size to start the overlay (depending on device orientation)
-			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
-			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
-				bounds.Size = new CGSize(bounds.Size.Height, bounds.Size.Width);
-			}
-			// show the loading overlay on the UI thread using the correct orientation sizing
-			this._loadPop = new LoadingOverlay (bounds);
-			this.View.Add ( this._loadPop );
-			//------LOADING Screen--------------------------
+//			//------LOADING Screen--------------------------
+//			// Determine the correct size to start the overlay (depending on device orientation)
+//			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+//			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+//				bounds.Size = new CGSize(bounds.Size.Height, bounds.Size.Width);
+//			}
+//			// show the loading overlay on the UI thread using the correct orientation sizing
+//			this._loadPop = new LoadingOverlay (bounds);
+//			this.View.Add ( this._loadPop );
+//			//------LOADING Screen--------------------------
 
+			hud = new MTMBProgressHUD (View) {
+				LabelText = "Preparing search...",
+				RemoveFromSuperViewOnHide = true,
+				AnimationType = MBProgressHUDAnimation.Fade,
+				//DetailsLabelText = "loading profile details...",
+				Mode = MBProgressHUDMode.Indeterminate,
+				Color = UIColor.Gray,
+				Opacity = 60,
+				DimBackground = true
+			};
+
+			View.AddSubview (hud);
+			hud.Show (animated: true);
 
 			if (AppDelegate.tfAccount.loggedIn) {
 				InvokeOnMainThread (async () => {
@@ -53,14 +68,17 @@ namespace QMobile
 					} catch (Exception e) {
 						new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 					}
+
+					hud.Hide(true);
 					//------LOADING Screen END----------------------
-					this._loadPop.Hide ();
+					//this._loadPop.Hide ();
 					//------LOADING Screen END----------------------
 				});
 
 			} else {
+				hud.Hide (true);
 				//------LOADING Screen END----------------------
-				this._loadPop.Hide ();
+				//this._loadPop.Hide ();
 				//------LOADING Screen END----------------------
 				new UIAlertView ("Profile Needed", "To receive updates/notifications please login in the profile tab.", null, "OK", null).Show ();
 			}

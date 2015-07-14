@@ -43,7 +43,8 @@ namespace QMobile
 			//---------------------------------------------------------
 
 			InvokeOnMainThread (() => {
-				this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+				//this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+				this.NavigationItem.TitleView = new UIImageView (FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("LogoWithOutBackground.png"), 50, 50));
 
 				//ticketIconView.Image = UIImage.FromBundle(ticketColor);
 				branchNameLabel.Text = merchant.BRANCH_NAME;
@@ -54,11 +55,11 @@ namespace QMobile
 				refreshButton.TintColor = UIColor.White;
 				refreshButton.Hidden = false;
 				//if (servingListJSON.getCurrentServingListMobileJSONResult.CurrentServingList.Any ()) {
-				if (servingListJSON.getCurrentServingListJSONResult.ResponseCode.Equals ("00")) {
-					currentServingTable.TableFooterView = new UIView (CGRect.Empty);
-					currentServingTable.Source = new CurrentServingTableSource (servingListJSON.getCurrentServingListJSONResult.CurrentServingList.ToArray (), this);
-					currentServingTable.ReloadData ();
-				}
+//				if (servingListJSON.getCurrentServingListJSONResult.ResponseCode.Equals ("00")) {
+//					currentServingTable.TableFooterView = new UIView (CGRect.Empty);
+//					currentServingTable.Source = new CurrentServingTableSource (servingListJSON.getCurrentServingListJSONResult.CurrentServingList.ToArray (), this);
+//					currentServingTable.ReloadData ();
+//				}
 
 			});
 
@@ -66,14 +67,14 @@ namespace QMobile
 				Console.WriteLine ("refresh button was pressed");
 				getCurrentServingList ();
 				//if (servingListJSON.getCurrentServingListMobileJSONResult.CurrentServingList.Any ()) {
-				if (servingListJSON.getCurrentServingListJSONResult.ResponseCode.Equals ("00")) {
-					currentServingTable.TableFooterView = new UIView (CGRect.Empty);
-					currentServingTable.Source = new CurrentServingTableSource (servingListJSON.getCurrentServingListJSONResult.CurrentServingList.ToArray (), this);
-					currentServingTable.ReloadData ();
-					refreshButton.Hidden = true;
-					await Task.Delay (20000);
-					refreshButton.Hidden = false;
-				}
+//				if (servingListJSON.getCurrentServingListJSONResult.ResponseCode.Equals ("00")) {
+//					currentServingTable.TableFooterView = new UIView (CGRect.Empty);
+//					currentServingTable.Source = new CurrentServingTableSource (servingListJSON.getCurrentServingListJSONResult.CurrentServingList.ToArray (), this);
+//					currentServingTable.ReloadData ();
+				refreshButton.Hidden = true;
+				await Task.Delay (20000);
+				refreshButton.Hidden = false;
+//				}
 				//getCurrentServingByTran ();
 
 			};
@@ -115,7 +116,7 @@ namespace QMobile
 			branchDetailsView.BackgroundColor = TFColor.FromHexString ("#0097a9", 1.0f);
 		}
 
-		public void getCurrentServingList ()
+		public async void getCurrentServingList ()
 		{
 
 			string url = "";
@@ -131,7 +132,7 @@ namespace QMobile
 				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
 				request.ContentType = "application/json";
 				request.Method = "GET";
-				using (HttpWebResponse response = request.GetResponse () as HttpWebResponse) {
+				using (HttpWebResponse response = await request.GetResponseAsync () as HttpWebResponse) {
 					if (response.StatusCode != HttpStatusCode.OK) {
 						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", response.StatusCode);
 						new UIAlertView ("No Internet", "We can't seem to connect to the internet.", null, "OK", null).Show ();

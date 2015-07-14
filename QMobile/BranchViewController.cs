@@ -17,7 +17,7 @@ namespace QMobile
 		public TFMerchants merchant;
 		public CLLocationCoordinate2D coords;
 		public CLLocationCoordinate2D coords2;
-		private MKMapViewDelegate _mapDelegate;
+
 		TFMemberFavorites memberFavorite;
 		List<TFBranchOption> options;
 		CLLocationManager locationManager;
@@ -147,14 +147,11 @@ namespace QMobile
 			//merchantImage.Image = FromURL (merchant.icon_image);
 
 			//Use Apple Map kit
+			var version8 = new Version (8, 0);
 			locationManager = new CLLocationManager ();
-			locationManager.RequestWhenInUseAuthorization ();
-
-			//Create new MapDelegate Instance
-			_mapDelegate = new MapDelegate ();
-
-			//Add delegate to map
-			mapView.Delegate = _mapDelegate;
+			if (new Version (UIDevice.CurrentDevice.SystemVersion) >= version8)
+				locationManager.RequestWhenInUseAuthorization ();
+			
 			mapView.MapType = MKMapType.Standard;
 			mapView.ShowsUserLocation = true;
 			//mapView.SetCenterCoordinate
@@ -166,7 +163,8 @@ namespace QMobile
 
 			InvokeOnMainThread (() => {
 //				this.NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);
-				this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+				//this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+				this.NavigationItem.TitleView = new UIImageView (FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("LogoWithOutBackground.png"), 50, 50));
 			});
 
 			//Set Options Table
@@ -175,12 +173,14 @@ namespace QMobile
 			TFBranchOption option3 = new TFBranchOption ();
 			options = new List<TFBranchOption> ();
 
-			option1.title = "Get Ticket";
-			option1.action = "RESERVATION";
-			option1.info = "Reserve a ticket for today";
-			option1.image = "";
-			option1.merchant = merchant;
-			options.Add (option1);
+			if (merchant.regReserve_flag == 1) {
+				option1.title = "Get Ticket";
+				option1.action = "RESERVATION";
+				option1.info = "Reserve a ticket for today";
+				option1.image = "";
+				option1.merchant = merchant;
+				options.Add (option1);
+			}
 
 			if (merchant.schedReserve_flag == 1) {
 				option2.title = "Schedule Appointment";
@@ -259,6 +259,7 @@ namespace QMobile
 							Console.WriteLine (error.LocalizedDescription);
 						} else {
 							//Add each Polyline from route to map as overlay
+							Console.WriteLine ("routes : " + response.Routes.Length);
 							foreach (var route in response.Routes) {
 								Console.WriteLine ("Route Distance : " + route.Distance);
 								mapView.AddOverlay (route.Polyline);
@@ -267,6 +268,19 @@ namespace QMobile
 					});
 				}
 			};
+
+			mapView.OverlayRenderer += ((mapView, overlay) => {
+				Console.WriteLine ("Polyline Renderer was called");
+				if (overlay is MKPolyline) {
+					var route = (MKPolyline)overlay;
+					var renderer = new MKPolylineRenderer (route) { 
+						StrokeColor = UIColor.Orange, 
+						LineWidth = 5
+					};
+					return renderer;
+				}
+				return null;
+			});
 		}
 
 
@@ -316,21 +330,6 @@ namespace QMobile
 			using (var url = new NSUrl (uri))
 			using (var data = NSData.FromUrl (url))
 				return UIImage.LoadFromData (data);
-		}
-
-		class MapDelegate : MKMapViewDelegate
-		{
-			//Override OverLayRenderer to draw Polyline from directions
-			public override MKOverlayRenderer OverlayRenderer (MKMapView mapView, IMKOverlay overlay)
-			{
-				Console.WriteLine ("Polyline Renderer was called");
-				if (overlay is MKPolyline) {
-					var route = (MKPolyline)overlay;
-					var renderer = new MKPolylineRenderer (route) { StrokeColor = UIColor.Blue };
-					return renderer;
-				}
-				return null;
-			}
 		}
 
 		#endregion

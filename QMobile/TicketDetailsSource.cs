@@ -37,22 +37,22 @@ namespace QMobile
 			if (tableItems [indexPath.Row].type.Equals ("Status")) {
 				switch (tableItems [indexPath.Row].valueDisplay) {
 				case "PENDING":
-					cell.DetailTextLabel.TextColor = UIColor.Green;
+					cell.DetailTextLabel.TextColor = TFColor.FromHexString ("#4caf50", 1.0f);
 					break;
 				case "CALLED":
-					cell.DetailTextLabel.TextColor = UIColor.Yellow;
+					cell.DetailTextLabel.TextColor = TFColor.FromHexString ("#ffeb3b", 1.0f);
 					break;
 				case "NO-SHOW":
-					cell.DetailTextLabel.TextColor = UIColor.Red;
+					cell.DetailTextLabel.TextColor = TFColor.FromHexString ("#f44336", 1.0f);
 					break;
 				case "DONE":
-					cell.DetailTextLabel.TextColor = UIColor.Blue;
+					cell.DetailTextLabel.TextColor = TFColor.FromHexString ("#2196f3", 1.0f);
 					break;
 				case "SERVING":
-					cell.DetailTextLabel.TextColor = UIColor.Yellow;
+					cell.DetailTextLabel.TextColor = TFColor.FromHexString ("#ffeb3b", 1.0f);
 					break;
 				default:
-					cell.DetailTextLabel.TextColor = UIColor.Green;
+					cell.DetailTextLabel.TextColor = TFColor.FromHexString ("#4caf50", 1.0f);
 					break;
 				}
 			}

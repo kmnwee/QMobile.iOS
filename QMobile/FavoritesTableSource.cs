@@ -55,18 +55,18 @@ namespace QMobile
 			InvokeOnMainThread (async () => {
 				long ticketsRes = 0;
 				long ticketsAppt = 0;
-				try{
-				ticketsRes = (await AppDelegate.MobileService.GetTable<TFOLReservation> ().Take (0).IncludeTotalCount ()
+				try {
+					ticketsRes = (await AppDelegate.MobileService.GetTable<TFOLReservation> ().Take (0).IncludeTotalCount ()
 					.Where (TFOLReservation => TFOLReservation.mobile_userid == tableItems [indexPath.Row].email
-						&& TFOLReservation.company_id == tableItems [indexPath.Row].company_id
-						&& TFOLReservation.branch_id == tableItems [indexPath.Row].branch_id)
+					&& TFOLReservation.company_id == tableItems [indexPath.Row].company_id
+					&& TFOLReservation.branch_id == tableItems [indexPath.Row].branch_id)
 					.ToListAsync () as ITotalCountProvider).TotalCount;
-				ticketsAppt = (await AppDelegate.MobileService.GetTable<TFScheduledReservation> ().Take (0).IncludeTotalCount ()
+					ticketsAppt = (await AppDelegate.MobileService.GetTable<TFScheduledReservation> ().Take (0).IncludeTotalCount ()
 					.Where (TFScheduledReservation => TFScheduledReservation.email == tableItems [indexPath.Row].email
 					&& TFScheduledReservation.company_id == tableItems [indexPath.Row].company_id
 					&& TFScheduledReservation.branch_id == tableItems [indexPath.Row].branch_id)
 					.ToListAsync () as ITotalCountProvider).TotalCount;
-				cell.DetailTextLabel.Text += String.Format (" | You had {0} ticket/s here", ticketsRes + ticketsAppt);
+					cell.DetailTextLabel.Text += String.Format (" | You had {0} ticket/s here", ticketsRes + ticketsAppt);
 				} catch (Exception e) {
 					Console.WriteLine ("Problem loading Tickets Count...");
 					Console.WriteLine (e.Message);

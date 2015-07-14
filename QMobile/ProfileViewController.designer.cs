@@ -36,6 +36,10 @@ namespace QMobile
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
+		UIButton loginAnonymousButton { get; set; }
+
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		UIButton logoutButton { get; set; }
 
 		[Outlet]
@@ -83,6 +87,10 @@ namespace QMobile
 			if (favoritesLabel != null) {
 				favoritesLabel.Dispose ();
 				favoritesLabel = null;
+			}
+			if (loginAnonymousButton != null) {
+				loginAnonymousButton.Dispose ();
+				loginAnonymousButton = null;
 			}
 			if (logoutButton != null) {
 				logoutButton.Dispose ();

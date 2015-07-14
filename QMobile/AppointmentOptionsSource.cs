@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Net;
 using Newtonsoft.Json;
 using System.IO;
+using CoreGraphics;
 
 namespace QMobile
 {
@@ -20,6 +21,7 @@ namespace QMobile
 		private UIViewController viewControllerLocal;
 		public TFOLReservation reservation;
 		public TFGetTicketResponse ticketResponse;
+		LoadingOverlay _loadPop;
 
 		public List<DateSelection> dateSelection;
 
@@ -54,6 +56,15 @@ namespace QMobile
 			tableView.DeselectRow (indexPath, true);
 
 			//AppointmentViewController appointmentView = viewControllerLocal.Storyboard.InstantiateViewController ("AppointmentViewController") as AppointmentViewController;
+			//------LOADING Screen--------------------------
+			// Determine the correct size to start the overlay (depending on device orientation)
+			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+			}
+			// show the loading overlay on the UI thread using the correct orientation sizing
+			this._loadPop = new LoadingOverlay (bounds);
+			//------LOADING Screen--------------------------
 
 			InvokeOnMainThread (() => {
 				switch (tableItems [indexPath.Row].type) {
@@ -62,7 +73,12 @@ namespace QMobile
 					var dateActionSheet = new UIActionSheet ("Select Appointment Date");
 					DateSelection ds = new DateSelection ();
 					dateSelection = new List<DateSelection> ();
-					var dsDate = DateTime.Now;
+					var dsDate = new DateTime ();
+					if(merchant.schedReserve_sameDay)
+						dsDate = DateTime.Now;
+					else
+						dsDate = DateTime.Now.AddDays(1);
+					
 					int daysCount = 5;
 					switch (merchant.schedReserveWeekend_flag) {
 					case 0:
@@ -254,7 +270,7 @@ namespace QMobile
 					break;
 				//MOBILE BUTTON WAS PRESSED <END>-------------------------------------------------------------------------------------------------------
 
-				//PROCESS BUTTON WAS PRESSED -------------------------------------------------------------------------------------------------------
+				//PROCEED BUTTON WAS PRESSED -------------------------------------------------------------------------------------------------------
 				case "Proceed":
 					if ((viewControllerLocal as AppointmentViewController).action.Equals ("APPOINTMENT")) {
 						Console.WriteLine ("Confirm Date: " + (viewControllerLocal as AppointmentViewController).schedDate);
@@ -427,6 +443,7 @@ namespace QMobile
 		public async void addTFScheduledAppointment ()
 		{
 			//Time Slot -- add error checking for this
+			this.viewControllerLocal.Add (this._loadPop);
 			try {
 				string url = String.Format ("http://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/addTFUserScheduleJSON/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/{9}/{10}/{11}/{12}/", 
 					             merchant.COMPANY_NO, 
@@ -447,7 +464,7 @@ namespace QMobile
 				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
 				request.ContentType = "application/json";
 				request.Method = "GET";
-				using (HttpWebResponse response = request.GetResponse () as HttpWebResponse) {
+				using (HttpWebResponse response = await request.GetResponseAsync () as HttpWebResponse) {
 					if (response.StatusCode != HttpStatusCode.OK) {
 						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", response.StatusCode);
 						new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
@@ -504,6 +521,7 @@ namespace QMobile
 			} catch (Exception e) {
 				new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 			}
+			this._loadPop.Hide ();
 			//---------------------------------------------------------
 		}
 
@@ -511,11 +529,12 @@ namespace QMobile
 		{
 			DateTime firedate = new DateTime ();
 			firedate = DateTime.ParseExact (ticket.date + " " + ticket.time, "yyyy-MM-dd HHmm", CultureInfo.InvariantCulture);
-
+			var version8 = new Version (8, 2);
 
 			var notification1 = new UILocalNotification ();
 			notification1.FireDate = DateTimeToNSDate (firedate.AddHours (-2));
-			notification1.AlertTitle = "QMobile Reminder!";
+			if (new Version (UIDevice.CurrentDevice.SystemVersion) >= version8)
+				notification1.AlertTitle = "QMobile Reminder!";
 			//notification1.AlertAction = "OK";
 			notification1.AlertBody = String.Format ("Ticket No. {2}\nYou have an appointment at {0} - {1} 2 Hours from now.", ticket.merchant.COMPANY_NAME, ticket.merchant.BRANCH_NAME, ticket.queue_no);
 			notification1.ApplicationIconBadgeNumber = 1;
@@ -525,7 +544,8 @@ namespace QMobile
 
 			var notification2 = new UILocalNotification ();
 			notification2.FireDate = DateTimeToNSDate (firedate.AddMinutes (-30));
-			notification2.AlertTitle = "QMobile Reminder!";
+			if (new Version (UIDevice.CurrentDevice.SystemVersion) >= version8)
+				notification2.AlertTitle = "QMobile Reminder!";
 			//notification2.AlertAction = "OK";
 			notification2.AlertBody = String.Format ("Ticket No. {2}\nYou have an appointment at {0} - {1} 30 Minutes from now.", ticket.merchant.COMPANY_NAME, ticket.merchant.BRANCH_NAME, ticket.queue_no);
 			notification2.ApplicationIconBadgeNumber = 1;
@@ -535,7 +555,8 @@ namespace QMobile
 
 			var notification3 = new UILocalNotification ();
 			notification3.FireDate = DateTimeToNSDate (firedate.AddMinutes (-15));
-			notification3.AlertTitle = "QMobile Reminder!";
+			if (new Version (UIDevice.CurrentDevice.SystemVersion) >= version8)
+				notification3.AlertTitle = "QMobile Reminder!";
 			//notification3.AlertAction = "OK";
 			notification3.AlertBody = String.Format ("Ticket No. {2}\nYou have an appointment at {0} - {1} 15 Minutes from now.", ticket.merchant.COMPANY_NAME, ticket.merchant.BRANCH_NAME, ticket.queue_no);
 			notification3.ApplicationIconBadgeNumber = 1;
@@ -545,7 +566,8 @@ namespace QMobile
 
 			var notification4 = new UILocalNotification ();
 			notification4.FireDate = DateTimeToNSDate (firedate.AddMinutes (-2));
-			notification4.AlertTitle = "QMobile Reminder!";
+			if (new Version (UIDevice.CurrentDevice.SystemVersion) >= version8)
+				notification4.AlertTitle = "QMobile Reminder!";
 			//notification4.AlertAction = "OK";
 			notification4.AlertBody = String.Format ("Ticket No. {2}\nYou have an appointment at {0} - {1} 2 Minutes from now.", ticket.merchant.COMPANY_NAME, ticket.merchant.BRANCH_NAME, ticket.queue_no);
 			notification4.ApplicationIconBadgeNumber = 1;
@@ -571,6 +593,7 @@ namespace QMobile
 		public async void addTFOLReservation ()
 		{
 			//http://tfqmsservicesc7b32.azurewebsites.net/kioskJSON.svc/addTFUserJSON/Sales/09088152132/Ken%20Marvin/M;R;7;32;weeken88@mail.com/217/14.005/121.32
+			this.viewControllerLocal.Add (this._loadPop);
 
 			string url = "";
 			if (merchant.edition.Equals ("CLOUD-SAAS")) {
@@ -604,7 +627,7 @@ namespace QMobile
 				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
 				request.ContentType = "application/json";
 				request.Method = "GET";
-				using (HttpWebResponse response = request.GetResponse () as HttpWebResponse) {
+				using (HttpWebResponse response = await request.GetResponseAsync () as HttpWebResponse) {
 					if (response.StatusCode != HttpStatusCode.OK) {
 						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", response.StatusCode);
 						new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
@@ -688,6 +711,7 @@ namespace QMobile
 				new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 			}
 
+			this._loadPop.Hide ();
 		}
 
 	}

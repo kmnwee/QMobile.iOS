@@ -7,6 +7,7 @@ using Microsoft.WindowsAzure.MobileServices;
 using CoreGraphics;
 using ObjCRuntime;
 using System.Linq;
+using MBProgressHUD;
 
 namespace QMobile
 {
@@ -19,6 +20,7 @@ namespace QMobile
 		public string birthday = "";
 		UITableView favoritesTable;
 		LoadingOverlay _loadPop;
+		MTMBProgressHUD hud;
 
 		public FavoritesTableController (IntPtr handle) : base (handle)
 		{
@@ -33,6 +35,27 @@ namespace QMobile
 			DashTabController dashTab = this.ParentViewController as DashTabController;
 			Console.WriteLine ("Fav View Loaded");
 			Console.WriteLine (String.Format ("Fav Tab : {0}, {1}, {2}", AppDelegate.tfAccount.name, AppDelegate.tfAccount.email, AppDelegate.tfAccount.birthday));
+			//------LOADING Screen-------------------------- init
+			// Determine the correct size to start the overlay (depending on device orientation)
+//			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+//			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+//				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+//			}
+//			// show the loading overlay on the UI thread using the correct orientation sizing
+//			this._loadPop = new LoadingOverlay (bounds);
+			//------LOADING Screen--------------------------
+
+			hud = new MTMBProgressHUD (View) {
+				LabelText = "Loading favorites...",
+				RemoveFromSuperViewOnHide = true,
+				AnimationType = MBProgressHUDAnimation.Fade,
+				//DetailsLabelText = "loading profile details...",
+				Mode = MBProgressHUDMode.Indeterminate,
+				Color = UIColor.Gray,
+				Opacity = 60,
+				DimBackground = true
+			};
+
 			RefreshControl = new UIRefreshControl ();
 			RefreshControl.ValueChanged += (object sender, EventArgs e) => {
 				Console.WriteLine ("Refresh Initiated");	
@@ -53,7 +76,7 @@ namespace QMobile
 			TFMemberFavoritesEx favEx = new TFMemberFavoritesEx ();
 			InvokeOnMainThread (async () => {
 				try {
-					tffavorites = await AppDelegate.MobileService.GetTable<TFMemberFavorites> ().Where (TFMemberFavorites => TFMemberFavorites.email == email).ToListAsync ();
+					tffavorites = await AppDelegate.MobileService.GetTable<TFMemberFavorites> ().Where (TFMemberFavorites => TFMemberFavorites.email == email && TFMemberFavorites.__deleted == "False").ToListAsync ();
 
 					foreach (TFMemberFavorites fav in tffavorites) {
 						Console.WriteLine ("Fav : " + fav.email + " , " + fav.company_id + " , " + fav.branch_id + " , " + fav.__deleted);
@@ -73,7 +96,8 @@ namespace QMobile
 							favEx.company_name = tfmerchants2.ToArray () [0].COMPANY_NAME;
 							favEx.icon_image = tfmerchants2.ToArray () [0].icon_image;
 							favEx.merchant = tfmerchants2.ToArray () [0];
-							tffavoritesCompl.Add (favEx);
+							if (!tffavoritesCompl.Where (favi => favi.company_id == fav.company_id && favi.branch_id == fav.branch_id).ToList ().Any ())
+								tffavoritesCompl.Add (favEx);
 						}
 					}
 
@@ -90,10 +114,14 @@ namespace QMobile
 
 					this.TableView = favoritesTable;
 				} catch (Exception e) {
-					new UIAlertView ("No Internet", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+					new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+					Console.Out.WriteLine (e.Message);
+					Console.Out.WriteLine (e.StackTrace);
 				}
+
+				hud.Hide (true);
 				//------LOADING Screen END----------------------
-				this._loadPop.Hide ();
+				//this._loadPop.Hide ();
 				//------LOADING Screen END----------------------
 			});
 		}
@@ -109,23 +137,21 @@ namespace QMobile
 		{
 			Console.WriteLine ("Fav ViewDidAppear");
 			Console.WriteLine ("Fav view: " + AppDelegate.tfAccount.email + "/ " + AppDelegate.tfAccount.loggedIn);
+			//if (AppDelegate.initialLoadFav) {
+
+			View.AddSubview (hud);
+			hud.Show (animated: true);
+			//this.View.Add (this._loadPop);
 			//------LOADING Screen--------------------------
-			// Determine the correct size to start the overlay (depending on device orientation)
-			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
-			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
-				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
-			}
-			// show the loading overlay on the UI thread using the correct orientation sizing
-			this._loadPop = new LoadingOverlay (bounds);
-			this.View.Add (this._loadPop);
-			//------LOADING Screen--------------------------
+			//}
 
 			//call Refresh Table
 			if (AppDelegate.tfAccount.loggedIn) {
 				RefreshFavoritesTable (AppDelegate.tfAccount.email);
 			} else {
 				//------LOADING Screen END----------------------
-				this._loadPop.Hide ();
+				hud.Hide (true);
+				//this._loadPop.Hide ();
 				//------LOADING Screen END----------------------
 				RefreshFavoritesTable ("");
 				InvokeOnMainThread (() => {
@@ -134,6 +160,7 @@ namespace QMobile
 				new UIAlertView ("Profile Needed", "Please login in profile tab.", null, "OK", null).Show ();
 
 			}
+			AppDelegate.initialLoadFav = false;
 			base.ViewDidAppear (animated);
 		}
 

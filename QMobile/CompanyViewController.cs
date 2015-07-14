@@ -41,7 +41,8 @@ namespace QMobile
 			mapView.ShowsUserLocation = true;
 
 			InvokeOnMainThread (() => {
-				this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+				//this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+				this.NavigationItem.TitleView = new UIImageView (FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("LogoWithOutBackground.png"), 50, 50));
 			});
 
 			//GET ALL BRANCHES

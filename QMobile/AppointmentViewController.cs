@@ -43,9 +43,19 @@ namespace QMobile
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
+			//------LOADING Screen--------------------------
+			// Determine the correct size to start the overlay (depending on device orientation)
+			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+			}
+			// show the loading overlay on the UI thread using the correct orientation sizing
+			this._loadPop = new LoadingOverlay (bounds);
+			this.View.Add (this._loadPop);
+			//------LOADING Screen--------------------------
+
+
 			Console.WriteLine ("Merchant ID " + merchant.COMPANY_NO + " " + merchant.BRANCH_NO + ">" + merchant.serviceURL);
-
-
 			branchDetailsView.BackgroundColor = TFColor.FromHexString ("#0097a9", 1.0f);
 			companyLabel.Text = merchant.COMPANY_NAME + " | " + merchant.BRANCH_NAME;
 			if (action.Equals ("APPOINTMENT"))
@@ -53,13 +63,19 @@ namespace QMobile
 			else if (action.Equals ("RESERVATION"))
 				branchLabel.Text = "Reserve a Ticket";
 			
-			DateTime initDate = DateTime.Now;
+			DateTime initDate = new DateTime ();
 
-			TFProcessOption option1 = new TFProcessOption ();
-			TFProcessOption option2 = new TFProcessOption ();
-			TFProcessOption option3 = new TFProcessOption ();
-			TFProcessOption option4 = new TFProcessOption ();
-			options = new List<TFProcessOption> ();
+			if(merchant.schedReserve_sameDay)
+				initDate = DateTime.Now;
+			else
+				initDate = DateTime.Now.AddDays(1);
+				
+
+//			TFProcessOption option1 = new TFProcessOption ();
+//			TFProcessOption option2 = new TFProcessOption ();
+//			TFProcessOption option3 = new TFProcessOption ();
+//			TFProcessOption option4 = new TFProcessOption ();
+//			options = new List<TFProcessOption> ();
 
 			//initialize--------------------------------------------- 
 			//Date
@@ -86,12 +102,27 @@ namespace QMobile
 			schedDate = initDate.ToString ("yyyy-MM-dd");
 
 			getTransactionTypes (); //add checking of trantypes here.
-			availableSchedResultJSON = new TFAvailableSchedule ();
-			if (!String.IsNullOrEmpty (schedTranType)) {
-				if (action.Equals ("APPOINTMENT")) {
-					updateAvailableSched ();
-				}
+
+		}
+
+		public override void ViewDidLayoutSubviews ()
+		{
+			base.ViewDidLayoutSubviews ();
+
+			if (appointmentOptionsTable != null) {
+				appointmentOptionsTable.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
 			}
+
+		}
+
+		public void initializeView ()
+		{
+			TFProcessOption option1 = new TFProcessOption ();
+			TFProcessOption option2 = new TFProcessOption ();
+			TFProcessOption option3 = new TFProcessOption ();
+			TFProcessOption option4 = new TFProcessOption ();
+			options = new List<TFProcessOption> ();
+
 			//---------------------------------------------------------
 			if (action.Equals ("APPOINTMENT"))
 				option1.title = "Appointment Date";
@@ -130,22 +161,12 @@ namespace QMobile
 			options.Add (option4);
 
 			InvokeOnMainThread (() => {
-				this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+				//this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
+				this.NavigationItem.TitleView = new UIImageView (FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("LogoWithOutBackground.png"), 50, 50));
 				appointmentOptionsTable.TableFooterView = new UIView (CGRect.Empty);
 				appointmentOptionsTable.Source = new AppointmentOptionsSource (options.ToArray (), merchant, this);
 				appointmentOptionsTable.ReloadData ();
 			});
-
-		}
-
-		public override void ViewDidLayoutSubviews ()
-		{
-			base.ViewDidLayoutSubviews ();
-
-			if (appointmentOptionsTable != null) {
-				appointmentOptionsTable.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
-			}
-
 		}
 
 		public async void getTransactionTypes ()
@@ -161,11 +182,11 @@ namespace QMobile
 				HttpWebRequest requestTranTypes = (HttpWebRequest)HttpWebRequest.Create (new Uri (urlTranTypes));
 				requestTranTypes.ContentType = "application/json";
 				requestTranTypes.Method = "GET";
-				using (HttpWebResponse responseTranTypes = requestTranTypes.GetResponse () as HttpWebResponse) {
+				using (HttpWebResponse responseTranTypes = await requestTranTypes.GetResponseAsync () as HttpWebResponse) {
 					if (responseTranTypes.StatusCode != HttpStatusCode.OK) {
 						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", responseTranTypes.StatusCode);
 						//Alert here "Problem connecting to the internet...
-						new UIAlertView ("No Internet", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+						new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 					} else {
 						using (StreamReader reader = new StreamReader (responseTranTypes.GetResponseStream ())) {
 							var content = reader.ReadToEnd ();
@@ -186,18 +207,33 @@ namespace QMobile
 					}
 				}
 			} catch (Exception e) {
-				new UIAlertView ("No Internet", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+				new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 			}
+
+
+
+			if (!action.Equals ("APPOINTMENT")) {
+				initializeView ();
+				this._loadPop.Hide ();
+			} else {
+				availableSchedResultJSON = new TFAvailableSchedule ();
+				if (!String.IsNullOrEmpty (schedTranType)) {
+					if (action.Equals ("APPOINTMENT")) {
+						updateAvailableSched ();
+					}
+				}	
+			}
+
 		}
 
-		public void updateAvailableSched ()
+		public async void updateAvailableSched ()
 		{
 			try {
 				string url = String.Format ("http://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/getTFMerchantAvailableSchedule/{0}/{1}/{2}/{3}/{4}/", merchant.COMPANY_NO, merchant.BRANCH_NO, schedDate, "ID", String.IsNullOrEmpty (schedTranTypeId) ? "0" : schedTranTypeId);
 				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
 				request.ContentType = "application/json";
 				request.Method = "GET";
-				using (HttpWebResponse response = request.GetResponse () as HttpWebResponse) {
+				using (HttpWebResponse response = await request.GetResponseAsync () as HttpWebResponse) {
 					if (response.StatusCode != HttpStatusCode.OK) {
 						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", response.StatusCode);
 						new UIAlertView ("No Internet", "We can't seem to connect to the internet.", null, "OK", null).Show ();
@@ -221,24 +257,28 @@ namespace QMobile
 					}
 				}
 			} catch (Exception e) {
-				new UIAlertView ("No Internet", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+				new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 			}
+
+			initializeView ();
+			this._loadPop.Hide ();
+
 		}
 
 
 		public override void ViewWillAppear (bool animated)
 		{
 			base.ViewWillAppear (animated);
-			//------LOADING Screen--------------------------
-			// Determine the correct size to start the overlay (depending on device orientation)
-			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
-			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
-				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
-			}
-			// show the loading overlay on the UI thread using the correct orientation sizing
-			this._loadPop = new LoadingOverlay (bounds);
-			this.View.Add (this._loadPop);
-			//------LOADING Screen--------------------------
+//			//------LOADING Screen--------------------------
+//			// Determine the correct size to start the overlay (depending on device orientation)
+//			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+//			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+//				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+//			}
+//			// show the loading overlay on the UI thread using the correct orientation sizing
+//			this._loadPop = new LoadingOverlay (bounds);
+//			this.View.Add (this._loadPop);
+//			//------LOADING Screen--------------------------
 
 		}
 
