@@ -106,6 +106,7 @@ namespace QMobile
 						.Where (TFMerchants => TFMerchants.featured_flag > 0 && !TFMerchants._unlisted).ToListAsync ();
 						TFFeaturedMerchants = TFMerchantList.GroupBy (c => c.COMPANY_NO).Select (grp => grp.FirstOrDefault ()).OrderBy (f => f.featured_flag).ToList ();
 						featuredTable.Source = new FeaturedTableSource (TFFeaturedMerchants.ToArray (), this);
+						//featuredTable.Source = new QTableSource (TFFeaturedMerchants.ToArray (), this);
 						featuredTable.ReloadData ();
 
 						hud.Hide(true);
@@ -132,8 +133,8 @@ namespace QMobile
 		public override void ViewDidLayoutSubviews ()
 		{
 			base.ViewDidLayoutSubviews ();
-//			if (featuredTable != null)
-//				featuredTable.ContentInset = new UIEdgeInsets (64, 0, 0, 0);
+			if (featuredTable != null)
+				featuredTable.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
 			
 		}
 

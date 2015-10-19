@@ -8,6 +8,9 @@ using System.Net;
 using Newtonsoft.Json;
 using System.IO;
 using CoreGraphics;
+using MBProgressHUD;
+using Microsoft.AspNet.SignalR.Client;
+using ToastIOS;
 
 namespace QMobile
 {
@@ -21,7 +24,9 @@ namespace QMobile
 		private UIViewController viewControllerLocal;
 		public TFOLReservation reservation;
 		public TFGetTicketResponse ticketResponse;
+		public TFGetTicketQMoileResponse qmobileticketResponse;
 		LoadingOverlay _loadPop;
+		MTMBProgressHUD hud;
 
 		public List<DateSelection> dateSelection;
 
@@ -66,18 +71,33 @@ namespace QMobile
 			this._loadPop = new LoadingOverlay (bounds);
 			//------LOADING Screen--------------------------
 
+			hud = new MTMBProgressHUD (this.viewControllerLocal.View) {
+				LabelText = "Loading...",
+				RemoveFromSuperViewOnHide = true,
+				AnimationType = MBProgressHUDAnimation.Fade,
+				//DetailsLabelText = "loading profile details...",
+				Mode = MBProgressHUDMode.Indeterminate,
+				Color = UIColor.Gray,
+				Opacity = 60,
+				DimBackground = true
+			};
+
+			this.viewControllerLocal.View.AddSubview (hud);
+
 			InvokeOnMainThread (() => {
 				switch (tableItems [indexPath.Row].type) {
+
 				//DATE BUTTON WAS PRESSED -------------------------------------------------------------------------------------------------------
 				case "Date":
+					hud.Show (true);
 					var dateActionSheet = new UIActionSheet ("Select Appointment Date");
 					DateSelection ds = new DateSelection ();
 					dateSelection = new List<DateSelection> ();
 					var dsDate = new DateTime ();
-					if(merchant.schedReserve_sameDay)
+					if (merchant.schedReserve_sameDay)
 						dsDate = DateTime.Now;
 					else
-						dsDate = DateTime.Now.AddDays(1);
+						dsDate = DateTime.Now.AddDays (1);
 					
 					int daysCount = 5;
 					switch (merchant.schedReserveWeekend_flag) {
@@ -163,12 +183,14 @@ namespace QMobile
 						}
 					};
 					dateActionSheet.ShowInView (viewControllerLocal.View);
+					hud.Hide (true);
 					break;
 				//DATE BUTTON WAS PRESSED <END>-------------------------------------------------------------------------------------------------------
 
 				//TIME SLOT BUTTON WAS PRESSED -------------------------------------------------------------------------------------------------------
 				case "Time":
 					//new UIAlertView ("Alert", tableItems [indexPath.Row].title, null, "Got It!", null).Show ();
+					hud.Show (true);
 					var timeActionSheet = new UIActionSheet ("Select Time Slot");
 					AvailableSched availSched = new AvailableSched ();
 					List<AvailableSched> availableSchedList = new List<AvailableSched> ();
@@ -196,6 +218,7 @@ namespace QMobile
 						}
 					};
 					timeActionSheet.ShowInView (viewControllerLocal.View);
+					hud.Hide (true);
 					break;
 				//TIME SLOT BUTTON WAS PRESSED <END>-------------------------------------------------------------------------------------------------------
 
@@ -206,35 +229,46 @@ namespace QMobile
 					TransactionType tranType = new TransactionType ();
 					List<TransactionType> tranTypesNew = new List<TransactionType> ();
 					//add reloading of transaction types from JSON call here to make sure updated one is shown
-					foreach (TransactionType tt in (viewControllerLocal as AppointmentViewController).transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes) {
-						tt.index = Convert.ToInt32 (tranActionSheet.AddButton (tt.tranType));
-						tranTypesNew.Add (tt);
-					}
-					(viewControllerLocal as AppointmentViewController).transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes = tranTypesNew;
-					tranActionSheet.CancelButtonIndex = tranActionSheet.AddButton ("Cancel");
-					tranActionSheet.Clicked += delegate(object a, UIButtonEventArgs b) {
-						if (b.ButtonIndex != tranActionSheet.CancelButtonIndex) {
-							string tranTypeTouched = tranTypesNew.Where (d => d.index == b.ButtonIndex).First ().tranType;
-							string tranTypeIdTouched = tranTypesNew.Where (d => d.index == b.ButtonIndex).First ().tran_id_local;
-							Console.WriteLine ("Button " + tranTypeTouched + " clicked");
-							(viewControllerLocal as AppointmentViewController).schedTranType = tranTypeTouched;
-							(viewControllerLocal as AppointmentViewController).schedTranTypeId = tranTypeIdTouched;
-							//update row
-							tableItems [indexPath.Row].valueDisplay = (viewControllerLocal as AppointmentViewController).schedTranType;
-							tableItems [indexPath.Row].value = (viewControllerLocal as AppointmentViewController).schedTranType;
-							tableItems [indexPath.Row].valueId = (viewControllerLocal as AppointmentViewController).schedTranTypeId;
-							//update Available Slots if Appointment
-							if ((viewControllerLocal as AppointmentViewController).action.Equals ("APPOINTMENT")) {
-								updateAvailableSched ();
-								tableItems [1].valueDisplay = (viewControllerLocal as AppointmentViewController).schedTimeString;
-								tableItems [1].value = (viewControllerLocal as AppointmentViewController).schedTimeKey;
-							}
-							tableView.ReloadData ();
-						} else {
-							Console.WriteLine ("Cancelled");
+					//InvokeOnMainThread (() => {
+						
+					getTransactionTypesSync ();
+						//hud.Hide (true);
+					//});
+					if ((viewControllerLocal as AppointmentViewController).transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes != null &&
+					    (viewControllerLocal as AppointmentViewController).transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes.Any ()) {
+						foreach (TransactionType tt in (viewControllerLocal as AppointmentViewController).transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes) {
+							tt.index = Convert.ToInt32 (tranActionSheet.AddButton (tt.tranType));
+							tranTypesNew.Add (tt);
 						}
-					};
-					tranActionSheet.ShowInView (viewControllerLocal.View);
+
+						(viewControllerLocal as AppointmentViewController).transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes = tranTypesNew;
+						tranActionSheet.CancelButtonIndex = tranActionSheet.AddButton ("Cancel");
+						tranActionSheet.Clicked += delegate(object a, UIButtonEventArgs b) {
+							if (b.ButtonIndex != tranActionSheet.CancelButtonIndex) {
+								string tranTypeTouched = tranTypesNew.Where (d => d.index == b.ButtonIndex).First ().tranType;
+								string tranTypeIdTouched = tranTypesNew.Where (d => d.index == b.ButtonIndex).First ().tran_id_local;
+								Console.WriteLine ("Button " + tranTypeTouched + " clicked");
+								(viewControllerLocal as AppointmentViewController).schedTranType = tranTypeTouched;
+								(viewControllerLocal as AppointmentViewController).schedTranTypeId = tranTypeIdTouched;
+								//update row
+								tableItems [indexPath.Row].valueDisplay = (viewControllerLocal as AppointmentViewController).schedTranType;
+								tableItems [indexPath.Row].value = (viewControllerLocal as AppointmentViewController).schedTranType;
+								tableItems [indexPath.Row].valueId = (viewControllerLocal as AppointmentViewController).schedTranTypeId;
+								//update Available Slots if Appointment
+								if ((viewControllerLocal as AppointmentViewController).action.Equals ("APPOINTMENT")) {
+									updateAvailableSched ();
+									tableItems [1].valueDisplay = (viewControllerLocal as AppointmentViewController).schedTimeString;
+									tableItems [1].value = (viewControllerLocal as AppointmentViewController).schedTimeKey;
+								}
+								tableView.ReloadData ();
+							} else {
+								Console.WriteLine ("Cancelled");
+							}
+						};
+						tranActionSheet.ShowInView (viewControllerLocal.View);
+					} else {
+						new UIAlertView ("Problem Connecting", "We can't seem to connect to this branch.", null, "OK", null).Show ();
+					}
 					break;
 				//TRANSACTION BUTTON WAS PRESSED <END>-------------------------------------------------------------------------------------------------------
 
@@ -290,19 +324,6 @@ namespace QMobile
 									//Call addTFScheduledReservation Service
 									addTFScheduledAppointment ();
 
-//									Console.WriteLine ("Proceed with Transaction");
-//									var notification = new UILocalNotification ();
-//									// set the fire date (the date time in which it will fire)
-//									notification.FireDate = NSDate.Now.AddSeconds (30);
-//									// configure the alert stuff
-//									notification.AlertAction = "QMobile Alert!";
-//									notification.AlertBody = "Your Scheduled appointment is near!";
-//									// modify the badge
-//									notification.ApplicationIconBadgeNumber = 1;
-//									// set the sound to be the default sound
-//									notification.SoundName = UILocalNotification.DefaultSoundName;
-//									// schedule it
-//									UIApplication.SharedApplication.ScheduleLocalNotification (notification);
 								} else if (b.ButtonIndex.ToString ().Equals ("1")) {
 									Console.WriteLine ("Cancel");
 								}
@@ -312,33 +333,31 @@ namespace QMobile
 							new UIAlertView ("Please review details", "One of the options cannot be empty.", null, "OK", null).Show ();
 						}
 					} else if ((viewControllerLocal as AppointmentViewController).action.Equals ("RESERVATION")) {
-						string confirmationString = String.Format ("Date : {0}\nMobile No: {1}\nService : {2}", 
-							                            DateTime.ParseExact ((viewControllerLocal as AppointmentViewController).schedDate, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString ("ddd, MMMM dd"),
-							                            (viewControllerLocal as AppointmentViewController).reservMobileNo, 
-							                            (viewControllerLocal as AppointmentViewController).schedTranType);
-						var proceedAlertReserve = new UIAlertView ("Please Confirm Details:", confirmationString, null, "Proceed", new string[] { "Cancel" });
-						proceedAlertReserve.Clicked += (s, b) => {
-							if (b.ButtonIndex.ToString ().Equals ("0")) {
-								//Call addTFUserJSON Service
-								Console.WriteLine ("Proceed with Reservation");
-								addTFOLReservation ();
-//								var notification = new UILocalNotification ();
-//								// set the fire date (the date time in which it will fire)
-//								notification.FireDate = NSDate.Now.AddSeconds (30);
-//								// configure the alert stuff
-//								notification.AlertAction = "QMobile Alert!";
-//								notification.AlertBody = "Your ticket is near!";
-//								// modify the badge
-//								notification.ApplicationIconBadgeNumber = 1;
-//								// set the sound to be the default sound
-//								notification.SoundName = UILocalNotification.DefaultSoundName;
-//								// schedule it
-//								UIApplication.SharedApplication.ScheduleLocalNotification (notification);
-							} else if (b.ButtonIndex.ToString ().Equals ("1")) {
-								Console.WriteLine ("Cancel");
-							}
-						};
-						proceedAlertReserve.Show ();
+
+						if (!String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).schedTranType)
+						    && !String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).schedTranTypeId)) {
+
+							string confirmationString = String.Format ("Date : {0}\nMobile No: {1}\nService : {2}", 
+								                            DateTime.ParseExact ((viewControllerLocal as AppointmentViewController).schedDate, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString ("ddd, MMMM dd"),
+								                            (viewControllerLocal as AppointmentViewController).reservMobileNo, 
+								                            (viewControllerLocal as AppointmentViewController).schedTranType);
+							var proceedAlertReserve = new UIAlertView ("Please Confirm Details:", confirmationString, null, "Proceed", new string[] { "Cancel" });
+							proceedAlertReserve.Clicked += (s, b) => {
+								if (b.ButtonIndex.ToString ().Equals ("0")) {
+									//Call addTFUserJSON Service
+									Console.WriteLine ("Proceed with Reservation");
+									addTFOLReservation ();
+									//update qpad count
+									sendSignalRBCast(merchant.COMPANY_NO, merchant.BRANCH_NO);
+
+								} else if (b.ButtonIndex.ToString ().Equals ("1")) {
+									Console.WriteLine ("Cancel");
+								}
+							};
+							proceedAlertReserve.Show ();
+						} else {
+							new UIAlertView ("Please review details", "One of the options cannot be empty.", null, "OK", null).Show ();
+						}
 					}
 
 					break;
@@ -351,7 +370,64 @@ namespace QMobile
 
 		}
 
+		public void getTransactionTypesSync ()
+		{
+			//Tran Type
+			//------------------------------------------
+			hud.Show (true);
+			try {
+				string urlTranTypes = String.Format (merchant.serviceURL + "/kioskJSON.svc/getAllTranTypesMobileJSON");
+				if (merchant.edition.Equals ("CLOUD-SAAS"))
+					urlTranTypes += String.Format ("/{0}/{1}/", merchant.COMPANY_NO, merchant.BRANCH_NO);
 
+				Console.WriteLine (urlTranTypes);
+				HttpWebRequest requestTranTypes = (HttpWebRequest)HttpWebRequest.Create (new Uri (urlTranTypes));
+				requestTranTypes.ContentType = "application/json";
+				requestTranTypes.Method = "GET";
+				requestTranTypes.Timeout = 15000;
+				using (HttpWebResponse responseTranTypes = requestTranTypes.GetResponse () as HttpWebResponse) {
+					if (responseTranTypes.StatusCode != HttpStatusCode.OK) {
+						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", responseTranTypes.StatusCode);
+						//Alert here "Problem connecting to the internet...
+						new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+					} else {
+						using (StreamReader reader = new StreamReader (responseTranTypes.GetResponseStream ())) {
+							var content = reader.ReadToEnd ();
+							if (string.IsNullOrWhiteSpace (content)) {
+								Console.Out.WriteLine ("Response contained empty body...");
+							} else {
+								Console.Out.WriteLine ("Response Body: \r\n {0}", content);
+								(viewControllerLocal as AppointmentViewController).transactionTypesJSON = new TFTransactionTypes ();
+								(viewControllerLocal as AppointmentViewController).transactionTypesJSON = JsonConvert.DeserializeObject<TFTransactionTypes> (content);
+								Console.WriteLine ((viewControllerLocal as AppointmentViewController).transactionTypesJSON.getAllTranTypesMobileJSONResult.ResponseCode);
+								Console.WriteLine ((viewControllerLocal as AppointmentViewController).transactionTypesJSON.getAllTranTypesMobileJSONResult.ResponseCode);
+								if ((viewControllerLocal as AppointmentViewController).transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes.Any ()) {
+									(viewControllerLocal as AppointmentViewController).schedTranType = (viewControllerLocal as AppointmentViewController).transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes.First ().tranType;
+									(viewControllerLocal as AppointmentViewController).schedTranTypeId = (viewControllerLocal as AppointmentViewController).transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes.First ().tran_id_local;
+								}
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+			}
+
+
+
+			if (!(viewControllerLocal as AppointmentViewController).action.Equals ("APPOINTMENT")) {
+				//(viewControllerLocal as AppointmentViewController).initializeView ();
+				hud.Hide (true);
+			} else {
+				availableSchedResultJSON = new TFAvailableSchedule ();
+				if (!String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).schedTranType)) {
+					if ((viewControllerLocal as AppointmentViewController).action.Equals ("APPOINTMENT")) {
+						updateAvailableSched ();
+					}
+				}	
+			}
+
+		}
 
 		public override UITableViewCell GetCell (UITableView tableView, Foundation.NSIndexPath indexPath)
 		{
@@ -401,7 +477,7 @@ namespace QMobile
 		{
 			//Time Slot -- add error checking for this
 			try {
-				string url = String.Format ("http://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/getTFMerchantAvailableSchedule/{0}/{1}/{2}/{3}/{4}/", 
+				string url = String.Format ("https://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/getTFMerchantAvailableSchedule/{0}/{1}/{2}/{3}/{4}/", 
 					             merchant.COMPANY_NO, merchant.BRANCH_NO, (viewControllerLocal as AppointmentViewController).schedDate, "ID", 
 					             String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).schedTranTypeId) ? "0" : (viewControllerLocal as AppointmentViewController).schedTranTypeId);
 				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
@@ -435,93 +511,126 @@ namespace QMobile
 					}
 				}
 			} catch (Exception e) {
-				new UIAlertView ("No Internet", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+				new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 			}
+
+			hud.Hide (true);
 			//---------------------------------------------------------
 		}
 
 		public async void addTFScheduledAppointment ()
 		{
 			//Time Slot -- add error checking for this
-			this.viewControllerLocal.Add (this._loadPop);
-			try {
-				string url = String.Format ("http://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/addTFUserScheduleJSON/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/{9}/{10}/{11}/{12}/", 
-					             merchant.COMPANY_NO, 
-					             merchant.BRANCH_NO,
-					             "-",
-					             AppDelegate.tfAccount.email, 
-					             AppDelegate.tfAccount.name,
-					             (viewControllerLocal as AppointmentViewController).schedTranType,
-					             (viewControllerLocal as AppointmentViewController).schedTranTypeId,
-					             "-", 
-					             (viewControllerLocal as AppointmentViewController).schedDate, 
-					             (viewControllerLocal as AppointmentViewController).schedTimeKey, 
-					             (viewControllerLocal as AppointmentViewController).userLocation.Latitude, 
-					             (viewControllerLocal as AppointmentViewController).userLocation.Longitude,
-					             merchant.icon_image.Replace ("/", ";").Replace (":", "~"));
+			//this.viewControllerLocal.Add (this._loadPop);
+			hud.Show (true);
+			DateTime dateNow = DateTime.Now;
+			String dateNowString = dateNow.ToString ("yyyy-MM-dd");
+			dateNow = DateTime.ParseExact (dateNowString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+			Console.WriteLine ("DateNOW: " + dateNowString + " or " + dateNow.ToString ());
+			int tixCount = 0;
+			List<TFScheduledReservation> TFReserveList = new List<TFScheduledReservation>();
+			TFReserveList = await AppDelegate.MobileService.GetTable<TFScheduledReservation> ().Take (3)
+				.Where (TFScheduledReservation => TFScheduledReservation.email.Contains (AppDelegate.tfAccount.email) &&
+					TFScheduledReservation.company_id == merchant.COMPANY_NO &&
+					TFScheduledReservation.branch_id == merchant.BRANCH_NO)
+				.OrderByDescending (TFScheduledReservation => TFScheduledReservation.reservation_date)
+				.ThenBy (TFScheduledReservation => TFScheduledReservation.reservation_time)
+				.ToListAsync ();
+			foreach (TFScheduledReservation sr in TFReserveList) {
+				if (DateTime.ParseExact (sr.reservation_date, "yyyy-MM-dd", CultureInfo.InvariantCulture)
+					.CompareTo
+					(DateTime.ParseExact ((viewControllerLocal as AppointmentViewController).schedDate, "yyyy-MM-dd", CultureInfo.InvariantCulture)) == 0) {
+					Console.WriteLine (sr.queue_no + " - " + sr.reservation_date);
+					tixCount++;
+				}
+			}
+
+			if (tixCount > 0) {
+				new UIAlertView ("Oops!", "You still have an active appointment for this merchant. \nTicket No. " + TFReserveList.First ().queue_no, null, "OK", null).Show ();
+			} else {
+				try {
+					string url = String.Format ("https://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/addTFUserScheduleJSON/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/{9}/{10}/{11}/{12}/", 
+						            merchant.COMPANY_NO, 
+						            merchant.BRANCH_NO,
+						            "-",
+						            AppDelegate.tfAccount.email, 
+						            AppDelegate.tfAccount.name,
+						            (viewControllerLocal as AppointmentViewController).schedTranType,
+						            (viewControllerLocal as AppointmentViewController).schedTranTypeId,
+						            "-", 
+						            (viewControllerLocal as AppointmentViewController).schedDate, 
+						            (viewControllerLocal as AppointmentViewController).schedTimeKey, 
+						            (viewControllerLocal as AppointmentViewController).userLocation.Latitude, 
+						            (viewControllerLocal as AppointmentViewController).userLocation.Longitude,
+						            merchant.icon_image.Replace ("/", ";").Replace (":", "~"));
+				
+					if (merchant.COMPANY_NO == 7) //if SMART
+					url += String.Format ("{0}/", (viewControllerLocal as AppointmentViewController).schedTimeString.Replace (":", ";"));
 								
-				Console.WriteLine (url);
-				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
-				request.ContentType = "application/json";
-				request.Method = "GET";
-				using (HttpWebResponse response = await request.GetResponseAsync () as HttpWebResponse) {
-					if (response.StatusCode != HttpStatusCode.OK) {
-						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", response.StatusCode);
-						new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
-					} else {
-						using (StreamReader reader = new StreamReader (response.GetResponseStream ())) {
-							var content = reader.ReadToEnd ();
-							if (string.IsNullOrWhiteSpace (content)) {
-								Console.Out.WriteLine ("Response contained empty body...");
-							} else {
-								Console.Out.WriteLine ("Response Body: \r\n {0}", content);
-								schedAppointmentJSON = new TFScheduledAppointment ();
-								schedAppointmentJSON = JsonConvert.DeserializeObject<TFScheduledAppointment> (content);
-								Console.WriteLine (schedAppointmentJSON.addTFUserScheduleJSONResult.ResponseCode);
-								Console.WriteLine (schedAppointmentJSON.addTFUserScheduleJSONResult.ResponseMessage);
-
-								TicketViewController ticketView = viewControllerLocal.Storyboard.InstantiateViewController ("TicketViewController") as TicketViewController;
-								DashTabController dashTabView = viewControllerLocal.Storyboard.InstantiateViewController ("DashTabController") as DashTabController;
-
-								if (schedAppointmentJSON.addTFUserScheduleJSONResult.ResponseCode.Equals ("00")) {
-									//add local notification here (2 hrs, 30 mins, 15 mins)							
-									InvokeOnMainThread (() => {
-										ticketView.appointment = schedAppointmentJSON;
-										TFTicket tix = new TFTicket ();
-										tix.branch_id = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.branch_id;
-										tix.company_id = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.company_id;
-										tix.cust_name = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.cust_name;
-										tix.date = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.reservation_date;
-										tix.id = Convert.ToString (schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.id);
-										tix.image_icon = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.image_icon;
-										tix.merchant = merchant;
-										tix.queue_no = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.queue_no;
-										tix.time = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.reservation_time;
-										tix.tran_id_local = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.tran_id_local;
-										tix.tran_type_name = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.tran_type_name;
-										tix.status = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.status;
-										tix.type = "APPOINTMENT";
-										ticketView.ticket = tix;
-										ticketView.NavigationItem.SetRightBarButtonItem (new UIBarButtonItem ("Home", UIBarButtonItemStyle.Plain, (sender, args) => {
-											Console.WriteLine ("Home Button was pressed!");
-											dashTabView.NavigationItem.SetHidesBackButton (true, false);
-											viewControllerLocal.NavigationController.PushViewController (dashTabView, true);
-										}), true);
-										addLocalNotification (tix);
-										viewControllerLocal.NavigationController.PushViewController (ticketView, true);	
-									});
+					Console.WriteLine (url);
+					HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
+					request.ContentType = "application/json";
+					request.Method = "GET";
+					using (HttpWebResponse response = await request.GetResponseAsync () as HttpWebResponse) {
+						if (response.StatusCode != HttpStatusCode.OK) {
+							Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", response.StatusCode);
+							new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+						} else {
+							using (StreamReader reader = new StreamReader (response.GetResponseStream ())) {
+								var content = reader.ReadToEnd ();
+								if (string.IsNullOrWhiteSpace (content)) {
+									Console.Out.WriteLine ("Response contained empty body...");
 								} else {
-									new UIAlertView ("Oops!", "Can't seem to schedule an appointment now.\nMessage: "
-									+ schedAppointmentJSON.addTFUserScheduleJSONResult.ResponseMessage, null, "OK", null).Show ();
+									Console.Out.WriteLine ("Response Body: \r\n {0}", content);
+									schedAppointmentJSON = new TFScheduledAppointment ();
+									schedAppointmentJSON = JsonConvert.DeserializeObject<TFScheduledAppointment> (content);
+									Console.WriteLine (schedAppointmentJSON.addTFUserScheduleJSONResult.ResponseCode);
+									Console.WriteLine (schedAppointmentJSON.addTFUserScheduleJSONResult.ResponseMessage);
+
+									TicketViewController ticketView = viewControllerLocal.Storyboard.InstantiateViewController ("TicketViewController") as TicketViewController;
+									DashTabController dashTabView = viewControllerLocal.Storyboard.InstantiateViewController ("DashTabController") as DashTabController;
+
+									if (schedAppointmentJSON.addTFUserScheduleJSONResult.ResponseCode.Equals ("00")) {
+										//add local notification here (2 hrs, 30 mins, 15 mins)							
+										InvokeOnMainThread (() => {
+											ticketView.appointment = schedAppointmentJSON;
+											TFTicket tix = new TFTicket ();
+											tix.branch_id = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.branch_id;
+											tix.company_id = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.company_id;
+											tix.cust_name = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.cust_name;
+											tix.date = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.reservation_date;
+											tix.id = Convert.ToString (schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.id);
+											tix.image_icon = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.image_icon;
+											tix.merchant = merchant;
+											tix.queue_no = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.queue_no;
+											tix.time = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.reservation_time;
+											tix.tran_id_local = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.tran_id_local;
+											tix.tran_type_name = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.tran_type_name;
+											tix.status = schedAppointmentJSON.addTFUserScheduleJSONResult.ScheduleDetails.status;
+											tix.type = "APPOINTMENT";
+											ticketView.ticket = tix;
+											ticketView.NavigationItem.SetRightBarButtonItem (new UIBarButtonItem ("Home", UIBarButtonItemStyle.Plain, (sender, args) => {
+												Console.WriteLine ("Home Button was pressed!");
+												dashTabView.NavigationItem.SetHidesBackButton (true, false);
+												viewControllerLocal.NavigationController.PushViewController (dashTabView, true);
+											}), true);
+											addLocalNotification (tix);
+											viewControllerLocal.NavigationController.PushViewController (ticketView, true);	
+										});
+									} else {
+										new UIAlertView ("Oops!", "Can't seem to schedule an appointment now.\nMessage: "
+										+ schedAppointmentJSON.addTFUserScheduleJSONResult.ResponseMessage, null, "OK", null).Show ();
+									}
 								}
 							}
 						}
 					}
+				} catch (Exception e) {
+					new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 				}
-			} catch (Exception e) {
-				new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 			}
-			this._loadPop.Hide ();
+			//this._loadPop.Hide ();
+			hud.Hide (true);
 			//---------------------------------------------------------
 		}
 
@@ -590,128 +699,166 @@ namespace QMobile
 				(date - reference).TotalSeconds);
 		}
 
+		public async void sendSignalRBCast(int company_id, int branch_id)
+		{
+			Console.WriteLine ("SignalR Init");
+			var hubConnection = new HubConnection ("http://tfqapps-n.azurewebsites.net/signalr/hubs");
+			var chatHubProxy = hubConnection.CreateHubProxy ("ChatHub");
+			chatHubProxy.On<string> ("broadcastMessage", message => Toast.MakeText ("Received : " + message));
+			await hubConnection.Start ();
+			Console.WriteLine ("SignalR Sending to " + company_id + ", " + branch_id);
+			await chatHubProxy.Invoke ("Send", branch_id, company_id);
+			hubConnection.Stop ();
+		}
+
 		public async void addTFOLReservation ()
 		{
 			//http://tfqmsservicesc7b32.azurewebsites.net/kioskJSON.svc/addTFUserJSON/Sales/09088152132/Ken%20Marvin/M;R;7;32;weeken88@mail.com/217/14.005/121.32
-			this.viewControllerLocal.Add (this._loadPop);
+			//this.viewControllerLocal.Add (this._loadPop);
+			hud.Show (true);
 
-			string url = "";
-			if (merchant.edition.Equals ("CLOUD-SAAS")) {
-				url = String.Format (merchant.serviceURL	+ "/kioskJSON.svc/addTFUserJSON/{0}/{1}/{2}/{3}/{4};{5};{6};{7};{8}/{9}/{10}/{11}/{12}/", 
-					(viewControllerLocal as AppointmentViewController).schedTranTypeId, 
-					"0", 
-					String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).reservMobileNo) ? "-" : (viewControllerLocal as AppointmentViewController).reservMobileNo,
-					String.IsNullOrEmpty (AppDelegate.tfAccount.name) ? "-" : AppDelegate.tfAccount.name,
-					"M", "R", merchant.COMPANY_NO, merchant.BRANCH_NO, String.IsNullOrEmpty (AppDelegate.tfAccount.email) ? "-" : AppDelegate.tfAccount.email,
-					merchant.COMPANY_NO,
-					merchant.BRANCH_NO,
-					(viewControllerLocal as AppointmentViewController).userLocation.Latitude,
-					(viewControllerLocal as AppointmentViewController).userLocation.Longitude);
-			} else {
-				url = String.Format (merchant.serviceURL	+ "/kioskJSON.svc/addTFUserJSON/{0}/{1}/{2}/{3};{4};{5};{6};{7}/{8}/{9}/{10}", 
-					(viewControllerLocal as AppointmentViewController).schedTranType, 
-					String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).reservMobileNo) ? "-" : (viewControllerLocal as AppointmentViewController).reservMobileNo,
-					String.IsNullOrEmpty (AppDelegate.tfAccount.name) ? "-" : AppDelegate.tfAccount.name,
-					"M", "R",
-					merchant.COMPANY_NO,
-					merchant.BRANCH_NO,
-					String.IsNullOrEmpty (AppDelegate.tfAccount.email) ? "-" : AppDelegate.tfAccount.email,
-					(viewControllerLocal as AppointmentViewController).schedTranTypeId,
-					(viewControllerLocal as AppointmentViewController).userLocation.Latitude,
-					(viewControllerLocal as AppointmentViewController).userLocation.Longitude);
+			DateTime dateNow = DateTime.Now;
+			String dateNowString = dateNow.ToString ("yyyy-MM-dd");
+			dateNow = DateTime.ParseExact (dateNowString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+			Console.WriteLine ("DateNOW: " + dateNowString + " or " + dateNow.ToString ());
+			int tixCount = 0;
+			List<TFOLReservation> TFReserveList = new List<TFOLReservation>();
+			TFReserveList = await AppDelegate.MobileService.GetTable<TFOLReservation> ().Take (3)
+				.Where (TFOLReservation => TFOLReservation.remarks.Contains (AppDelegate.tfAccount.email) &&
+					TFOLReservation.company_id == merchant.COMPANY_NO &&
+					TFOLReservation.branch_id == merchant.BRANCH_NO)
+				.OrderByDescending (TFOLReservation => TFOLReservation.date_in)
+				.ToListAsync ();
+			foreach (TFOLReservation sr in TFReserveList) {
+				if (DateTime.ParseExact (sr.date_in, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture).CompareTo (dateNow) >= 0) {
+					Console.WriteLine (sr.queue_no + " - " + sr.date_in);
+					tixCount++;
+				}
 			}
 
-			Console.WriteLine (url);
+			if (tixCount > 0) {
+				new UIAlertView ("Oops!", "You still have an active ticket for this merchant. \nTicket No. " + TFReserveList.First().queue_no, null, "OK", null).Show ();
+			} else {
+				string url = "";
+				if (merchant.edition.Equals ("CLOUD-SAAS")) {
+					//url = String.Format (merchant.serviceURL	+ "/kioskJSON.svc/addTFUserJSON/{0}/{1}/{2}/{3}/{4};{5};{6};{7};{8}/{9}/{10}/{11}/{12}/", 
+					url = String.Format ("https://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/addTFUserQMobileJSON/{0}/{1}/{2}/{3}/{4};{5};{6};{7};{8}/{9}/{10}/{11}/{12}/", 
+						(viewControllerLocal as AppointmentViewController).schedTranTypeId, 
+						"0", 
+						String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).reservMobileNo) ? "-" : (viewControllerLocal as AppointmentViewController).reservMobileNo,
+						String.IsNullOrEmpty (AppDelegate.tfAccount.name) ? "-" : AppDelegate.tfAccount.name,
+						"M", "R", merchant.COMPANY_NO, merchant.BRANCH_NO, String.IsNullOrEmpty (AppDelegate.tfAccount.email) ? "-" : AppDelegate.tfAccount.email,
+						merchant.COMPANY_NO,
+						merchant.BRANCH_NO,
+						(viewControllerLocal as AppointmentViewController).userLocation.Latitude,
+						(viewControllerLocal as AppointmentViewController).userLocation.Longitude);
+				} else {
+					url = String.Format (merchant.serviceURL	+ "/kioskJSON.svc/addTFUserJSON/{0}/{1}/{2}/{3};{4};{5};{6};{7}/{8}/{9}/{10}", 
+						(viewControllerLocal as AppointmentViewController).schedTranType, 
+						String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).reservMobileNo) ? "-" : (viewControllerLocal as AppointmentViewController).reservMobileNo,
+						String.IsNullOrEmpty (AppDelegate.tfAccount.name) ? "-" : AppDelegate.tfAccount.name,
+						"M", "R",
+						merchant.COMPANY_NO,
+						merchant.BRANCH_NO,
+						String.IsNullOrEmpty (AppDelegate.tfAccount.email) ? "-" : AppDelegate.tfAccount.email,
+						(viewControllerLocal as AppointmentViewController).schedTranTypeId,
+						(viewControllerLocal as AppointmentViewController).userLocation.Latitude,
+						(viewControllerLocal as AppointmentViewController).userLocation.Longitude);
+				}
 
-			try {
-				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
-				request.ContentType = "application/json";
-				request.Method = "GET";
-				using (HttpWebResponse response = await request.GetResponseAsync () as HttpWebResponse) {
-					if (response.StatusCode != HttpStatusCode.OK) {
-						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", response.StatusCode);
-						new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
-					} else {
-						using (StreamReader reader = new StreamReader (response.GetResponseStream ())) {
-							var content = reader.ReadToEnd ();
-							if (string.IsNullOrWhiteSpace (content)) {
-								Console.Out.WriteLine ("Response contained empty body...");
-							} else {
-								Console.Out.WriteLine ("Response Body: \r\n {0}", content);
-								ticketResponse = new TFGetTicketResponse ();
-								ticketResponse = JsonConvert.DeserializeObject<TFGetTicketResponse> (content);
-								Console.WriteLine (ticketResponse.addTFUserJSONResult.ResponseCode);
-								Console.WriteLine (ticketResponse.addTFUserJSONResult.ResponseMessage);
+				Console.WriteLine (url);
 
-								TicketViewController ticketView = viewControllerLocal.Storyboard.InstantiateViewController ("TicketViewController") as TicketViewController;
-								DashTabController dashTabView = viewControllerLocal.Storyboard.InstantiateViewController ("DashTabController") as DashTabController;
-
-								if (ticketResponse.addTFUserJSONResult.ResponseCode.Equals ("00")) {
-									InvokeOnMainThread (() => {
-										ticketView.olReservation = ticketResponse;
-										TFTicket tix = new TFTicket ();
-										tix.branch_id = merchant.BRANCH_NO;
-										tix.company_id = merchant.COMPANY_NO;
-										tix.cust_name = AppDelegate.tfAccount.name;
-										tix.date = DateTime.ParseExact (ticketResponse.addTFUserJSONResult.UserDetails.dateIn, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString ("yyyy-MM-dd");
-										tix.id = "";
-										tix.image_icon = merchant.icon_image;
-										tix.merchant = merchant;
-										tix.queue_no = ticketResponse.addTFUserJSONResult.UserDetails.queueNo;
-										tix.time = "";
-										tix.tran_id_local = ticketResponse.addTFUserJSONResult.UserDetails.tran_id_local;
-										tix.tran_type_name = ticketResponse.addTFUserJSONResult.UserDetails.tranType;
-										tix.status = ticketResponse.addTFUserJSONResult.UserDetails.status;
-										tix.type = "RESERVATION";
-										ticketView.ticket = tix;
-
-										InvokeInBackground (async () => {
-											reservation = new TFOLReservation ();
-											reservation.user_refno = ticketResponse.addTFUserJSONResult.UserDetails.userReferenceNo;
-											reservation.mobile_no = (viewControllerLocal as AppointmentViewController).reservMobileNo;
-											reservation.cust_name = AppDelegate.tfAccount.name;
-											reservation.queue_no = ticketResponse.addTFUserJSONResult.UserDetails.queueNo;
-											reservation.date_in = ticketResponse.addTFUserJSONResult.UserDetails.dateIn;
-											reservation.remarks = ticketResponse.addTFUserJSONResult.UserDetails.remarks;
-											reservation.awt = ticketResponse.addTFUserJSONResult.UserDetails.awt;
-											reservation.smsnotif_status = "";
-											reservation.reserve_type = "R";
-											reservation.company_id = merchant.COMPANY_NO;
-											reservation.branch_id = merchant.BRANCH_NO;
-											reservation.reservation_status = "";
-											reservation.confirmation_no = "";
-											reservation.mobile_userid = AppDelegate.tfAccount.email;
-											reservation.tran_type = ticketResponse.addTFUserJSONResult.UserDetails.tranType;
-											reservation.tran_id_local = ticketResponse.addTFUserJSONResult.UserDetails.tran_id_local;
-											reservation.status = "PENDING";
-											reservation.image_icon = merchant.icon_image;
-											reservation.entryLatitude = Convert.ToString ((viewControllerLocal as AppointmentViewController).userLocation.Latitude);
-											reservation.entryLongitude = Convert.ToString ((viewControllerLocal as AppointmentViewController).userLocation.Longitude);
-											await AppDelegate.MobileService.GetTable<TFOLReservation> ().InsertAsync (reservation); //see how we can check if successful...
-											Console.WriteLine ("Done Insert in TFOlReservation...");
-										});
-
-										ticketView.NavigationItem.SetRightBarButtonItem (new UIBarButtonItem ("Home", UIBarButtonItemStyle.Plain, (sender, args) => {
-											Console.WriteLine ("Home Button was pressed!");
-											dashTabView.NavigationItem.SetHidesBackButton (true, false);
-											viewControllerLocal.NavigationController.PushViewController (dashTabView, true);
-										}), true);
-
-										viewControllerLocal.NavigationController.PushViewController (ticketView, true);	
-									});
+				try {
+					HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
+					request.ContentType = "application/json";
+					request.Method = "GET";
+					using (HttpWebResponse response = await request.GetResponseAsync () as HttpWebResponse) {
+						if (response.StatusCode != HttpStatusCode.OK) {
+							Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", response.StatusCode);
+							new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+						} else {
+							using (StreamReader reader = new StreamReader (response.GetResponseStream ())) {
+								var content = reader.ReadToEnd ();
+								if (string.IsNullOrWhiteSpace (content)) {
+									Console.Out.WriteLine ("Response contained empty body...");
 								} else {
-									new UIAlertView ("Oops!", "Can't seem to get a ticket now.\nMessage: "
-									+ ticketResponse.addTFUserJSONResult.ResponseMessage, null, "OK", null).Show ();
+									Console.Out.WriteLine ("Response Body: \r\n {0}", content);
+									//2015-09-11
+									qmobileticketResponse = new TFGetTicketQMoileResponse ();
+									qmobileticketResponse = JsonConvert.DeserializeObject<TFGetTicketQMoileResponse> (content);
+									Console.WriteLine (qmobileticketResponse.addTFUserQMobileJSONResult.ResponseCode);
+									Console.WriteLine (qmobileticketResponse.addTFUserQMobileJSONResult.ResponseMessage);
+									//-----------
+									TicketViewController ticketView = viewControllerLocal.Storyboard.InstantiateViewController ("TicketViewController") as TicketViewController;
+									DashTabController dashTabView = viewControllerLocal.Storyboard.InstantiateViewController ("DashTabController") as DashTabController;
+
+									if (qmobileticketResponse.addTFUserQMobileJSONResult.ResponseCode.Equals ("00")) {
+										InvokeOnMainThread (() => {
+											ticketView.olReservation = qmobileticketResponse;
+											TFTicket tix = new TFTicket ();
+											tix.branch_id = merchant.BRANCH_NO;
+											tix.company_id = merchant.COMPANY_NO;
+											tix.cust_name = AppDelegate.tfAccount.name;
+											tix.date = DateTime.ParseExact (qmobileticketResponse.addTFUserQMobileJSONResult.UserDetails.dateIn, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString ("yyyy-MM-dd");
+											tix.id = "";
+											tix.image_icon = merchant.icon_image;
+											tix.merchant = merchant;
+											tix.queue_no = qmobileticketResponse.addTFUserQMobileJSONResult.UserDetails.queueNo;
+											tix.time = "";
+											tix.tran_id_local = qmobileticketResponse.addTFUserQMobileJSONResult.UserDetails.tran_id_local;
+											tix.tran_type_name = qmobileticketResponse.addTFUserQMobileJSONResult.UserDetails.tranType;
+											tix.status = qmobileticketResponse.addTFUserQMobileJSONResult.UserDetails.status;
+											tix.type = "RESERVATION";
+											ticketView.ticket = tix;
+
+//											InvokeInBackground (async () => {
+//												reservation = new TFOLReservation ();
+//												reservation.user_refno = ticketResponse.addTFUserJSONResult.UserDetails.userReferenceNo;
+//												reservation.mobile_no = (viewControllerLocal as AppointmentViewController).reservMobileNo;
+//												reservation.cust_name = AppDelegate.tfAccount.name;
+//												reservation.queue_no = ticketResponse.addTFUserJSONResult.UserDetails.queueNo;
+//												reservation.date_in = ticketResponse.addTFUserJSONResult.UserDetails.dateIn;
+//												reservation.remarks = ticketResponse.addTFUserJSONResult.UserDetails.remarks;
+//												reservation.awt = ticketResponse.addTFUserJSONResult.UserDetails.awt;
+//												reservation.smsnotif_status = "";
+//												reservation.reserve_type = "R";
+//												reservation.company_id = merchant.COMPANY_NO;
+//												reservation.branch_id = merchant.BRANCH_NO;
+//												reservation.reservation_status = "";
+//												reservation.confirmation_no = "";
+//												reservation.mobile_userid = AppDelegate.tfAccount.email;
+//												reservation.tran_type = ticketResponse.addTFUserJSONResult.UserDetails.tranType;
+//												reservation.tran_id_local = ticketResponse.addTFUserJSONResult.UserDetails.tran_id_local;
+//												reservation.status = "PENDING";
+//												reservation.image_icon = merchant.icon_image;
+//												reservation.entryLatitude = Convert.ToString ((viewControllerLocal as AppointmentViewController).userLocation.Latitude);
+//												reservation.entryLongitude = Convert.ToString ((viewControllerLocal as AppointmentViewController).userLocation.Longitude);
+//												await AppDelegate.MobileService.GetTable<TFOLReservation> ().InsertAsync (reservation); //see how we can check if successful...
+//												Console.WriteLine ("Done Insert in TFOlReservation...");
+//											});
+
+											ticketView.NavigationItem.SetRightBarButtonItem (new UIBarButtonItem ("Home", UIBarButtonItemStyle.Plain, (sender, args) => {
+												Console.WriteLine ("Home Button was pressed!");
+												dashTabView.NavigationItem.SetHidesBackButton (true, false);
+												viewControllerLocal.NavigationController.PushViewController (dashTabView, true);
+											}), true);
+
+											viewControllerLocal.NavigationController.PushViewController (ticketView, true);	
+										});
+									} else {
+										new UIAlertView ("Oops!", "Can't seem to get a ticket now.\nMessage: "
+											+ qmobileticketResponse.addTFUserQMobileJSONResult.ResponseMessage, null, "OK", null).Show ();
+									}
 								}
 							}
 						}
 					}
+				} catch (Exception e) {
+					new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 				}
-			} catch (Exception e) {
-				new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 			}
-
-			this._loadPop.Hide ();
+			//this._loadPop.Hide ();
+			hud.Hide (true);
 		}
 
 	}

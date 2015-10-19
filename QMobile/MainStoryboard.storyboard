@@ -8,7 +8,7 @@
         <!--Login-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController title="Login" id="vXZ-lx-hvc" customClass="QMobileViewController" sceneMemberID="viewController">
+                <viewController title="Login" id="vXZ-lx-hvc" customClass="QMobileViewController" sceneMemberID="viewController" storyboardIdentifier="QMobileViewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="3"/>
                         <viewControllerLayoutGuide type="bottom" id="4"/>
@@ -37,6 +37,64 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="115" sectionHeaderHeight="22" sectionFooterHeight="22" id="2078" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                <rect key="frame" x="0.0" y="194" width="375" height="473"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="2079" rowHeight="115" customClass="TFCustomCell" reuseIdentifier="TFCustomCell">
+                                        <rect key="frame" x="0.0" y="22" width="375" height="115"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="2080" tableViewCell="2079">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="114.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" id="2104" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                                    <rect key="frame" x="0.0" y="0.0" width="114" height="114"/>
+                                                </imageView>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="MainLabel" lineBreakMode="tailTruncation" minimumFontSize="10" id="2108" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                                    <rect key="frame" x="122" y="12" width="233" height="21"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label1" lineBreakMode="tailTruncation" minimumFontSize="10" id="2111" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                                    <rect key="frame" x="122" y="47" width="233" height="21"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label2" lineBreakMode="tailTruncation" minimumFontSize="10" id="2114" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                                    <rect key="frame" x="122" y="71" width="233" height="21"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="2104" firstAttribute="leading" secondItem="2080" secondAttribute="leading" constant="0.0" id="2105"/>
+                                                <constraint firstItem="2104" firstAttribute="top" secondItem="2080" secondAttribute="top" constant="0.0" id="2106"/>
+                                                <constraint firstItem="2104" firstAttribute="bottom" secondItem="2080" secondAttribute="bottom" constant="0.0" id="2107"/>
+                                                <constraint firstItem="2108" firstAttribute="leading" secondItem="2104" secondAttribute="trailing" constant="8" id="2109"/>
+                                                <constraint firstItem="2108" firstAttribute="top" secondItem="2080" secondAttribute="top" constant="12" id="2110"/>
+                                                <constraint firstItem="2111" firstAttribute="leading" secondItem="2104" secondAttribute="trailing" constant="8" id="2112"/>
+                                                <constraint firstItem="2111" firstAttribute="top" secondItem="2108" secondAttribute="bottom" constant="14" id="2113"/>
+                                                <constraint firstItem="2114" firstAttribute="leading" secondItem="2104" secondAttribute="trailing" constant="8" id="2115"/>
+                                                <constraint firstItem="2114" firstAttribute="top" secondItem="2111" secondAttribute="bottom" constant="3" id="2116"/>
+                                            </constraints>
+                                        </view>
+                                        <connections>
+                                            <outlet property="tableImageView" destination="2104" id="name-outlet-2104"/>
+                                            <outlet property="mainLabel" destination="2108" id="name-outlet-2108"/>
+                                            <outlet property="subLabelA" destination="2111" id="name-outlet-2111"/>
+                                            <outlet property="subLabelB" destination="2114" id="name-outlet-2114"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -45,12 +103,17 @@
                             <constraint firstItem="16" firstAttribute="leading" secondItem="15" secondAttribute="leading" id="1150"/>
                             <constraint firstItem="15" firstAttribute="trailing" secondItem="16" secondAttribute="trailing" id="1151"/>
                             <constraint firstItem="16" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="120" id="1152"/>
+                            <constraint firstItem="2078" firstAttribute="top" secondItem="3" secondAttribute="bottom" constant="174" id="2085"/>
+                            <constraint firstItem="2078" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailing" constant="0.0" id="2086"/>
+                            <constraint firstItem="2078" firstAttribute="bottom" secondItem="4" secondAttribute="top" constant="21" id="2087"/>
+                            <constraint firstItem="2078" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="0.0" id="2133"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Login" id="51"/>
                     <connections>
                         <outlet property="fbButton" destination="15" id="name-outlet-15"/>
                         <outlet property="gpButton" destination="16" id="name-outlet-16"/>
+                        <outlet property="testTableView" destination="2078" id="name-outlet-2078"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -150,6 +213,7 @@
                             <outlet property="dataSource" destination="170" id="172"/>
                             <outlet property="delegate" destination="170" id="173"/>
                         </connections>
+                        <prototypes/>
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Favorites" image="Icons3/ribbon_32px.png" id="415"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
@@ -243,17 +307,63 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="580" bounces="NO">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="515"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="60" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="580" bounces="NO" misplaced="YES">
+                                <rect key="frame" x="0.0" y="65" width="375" height="553"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="2180" rowHeight="60" customClass="FeaturedViewCell" reuseIdentifier="FeaturedViewCell">
+                                        <rect key="frame" x="0.0" y="22" width="375" height="60"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2180" id="2181">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" id="2182" translatesAutoresizingMaskIntoConstraints="NO">
+                                                    <rect key="frame" x="16" y="5" width="50" height="50"/>
+                                                    <constraints>
+                                                        <constraint id="2210" firstAttribute="width" constant="50"/>
+                                                        <constraint id="2211" firstAttribute="height" constant="50"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Company A" lineBreakMode="tailTruncation" minimumFontSize="10" id="2183" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                                    <rect key="frame" x="86" y="8" width="280" height="21"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Details" lineBreakMode="tailTruncation" minimumFontSize="10" id="2187" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                                    <rect key="frame" x="86" y="30" width="280" height="21"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="2183" firstAttribute="top" secondItem="2181" secondAttribute="top" constant="8" id="2190"/>
+                                                <constraint firstItem="2187" firstAttribute="top" secondItem="2183" secondAttribute="bottom" constant="1" id="2193"/>
+                                                <constraint id="2213" constant="16" firstItem="2182" firstAttribute="leading" secondItem="2181" secondAttribute="leading"/>
+                                                <constraint firstItem="2182" firstAttribute="centerY" secondItem="2181" secondAttribute="centerY" constant="0.0" id="2214"/>
+                                                <constraint firstItem="2183" firstAttribute="leading" secondItem="2182" secondAttribute="trailing" constant="20" id="2217"/>
+                                                <constraint firstItem="2187" firstAttribute="leading" secondItem="2182" secondAttribute="trailing" constant="20" id="2218"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="featuredImageView" destination="2182" id="name-outlet-2182"/>
+                                            <outlet property="featuredMainTitle" destination="2183" id="name-outlet-2183"/>
+                                            <outlet property="featuredDetails" destination="2187" id="name-outlet-2187"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="580" secondAttribute="trailing" id="1069"/>
-                            <constraint firstItem="580" firstAttribute="leading" secondItem="487" secondAttribute="leading" id="1070"/>
-                            <constraint firstItem="580" firstAttribute="top" secondItem="487" secondAttribute="top" id="1071"/>
-                            <constraint firstItem="484" firstAttribute="top" secondItem="580" secondAttribute="bottom" id="1072"/>
+                            <constraint firstItem="580" firstAttribute="leading" secondItem="487" secondAttribute="leading" constant="0.0" id="2152"/>
+                            <constraint firstItem="580" firstAttribute="top" secondItem="483" secondAttribute="bottom" constant="0.0" id="2153" multiplier="1"/>
+                            <constraint firstItem="580" firstAttribute="trailing" secondItem="487" secondAttribute="trailing" constant="0.0" id="2154"/>
+                            <constraint firstItem="580" firstAttribute="bottom" secondItem="484" secondAttribute="top" constant="0.0" id="2155"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Featured" image="Icons3/flag_32px.png" id="510"/>
@@ -1013,6 +1123,20 @@
         <image name="ticketcolors/tag_yellow.png" width="75" height="75"/>
         <image name="ticketcolors/tag [green].png" width="75" height="75"/>
         <image name="ticketcolors/tag_green.png" width="75" height="75"/>
+        <image name="action/ic_add_black_24dp.png" width="72" height="72"/>
+        <image name="action/ic_add_black_48dp.png" width="144" height="144"/>
+        <image name="action/ic_clear_black_24dp.png" width="72" height="72"/>
+        <image name="action/ic_clear_black_48dp.png" width="144" height="144"/>
+        <image name="action/ic_chevron_left_black_48dp.png" width="144" height="144"/>
+        <image name="action/ic_chevron_right_black_24dp.png" width="72" height="72"/>
+        <image name="action/ic_local_offer_black_24dp.png" width="72" height="72"/>
+        <image name="action/ic_local_offer_black_48dp.png" width="144" height="144"/>
+        <image name="action/ic_add_white_24dp.png" width="96" height="96"/>
+        <image name="action/ic_add_white_48dp.png" width="192" height="192"/>
+        <image name="action/ic_clear_white_24dp.png" width="96" height="96"/>
+        <image name="action/ic_clear_white_48dp.png" width="192" height="192"/>
+        <image name="action/ic_local_offer_white_24dp.png" width="96" height="96"/>
+        <image name="action/ic_local_offer_white_48dp.png" width="192" height="192"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

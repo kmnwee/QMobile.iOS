@@ -103,7 +103,7 @@
       <HintPath>..\..\..\..\Downloads\xamarin.auth-1.2.3.1\lib\ios-unified\Xamarin.Auth.iOS.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\Components\signalr-2.1.2.2\lib\ios-unified\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Json" />
     <Reference Include="System.Net.Http" />
@@ -111,10 +111,10 @@
       <HintPath>..\..\..\..\Downloads\googlemapsios-1.9.1\lib\ios-unified\GoogleMaps.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
+      <HintPath>..\Components\signalr-2.1.2.2\lib\ios-unified\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
+      <HintPath>..\Components\signalr-2.1.2.2\lib\ios-unified\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="TimesSquare.iOS">
       <HintPath>..\..\..\..\Downloads\timessquare-1.0.5\lib\ios-unified\TimesSquare.iOS.dll</HintPath>
@@ -157,6 +157,21 @@
     </Reference>
     <Reference Include="MBProgressHUD">
       <HintPath>..\Components\mbprogresshud-0.9.0.2\lib\ios-unified\MBProgressHUD.dll</HintPath>
+    </Reference>
+    <Reference Include="SWTableViewCell">
+      <HintPath>..\Components\swtableviewcell-0.3.6.1\lib\ios-unified\SWTableViewCell.dll</HintPath>
+    </Reference>
+    <Reference Include="ToastIOS">
+      <HintPath>..\Components\ToastIOS-1.05\lib\ios-unified\ToastIOS.dll</HintPath>
+    </Reference>
+    <Reference Include="ZXing.Net.Mobile">
+      <HintPath>..\Components\zxing.net.mobile-1.4.7.2\lib\ios-unified\ZXing.Net.Mobile.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.ios">
+      <HintPath>..\Components\zxing.net.mobile-1.4.7.2\lib\ios-unified\zxing.ios.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Client">
+      <HintPath>..\Components\signalr-2.1.2.2\lib\ios-unified\Microsoft.AspNet.SignalR.Client.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -264,6 +279,10 @@
     <Compile Include="CurrentServingTableSource.cs" />
     <Compile Include="TFContentFetchFlags.cs" />
     <Compile Include="FeaturedTableCell.cs" />
+    <Compile Include="TFCustomCell.cs" />
+    <Compile Include="QTableSource.cs" />
+    <Compile Include="FeaturedViewCell.cs" />
+    <Compile Include="TFBranchStatus.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -275,6 +294,7 @@
     <Folder Include="Resources\Icons3\" />
     <Folder Include="Resources\ticketcolors\" />
     <Folder Include="Sounds\" />
+    <Folder Include="Resources\action\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\socialicons\signinfb.png" />
@@ -345,6 +365,21 @@
     <BundleResource Include="Resources\ticketcolors\tag_red.png" />
     <BundleResource Include="Resources\ticketcolors\tag_yellow.png" />
     <BundleResource Include="Resources\ticketcolors\tag_green.png" />
+    <BundleResource Include="Resources\action\ic_add_black_24dp.png" />
+    <BundleResource Include="Resources\action\ic_add_black_48dp.png" />
+    <BundleResource Include="Resources\action\ic_clear_black_24dp.png" />
+    <BundleResource Include="Resources\action\ic_clear_black_48dp.png" />
+    <BundleResource Include="Resources\action\ic_chevron_left_black_48dp.png" />
+    <BundleResource Include="Resources\action\ic_chevron_right_black_24dp.png" />
+    <BundleResource Include="Resources\action\ic_local_offer_black_24dp.png" />
+    <BundleResource Include="Resources\action\ic_local_offer_black_48dp.png" />
+    <BundleResource Include="Resources\action\ic_add_white_24dp.png" />
+    <BundleResource Include="Resources\action\ic_add_white_48dp.png" />
+    <BundleResource Include="Resources\action\ic_clear_white_24dp.png" />
+    <BundleResource Include="Resources\action\ic_clear_white_48dp.png" />
+    <BundleResource Include="Resources\action\ic_local_offer_white_24dp.png" />
+    <BundleResource Include="Resources\action\ic_local_offer_white_48dp.png" />
+    <BundleResource Include="Resources\Icons3\qr.png" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="azure-messaging">
@@ -357,6 +392,22 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="mbprogresshud">
       <Version>0.9.0.2</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="swtableviewcell">
+      <Version>0.3.6.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="ToastIOS">
+      <Version>1.05</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="zxing.net.mobile">
+      <Version>1.4.7.2</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="signalr">
+      <Version>2.1.2.2</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

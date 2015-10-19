@@ -14,7 +14,7 @@ namespace QMobile
 	partial class FavoritesTableController : UITableViewController
 	{
 		public List<TFMemberFavorites> favorites { get; set; }
-
+		public List<TFMemberFavoritesEx> tffavoritesCompl;
 		public string name = "";
 		public string email = "";
 		public string birthday = "";
@@ -71,7 +71,7 @@ namespace QMobile
 			Console.WriteLine ("RefreshFavoritesTable email: " + email);
 			List<TFMerchants> tfmerchants = new List<TFMerchants> ();
 			List<TFMemberFavorites> tffavorites = new List<TFMemberFavorites> ();
-			List<TFMemberFavoritesEx> tffavoritesCompl = new List<TFMemberFavoritesEx> ();
+			tffavoritesCompl = new List<TFMemberFavoritesEx> ();
 			List<TFMerchants> tfmerchants2 = new List<TFMerchants> ();
 			TFMemberFavoritesEx favEx = new TFMemberFavoritesEx ();
 			InvokeOnMainThread (async () => {
@@ -107,6 +107,7 @@ namespace QMobile
 						SeparatorStyle = UITableViewCellSeparatorStyle.None,
 						Source = new FavoritesTableSource (tffavoritesCompl.ToArray (), this)
 					};
+					//favoritesTable.ReloadData();
 
 					if (!tffavoritesCompl.Any ()) {
 						new UIAlertView ("No Favorites!", "You currently have no favorites.", null, "OK", null).Show ();

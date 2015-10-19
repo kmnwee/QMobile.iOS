@@ -33,5 +33,35 @@ namespace QMobile
 	{
 		public AddTFUserJSONResult addTFUserJSONResult { get; set; }
 	}
+
+	public class AddTFUserQMobileJSONResult
+	{
+		public string ResponseCode { get; set; }
+		public string ResponseMessage { get; set; }
+		public UserDetails UserDetails { get; set; }
+	}
+
+	public class TFGetTicketQMoileResponse
+	{
+		public AddTFUserQMobileJSONResult addTFUserQMobileJSONResult { get; set; }
+	}
+
+	public class AddUserFromQRResult
+	{
+		public string ResponseCode { get; set; }
+		public string ResponseMessage { get; set; }
+	}
+
+	public class AddUserFromQRResponse
+	{
+		public AddUserFromQRResult addUserFromQRResult { get; set; }
+	}
+
+	public class QRCodeUser
+	{
+		public string u { get; set; }
+		public string b { get; set; }
+		public string c { get; set; }
+	}
 }
 

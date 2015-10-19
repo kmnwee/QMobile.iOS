@@ -423,7 +423,7 @@ namespace QMobile
 			profileImageCircle.CornerRadius = profileImageView.Frame.Size.Width / 2;//60;
 			profileImageCircle.MasksToBounds = true;
 			profileImageCircle.BorderColor = UIColor.White.CGColor;
-			profileImageCircle.BorderWidth = 4;
+			profileImageCircle.BorderWidth = 2;
 		}
 
 		public override void ViewWillAppear (bool animated)

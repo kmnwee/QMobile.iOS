@@ -58,6 +58,7 @@ namespace QMobile
 
 			InvokeOnMainThread (() => {
 				this.NavigationItem.BackBarButtonItem = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, null);
+
 			});
 
 			//Check if Account is Present:

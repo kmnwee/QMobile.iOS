@@ -7,6 +7,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using MBProgressHUD;
+using Newtonsoft.Json;
+using ToastIOS;
+using System.Net;
+using System.IO;
 
 namespace QMobile
 {
@@ -17,6 +21,7 @@ namespace QMobile
 		public List<TFScheduledReservation> TFSchedList = new List<TFScheduledReservation> ();
 		public List<TFOLReservation> TFReserveList = new List<TFOLReservation> ();
 		MTMBProgressHUD hud;
+		MTMBProgressHUD hud2;
 
 		public TicketsTableController (IntPtr handle) : base (handle)
 		{
@@ -105,6 +110,7 @@ namespace QMobile
 						tix.status = sr.status;
 						tix.date = sr.reservation_date;
 						tix.time = sr.reservation_time;
+						tix.timeString = sr.reservation_time_string;
 						tix.image_icon = sr.image_icon;
 						tix.tran_type_name = sr.tran_type_name;
 						tix.tran_id_local = sr.tran_id_local;
@@ -139,12 +145,13 @@ namespace QMobile
 						}
 					}
 
-					TFTickets = TFTickets.OrderBy (t => t.date).ToList ();
+					TFTickets = TFTickets.OrderBy (t => t.date).ThenBy(q => q.queue_no).ToList ();
 					ticketsTable.Source = new TicketsTableSource (TFTickets.ToArray (), this);
 					ticketsTable.ReloadData ();
 
 					if (!TFTickets.Any ()) {
-						new UIAlertView ("No Tickets!", "You currently have no active tickets.", null, "OK", null).Show ();
+						//new UIAlertView ("No Tickets!", "You currently have no active tickets.", null, "OK", null).Show ();
+						Toast.MakeText ("You currently have no active tickets.").SetDuration (4000).Show ();
 					}
 				} catch (Exception exex) {
 					new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet right now.", null, "OK", null).Show ();
@@ -160,10 +167,108 @@ namespace QMobile
 		}
 
 
+		public async void scanQR ()
+		{
+			var scanner = new ZXing.Mobile.MobileBarcodeScanner ();
+			var result = await scanner.Scan ();
+
+			if (result != null) {
+				Console.WriteLine ("Scanned Barcode: " + result.Text);
+				hud2 = new MTMBProgressHUD (View) {
+					LabelText = "Processing...",
+					RemoveFromSuperViewOnHide = true,
+					AnimationType = MBProgressHUDAnimation.Fade,
+					//DetailsLabelText = "loading profile details...",
+					Mode = MBProgressHUDMode.Indeterminate,
+					Color = UIColor.Gray,
+					Opacity = 60,
+					DimBackground = true
+				};
+
+				View.AddSubview (hud2);
+				//hud2.Show (animated: true);
+
+				try {
+					QRCodeUser qr = new QRCodeUser ();
+					qr = JsonConvert.DeserializeObject<QRCodeUser> (result.Text);
+
+					Console.WriteLine (qr.u);
+					Console.WriteLine (qr.b);
+					Console.WriteLine (qr.c);
+
+					if (!String.IsNullOrEmpty (qr.u) && !String.IsNullOrEmpty (qr.b) && !String.IsNullOrEmpty (qr.c)) {
+						//map to webservice
+						addUserFromQR (qr.u, qr.c, qr.b);
+					} else {
+						Toast.MakeText ("The QR code you scanned is invalid. Please try again.")
+							.SetDuration (5000)
+							.Show ();
+						//hud2.Hide (animated: true);
+					}
+
+				} catch (Exception e) {
+					//new UIAlertView ("Code Unrecognized", "The QR code you scanned is invalid. Please try again.", null, "OK", null).Show ();
+					Toast.MakeText ("The QR code you scanned is invalid. Please try again.")
+						.SetDuration (5000)
+						.Show ();
+				}
+//				hud2.Hide (animated: true);
+			}
+		}
+
+		public async void addUserFromQR (String refNo, String company_id, String branch_id)
+		{
+			//Time Slot -- add error checking for this
+			try {
+				string url = String.Format ("https://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/addUserFromQR/{0}/{1}/{2}/{3}/{4}/", 
+					             refNo, AppDelegate.tfAccount.email, AppDelegate.tfAccount.name, company_id, branch_id);
+				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
+				request.ContentType = "application/json";
+				request.Method = "GET";
+				using (HttpWebResponse response = await request.GetResponseAsync () as HttpWebResponse) {
+					if (response.StatusCode != HttpStatusCode.OK) {
+						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", response.StatusCode);
+						new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+					} else {
+						using (StreamReader reader = new StreamReader (response.GetResponseStream ())) {
+							var content = reader.ReadToEnd ();
+							if (string.IsNullOrWhiteSpace (content)) {
+								Console.Out.WriteLine ("Response contained empty body...");
+							} else {
+								Console.Out.WriteLine ("Response Body: \r\n {0}", content);
+								AddUserFromQRResponse addUserFromQRResp = new AddUserFromQRResponse ();
+								addUserFromQRResp = JsonConvert.DeserializeObject<AddUserFromQRResponse> (content);
+								Console.WriteLine (addUserFromQRResp.addUserFromQRResult.ResponseCode);
+								Console.WriteLine (addUserFromQRResp.addUserFromQRResult.ResponseMessage);
+								Toast.MakeText (addUserFromQRResp.addUserFromQRResult.ResponseMessage)
+									.SetDuration (5000)
+									.Show ();
+								RefreshTicketsTable (AppDelegate.tfAccount.email);
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+				Console.WriteLine (e.Message);
+				Console.WriteLine (e.StackTrace);
+			}
+			//---------------------------------------------------------
+			//hud2.Hide (animated: true);
+		}
 
 		public override void ViewWillAppear (bool animated)
 		{
 			base.ViewWillAppear (animated);
+			InvokeOnMainThread (() => {
+				Console.WriteLine ("Tickets Table!");
+				this.ParentViewController.NavigationItem.SetRightBarButtonItem 
+				(new UIBarButtonItem (FeaturedTableSource.MaxResizeImage (UIImage.FromBundle ("Icons3/qr.png"), 30, 30), 
+					UIBarButtonItemStyle.Plain, (sender, args) => {
+					Console.WriteLine ("Scan Button was pressed!");
+					scanQR ();
+				}), true);
+			});
 		}
 
 		public override void ViewDidAppear (bool animated)
@@ -207,6 +312,10 @@ namespace QMobile
 		public override void ViewWillDisappear (bool animated)
 		{
 			base.ViewWillDisappear (animated);
+			InvokeOnMainThread (() => {
+				Console.WriteLine ("Tickets Table remove!");
+				this.ParentViewController.NavigationItem.SetRightBarButtonItem (null, true);
+			});
 		}
 
 		public override void ViewDidDisappear (bool animated)

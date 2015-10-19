@@ -167,7 +167,10 @@ namespace QMobile
 
 								} else {
 									lastTicketNoLabel.Text = " -- ";
-									new UIAlertView ("Counters are Closed", "Counters have not yet started serving tickets. Try refreshing after a few minutes.", null, "OK", null).Show ();
+									if(merchant.COMPANY_NO != 7)
+										new UIAlertView ("Counters are Closed", "Counters have not yet started serving tickets. Try refreshing after a few minutes.", null, "OK", null).Show ();
+									else
+										new UIAlertView ("Problem getting store status", "Try refreshing after a few minutes.", null, "OK", null).Show ();
 								}
 								AppDelegate.contentFlags.newContentAvailable = false;
 								Console.WriteLine ("newContentAvailable : " + AppDelegate.contentFlags.newContentAvailable);

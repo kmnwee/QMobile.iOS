@@ -33,8 +33,13 @@ namespace QMobile
 			if (cell == null) {
 				cell = new UITableViewCell (UITableViewCellStyle.Value1, cellId);
 			}
-			cell.TextLabel.Text = "Counter " + tableItems [indexPath.Row].counterNo;
-			cell.DetailTextLabel.Text = tableItems [indexPath.Row].queueNo;
+			if ((viewControllerLocal as CurrentServingViewController).merchant.COMPANY_NO != 7) { 
+				cell.TextLabel.Text = "Counter " + tableItems [indexPath.Row].counterNo;
+				cell.DetailTextLabel.Text = tableItems [indexPath.Row].queueNo;
+			} else {
+				cell.TextLabel.Text = tableItems [indexPath.Row].counterNo; //Transaction Type
+				cell.DetailTextLabel.Text = tableItems [indexPath.Row].queueNo; //Waiting Count
+			}
 			cell.UserInteractionEnabled = false;
 
 			return cell;

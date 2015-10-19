@@ -13,6 +13,7 @@ namespace QMobile
 		public string status { get; set; } 
 		public string date { get; set; } 
 		public string time { get; set; } 
+		public string timeString { get; set;}
 		public string image_icon { get; set; } 
 		public string tran_type_name { get; set; } 
 		public string tran_id_local { get; set; } 

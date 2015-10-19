@@ -15,7 +15,8 @@ namespace QMobile
 	partial class TicketViewController : UIViewController
 	{
 		public TFTicket ticket;
-		public TFGetTicketResponse olReservation;
+		//public TFGetTicketResponse olReservation;
+		public TFGetTicketQMoileResponse olReservation;
 		public TFScheduledAppointment appointment;
 		public List<TFProcessOption> options;
 		public TFCurrentServingResponse currentServing;
@@ -56,8 +57,12 @@ namespace QMobile
 
 			if (ticket.type.Equals ("APPOINTMENT")) {
 				option3.title = "Time Slot";
-				option3.valueDisplay = DateTime.ParseExact (ticket.time, "HHmm", CultureInfo.InvariantCulture).ToString ("hh:mm tt") + " - "
-				+ DateTime.ParseExact (ticket.time, "HHmm", CultureInfo.InvariantCulture).AddMinutes (ticket.merchant.schedReserve_interval).ToString ("hh:mm tt");
+				if (ticket.company_id != 7) {
+					option3.valueDisplay = DateTime.ParseExact (ticket.time, "HHmm", CultureInfo.InvariantCulture).ToString ("hh:mm tt") + " - "
+					+ DateTime.ParseExact (ticket.time, "HHmm", CultureInfo.InvariantCulture).AddMinutes (ticket.merchant.schedReserve_interval).ToString ("hh:mm tt");
+				} else {
+					option3.valueDisplay = ticket.timeString.Replace(";",":");
+				}
 				option3.type = "Time";
 				option3.value = ticket.time;
 				options.Add (option3);
@@ -160,7 +165,7 @@ namespace QMobile
 					}
 				}
 			} catch (Exception e) {
-				new UIAlertView ("No Internet", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+				new UIAlertView ("Problem Connecting...", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 				Console.WriteLine ("Problem loading Mobile Visitors Count...");
 				Console.WriteLine (e.Message);
 				Console.WriteLine (e.StackTrace);

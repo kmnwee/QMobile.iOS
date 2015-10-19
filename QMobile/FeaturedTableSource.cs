@@ -44,21 +44,29 @@ namespace QMobile
 			companyView.companyId = tableItems [indexPath.Row].COMPANY_NO;
 			companyView.companyName = tableItems [indexPath.Row].COMPANY_NAME;
 			InvokeOnMainThread (() => viewControllerLocal.NavigationController.PushViewController (companyView, true));
+
+			//test Table
+//			Console.WriteLine ("Row Selected");
+//			QMobileViewController qview = viewControllerLocal.Storyboard.InstantiateViewController ("QMobileViewController") as QMobileViewController;
+//			qview.tableItems = tableItems;
+//			InvokeOnMainThread (() => viewControllerLocal.NavigationController.PushViewController (qview, true));
 		}
 
 		public override UITableViewCell GetCell (UITableView tableView, Foundation.NSIndexPath indexPath)
 		{
-			UITableViewCell cell = tableView.DequeueReusableCell (cellId);
-			//FeaturedTableCell cell = tableView.DequeueReusableCell (cellId) as FeaturedTableCell;
-			if (cell == null) {
-				cell = new UITableViewCell (UITableViewCellStyle.Subtitle, cellId);// as FeaturedTableCell;
-			}
+//			UITableViewCell cell = tableView.DequeueReusableCell (cellId);
+//			if (cell == null) {
+//				cell = new UITableViewCell (UITableViewCellStyle.Subtitle, cellId);// as FeaturedTableCell;
+//			}
 
-			cell.TextLabel.Text = tableItems [indexPath.Row].COMPANY_NAME;
-			//cell.setCompanyName (tableItems [indexPath.Row].COMPANY_NAME);
-			//cell.setCompanyLogo (tableItems [indexPath.Row].icon_image);
+			FeaturedViewCell cell = (FeaturedViewCell)tableView.DequeueReusableCell (FeaturedViewCell.Key);
+
+			//cell.TextLabel.Text = tableItems [indexPath.Row].COMPANY_NAME;
 
 			InvokeOnMainThread (async () => {
+				cell.setFeaturedMainTitle(tableItems [indexPath.Row].COMPANY_NAME);
+				cell.setFeaturedImageView(tableItems [indexPath.Row].icon_image);
+
 				TFBusinessTypes bt = new TFBusinessTypes ();
 				long visitCountRes = 0;
 				long visitCountAppt = 0;
@@ -71,13 +79,16 @@ namespace QMobile
 					.Where (TFScheduledReservation => TFScheduledReservation.company_id == tableItems [indexPath.Row].COMPANY_NO)
 					.ToListAsync () as ITotalCountProvider).TotalCount;
 					if (bt != null) {
-						cell.DetailTextLabel.Text = bt.businesstype_name;
+						cell.setFeaturedDetails (bt.businesstype_name);
+						//cell.DetailTextLabel.Text = bt.businesstype_name;
 						//cell.setBranchName (bt.businesstype_name);
 					} else {
-						cell.DetailTextLabel.Text = " ";
+						cell.setFeaturedDetails( " ");
+					//	cell.DetailTextLabel.Text = " ";
 						//cell.setBranchName (" ");
 					}
-					cell.DetailTextLabel.Text += String.Format (" | {0} Mobile Visitors", visitCountRes + visitCountAppt);
+					cell.setFeaturedDetails(cell.getFeaturedDetails() + String.Format (" | {0} Mobile Visitors", visitCountRes + visitCountAppt));
+					//cell.DetailTextLabel.Text += String.Format (" | {0} Mobile Visitors", visitCountRes + visitCountAppt);
 					//cell.setBranchName (String.Format ("{0} | {1} Mobile Visitors", bt.businesstype_name, visitCountRes + visitCountAppt));
 
 				} catch (Exception e) {
@@ -89,39 +100,52 @@ namespace QMobile
 
 
 
-			InvokeOnMainThread (async () => {
-				try {
-					Console.WriteLine ("Loading Image " + tableItems [indexPath.Row].icon_image.Replace ("merchantlogos", "merchantlogos-ios"));
+			//InvokeOnMainThread (async () => {
+			//	try {
+			//		Console.WriteLine ("Loading Image " + tableItems [indexPath.Row].icon_image.Replace ("merchantlogos", "merchantlogos-ios"));
 
 //					cell.ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
 
-					cell.ImageView.SetImage (
-						url: new NSUrl (tableItems [indexPath.Row].icon_image),
-						placeholder: UIImage.FromBundle ("placeholder_store.jpg"),
-						//options: SDWebImageOptions.RefreshCached,
-						completionHandler: (image, error, cacheType, url) => {
-							Console.WriteLine("Handler was called");
-							if (image != null) {
-								//image.Scale(new SizeF(50, 50), 0.0f);
-								Console.WriteLine("Image not null");
-								image = MaxResizeImage(image, 50, 50);
-								cell.ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
-								cell.ImageView.Image = image;
-							}
-						}
-					);
+//					CALayer merchantLogoView = cell.ImageView.Layer;
+//					merchantLogoView.CornerRadius = 8.77f;//60;
+//					merchantLogoView.MasksToBounds = true;
+					//merchantLogoView.ShadowColor = UIColor.DarkGray.CGColor;
+//					merchantLogoView.ShadowOpacity = 0.8f;
+//					merchantLogoView.ShadowRadius = 3.0f;
+//					merchantLogoView.BorderColor = UIColor.Gray.CGColor;
+//					merchantLogoView.BorderWidth = 1;
+
+					//cell.ImageView.Frame = new RectangleF (0, 0, 50, 50);
+//					cell.ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
+//					cell.ImageView.SetImage (
+//						url: new NSUrl (tableItems [indexPath.Row].icon_image),
+//						placeholder: UIImage.FromBundle ("placeholder_store.jpg"),
+//						//options: SDWebImageOptions.TransformAnimatedImage,
+//						completionHandler: (image, error, cacheType, url) => {
+////							Console.WriteLine("Handler was called");
+//							if (image != null) {
+//								//image.Scale(new SizeF(50, 50), 0.0f);
+//								Console.WriteLine("Image not null");
+//								image = MaxResizeImage(image, 50, 50);
+//								cell.ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
+//								cell.ImageView.Image = image;
+//							}
+//						}
+//					);
+
+
 
 					//cell.ImageView.Image = FromURL(tableItems [indexPath.Row].icon_image.Replace("merchantlogos", "merchantlogos-ios"));
 					//cell.ImageView.Image = await LoadImage (tableItems [indexPath.Row].icon_image.Replace ("merchantlogos", "merchantlogos-ios"));
 					//cell.ImageView.SetImage(await LoadImage (tableItems [indexPath.Row].icon_image));
 					//cell.ImageView.Image = await LoadImage (tableItems [indexPath.Row].icon_image);
 					//cell.ImageView.Image = MaxResizeImage (FromURL (tableItems [indexPath.Row].icon_image), 50, 50);
-				} catch (Exception ex) {
-					//cell.ImageView.Image = MaxResizeImage (UIImage.FromBundle ("placeholder_store.jpg"), 50, 50);
-					Console.Out.WriteLine (ex.Message);
-					Console.Out.WriteLine ("Cannot Load Image");
-				}
-			});
+//				} catch (Exception ex) {
+//					//cell.ImageView.Image = MaxResizeImage (UIImage.FromBundle ("placeholder_store.jpg"), 50, 50);
+//					Console.Out.WriteLine (ex.Message);
+//					Console.Out.WriteLine ("Cannot Load Image");
+//				}
+//			});
 
 
 			Console.Out.WriteLine (tableItems [indexPath.Row].COMPANY_NAME + ": " + tableItems [indexPath.Row].icon_image);
@@ -181,7 +205,7 @@ namespace QMobile
 			var contents = await contentsTask;
 
 			// load from bytes
-			return MaxResizeImage(UIImage.LoadFromData (NSData.FromArray (contents)), 50, 50);
+			return MaxResizeImage (UIImage.LoadFromData (NSData.FromArray (contents)), 50, 50);
 		}
 
 

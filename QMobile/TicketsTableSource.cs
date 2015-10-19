@@ -73,7 +73,10 @@ namespace QMobile
 			if (tableItems [indexPath.Row].type.Equals ("APPOINTMENT")) {
 				DateTime date = DateTime.ParseExact (tableItems [indexPath.Row].date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 				DateTime time = DateTime.ParseExact (tableItems [indexPath.Row].time, "HHmm", CultureInfo.InvariantCulture);
-				cell.DetailTextLabel.Text += " | " + date.ToString ("MMM dd") + " (" + time.ToString ("t") + ")";
+				if(tableItems [indexPath.Row].company_id != 7)
+					cell.DetailTextLabel.Text += " | " + date.ToString ("MMM dd") + " (" + time.ToString ("t") + ")";
+				else
+					cell.DetailTextLabel.Text += " | " + date.ToString ("MMM dd") + " (" + tableItems [indexPath.Row].timeString.Replace(";",":") + ")";
 			} else if (tableItems [indexPath.Row].type.Equals ("RESERVATION")) {
 				DateTime date = DateTime.ParseExact (tableItems [indexPath.Row].date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 				cell.DetailTextLabel.Text += " | " + date.ToString ("MMM dd");
@@ -97,6 +100,9 @@ namespace QMobile
 				break;
 			case "SERVING":
 				ticketColor = "ticketcolors/tag_yellow.png";
+				break;
+			case "TRANSFERRED":
+				ticketColor = "ticketcolors/tag_blue.png";
 				break;
 			default:
 				ticketColor = "ticketcolors/tag_green.png";

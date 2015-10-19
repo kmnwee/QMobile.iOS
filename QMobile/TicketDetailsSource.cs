@@ -51,6 +51,9 @@ namespace QMobile
 				case "SERVING":
 					cell.DetailTextLabel.TextColor = TFColor.FromHexString ("#ffeb3b", 1.0f);
 					break;
+				case "TRANSFERRED":
+					cell.DetailTextLabel.TextColor = TFColor.FromHexString ("#2196f3", 1.0f);
+					break;
 				default:
 					cell.DetailTextLabel.TextColor = TFColor.FromHexString ("#4caf50", 1.0f);
 					break;

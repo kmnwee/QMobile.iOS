@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Globalization;
 using CoreLocation;
+using MBProgressHUD;
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace QMobile
 {
@@ -24,6 +26,7 @@ namespace QMobile
 		public TFAvailableSchedule availableSchedResultJSON;
 		public TFTransactionTypes transactionTypesJSON;
 		public string action;
+		public MTMBProgressHUD hud;
 
 		//For Process Values
 		public string schedDate;
@@ -43,16 +46,32 @@ namespace QMobile
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
-			//------LOADING Screen--------------------------
-			// Determine the correct size to start the overlay (depending on device orientation)
-			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
-			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
-				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
-			}
-			// show the loading overlay on the UI thread using the correct orientation sizing
-			this._loadPop = new LoadingOverlay (bounds);
-			this.View.Add (this._loadPop);
-			//------LOADING Screen--------------------------
+
+			hud = new MTMBProgressHUD (View) {
+				LabelText = "Loading...",
+				RemoveFromSuperViewOnHide = true,
+				AnimationType = MBProgressHUDAnimation.Fade,
+				//DetailsLabelText = "loading profile details...",
+				Mode = MBProgressHUDMode.Indeterminate,
+				Color = UIColor.Gray,
+				Opacity = 60,
+				DimBackground = true
+			};
+
+			hud.Show (animated: true);
+
+			transactionTypesJSON = new TFTransactionTypes ();
+			availableSchedResultJSON = new TFAvailableSchedule ();
+//			//------LOADING Screen--------------------------
+//			// Determine the correct size to start the overlay (depending on device orientation)
+//			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+//			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+//				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+//			}
+//			// show the loading overlay on the UI thread using the correct orientation sizing
+//			this._loadPop = new LoadingOverlay (bounds);
+//			this.View.Add (this._loadPop);
+//			//------LOADING Screen--------------------------
 
 
 			Console.WriteLine ("Merchant ID " + merchant.COMPANY_NO + " " + merchant.BRANCH_NO + ">" + merchant.serviceURL);
@@ -207,14 +226,18 @@ namespace QMobile
 					}
 				}
 			} catch (Exception e) {
+				Console.Out.WriteLine ("Error : " + e.Message);
+				Console.Out.WriteLine ("Error : " + e.StackTrace);
 				new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+
 			}
 
 
 
 			if (!action.Equals ("APPOINTMENT")) {
 				initializeView ();
-				this._loadPop.Hide ();
+				hud.Hide (true);
+				//this._loadPop.Hide ();
 			} else {
 				availableSchedResultJSON = new TFAvailableSchedule ();
 				if (!String.IsNullOrEmpty (schedTranType)) {
@@ -225,6 +248,64 @@ namespace QMobile
 			}
 
 		}
+
+		public void getTransactionTypesSync ()
+		{
+			//Tran Type
+			//------------------------------------------
+			try {
+				string urlTranTypes = String.Format (merchant.serviceURL + "/kioskJSON.svc/getAllTranTypesMobileJSON");
+				if (merchant.edition.Equals ("CLOUD-SAAS"))
+					urlTranTypes += String.Format ("/{0}/{1}/", merchant.COMPANY_NO, merchant.BRANCH_NO);
+
+				Console.WriteLine (urlTranTypes);
+				HttpWebRequest requestTranTypes = (HttpWebRequest)HttpWebRequest.Create (new Uri (urlTranTypes));
+				requestTranTypes.ContentType = "application/json";
+				requestTranTypes.Method = "GET";
+				using (HttpWebResponse responseTranTypes = requestTranTypes.GetResponse () as HttpWebResponse) {
+					if (responseTranTypes.StatusCode != HttpStatusCode.OK) {
+						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", responseTranTypes.StatusCode);
+						//Alert here "Problem connecting to the internet...
+						new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+					} else {
+						using (StreamReader reader = new StreamReader (responseTranTypes.GetResponseStream ())) {
+							var content = reader.ReadToEnd ();
+							if (string.IsNullOrWhiteSpace (content)) {
+								Console.Out.WriteLine ("Response contained empty body...");
+							} else {
+								Console.Out.WriteLine ("Response Body: \r\n {0}", content);
+								transactionTypesJSON = new TFTransactionTypes ();
+								transactionTypesJSON = JsonConvert.DeserializeObject<TFTransactionTypes> (content);
+								Console.WriteLine (transactionTypesJSON.getAllTranTypesMobileJSONResult.ResponseCode);
+								Console.WriteLine (transactionTypesJSON.getAllTranTypesMobileJSONResult.ResponseCode);
+								if (transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes.Any ()) {
+									schedTranType = transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes.First ().tranType;
+									schedTranTypeId = transactionTypesJSON.getAllTranTypesMobileJSONResult.TransactionTypes.First ().tran_id_local;
+								}
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+			}
+
+
+
+			if (!action.Equals ("APPOINTMENT")) {
+				initializeView ();
+				hud.Hide (true);
+			} else {
+				availableSchedResultJSON = new TFAvailableSchedule ();
+				if (!String.IsNullOrEmpty (schedTranType)) {
+					if (action.Equals ("APPOINTMENT")) {
+						updateAvailableSched ();
+					}
+				}	
+			}
+
+		}
+
 
 		public async void updateAvailableSched ()
 		{
@@ -261,7 +342,8 @@ namespace QMobile
 			}
 
 			initializeView ();
-			this._loadPop.Hide ();
+			hud.Hide (true);
+			//this._loadPop.Hide ();
 
 		}
 
@@ -286,7 +368,8 @@ namespace QMobile
 		{
 			base.ViewDidAppear (animated);
 			//------LOADING Screen END----------------------
-			this._loadPop.Hide ();
+			hud.Hide (true);
+			//this._loadPop.Hide ();
 			//------LOADING Screen END----------------------
 		}
 

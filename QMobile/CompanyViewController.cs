@@ -7,6 +7,7 @@ using CoreLocation;
 using MapKit;
 using CoreGraphics;
 using System.Linq;
+using MBProgressHUD;
 
 namespace QMobile
 {
@@ -18,6 +19,7 @@ namespace QMobile
 		CLLocationManager locationManager;
 		LoadingOverlay _loadPop;
 		bool userLocationFirstUpdate = true;
+		MTMBProgressHUD hud;
 
 		public CompanyViewController (IntPtr handle) : base (handle)
 		{
@@ -31,31 +33,44 @@ namespace QMobile
 
 			branchDetailsView.BackgroundColor = TFColor.FromHexString ("#0097a9", 1.0f);
 			companyLabel.Text = "Branches";
-			;
 			branchLabel.Text = companyName;
 
 			//Use Apple Map kit
+			var version8 = new Version (8, 0);
 			locationManager = new CLLocationManager ();
-			locationManager.RequestWhenInUseAuthorization ();
+			if (new Version (UIDevice.CurrentDevice.SystemVersion) >= version8)
+				locationManager.RequestWhenInUseAuthorization ();
 			mapView.MapType = MKMapType.Standard;
 			mapView.ShowsUserLocation = true;
 
 			InvokeOnMainThread (() => {
 				//this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
-				this.NavigationItem.TitleView = new UIImageView (FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("LogoWithOutBackground.png"), 50, 50));
+				this.NavigationItem.TitleView = new UIImageView (FeaturedTableSource.MaxResizeImage (UIImage.FromBundle ("LogoWithOutBackground.png"), 50, 50));
 			});
 
 			//GET ALL BRANCHES
-			//------LOADING Screen--------------------------
-			// Determine the correct size to start the overlay (depending on device orientation)
-			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
-			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
-				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
-			}
-			// show the loading overlay on the UI thread using the correct orientation sizing
-			this._loadPop = new LoadingOverlay (bounds);
-			this.View.Add (this._loadPop);
-			//------LOADING Screen--------------------------
+			hud = new MTMBProgressHUD (View) {
+				LabelText = "Fetching Stores...",
+				RemoveFromSuperViewOnHide = true,
+				AnimationType = MBProgressHUDAnimation.Fade,
+				//DetailsLabelText = "loading profile details...",
+				Mode = MBProgressHUDMode.Indeterminate,
+				Color = UIColor.Gray,
+				Opacity = 60,
+				DimBackground = true
+			};
+			View.AddSubview (hud);
+			hud.Show (animated: true);
+//			//------LOADING Screen--------------------------
+//			// Determine the correct size to start the overlay (depending on device orientation)
+//			var bounds = UIScreen.MainScreen.Bounds; // portrait bounds
+//			if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
+//				bounds.Size = new CGSize (bounds.Size.Height, bounds.Size.Width);
+//			}
+//			// show the loading overlay on the UI thread using the correct orientation sizing
+//			this._loadPop = new LoadingOverlay (bounds);
+//			this.View.Add (this._loadPop);
+//			//------LOADING Screen--------------------------
 
 			InvokeOnMainThread (async () => {
 				branchList = new List<TFMerchants> ();
@@ -68,7 +83,8 @@ namespace QMobile
 					new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
 				}
 				//------LOADING Screen END----------------------
-				this._loadPop.Hide ();
+				hud.Hide (animated: true);
+				//this._loadPop.Hide ();
 				//------LOADING Screen END----------------------
 			});
 
@@ -129,37 +145,37 @@ namespace QMobile
 
 								CLLocation coordsCenterLoc = new CLLocation ();
 								CLLocation coordsMerchantLoc = new CLLocation ();
-								CLLocationCoordinate2D coordsCenter = new CLLocationCoordinate2D();
+								CLLocationCoordinate2D coordsCenter = new CLLocationCoordinate2D ();
 								double distance = 0;
 								double latitude = 0;
 								double longitude = 0;
 								if (newBranchList.Count < 4) {
 									Console.WriteLine (" < 4");
-									latitude = Convert.ToDouble(newBranchList.Last().latitude);
-									longitude = Convert.ToDouble(newBranchList.Last().longitude);
+									latitude = Convert.ToDouble (newBranchList.Last ().latitude);
+									longitude = Convert.ToDouble (newBranchList.Last ().longitude);
 								} else {
 									Console.WriteLine (" >= 4");
-									latitude = Convert.ToDouble(newBranchList.ToArray()[3].latitude);
-									longitude = Convert.ToDouble(newBranchList.ToArray()[3].longitude);
+									latitude = Convert.ToDouble (newBranchList.ToArray () [3].latitude);
+									longitude = Convert.ToDouble (newBranchList.ToArray () [3].longitude);
 								}
 
-								coordsCenter = new CLLocationCoordinate2D ((latitude + mapView.UserLocation.Coordinate.Latitude) /2, (longitude + mapView.UserLocation.Coordinate.Longitude)/2);
-								coordsCenterLoc = new CLLocation ((latitude + mapView.UserLocation.Coordinate.Latitude)/2, (longitude + mapView.UserLocation.Coordinate.Longitude)/2);
+								coordsCenter = new CLLocationCoordinate2D ((latitude + mapView.UserLocation.Coordinate.Latitude) / 2, (longitude + mapView.UserLocation.Coordinate.Longitude) / 2);
+								coordsCenterLoc = new CLLocation ((latitude + mapView.UserLocation.Coordinate.Latitude) / 2, (longitude + mapView.UserLocation.Coordinate.Longitude) / 2);
 								coordsMerchantLoc = new CLLocation (latitude, longitude);
 								distance = coordsCenterLoc.DistanceFrom (coordsMerchantLoc);
 								double distanceDisplay = coordsUserLoc.DistanceFrom (coordsMerchantLoc);
 								try {
 									Console.WriteLine ("OK, Distance = " + distanceDisplay / 1000 + " kilometers.");
 									//mapView.Region = MKCoordinateRegion.FromDistance (mapView.UserLocation.Coordinate, distance*3, distance*3);
-									mapView.SetRegion(MKCoordinateRegion.FromDistance (mapView.UserLocation.Coordinate, distance*3, distance*3), true);
+									mapView.SetRegion (MKCoordinateRegion.FromDistance (mapView.UserLocation.Coordinate, distance * 3, distance * 3), true);
 								} catch (Exception exx) {
 									Console.WriteLine ("Too Far, Distance = " + distanceDisplay / 1000 + " kilometers.");
 									//mapView.Region = MKCoordinateRegion.FromDistance (mapView.UserLocation.Coordinate, 1, 1);
-									mapView.SetRegion(MKCoordinateRegion.FromDistance (mapView.UserLocation.Coordinate, 1, 1),true);
+									mapView.SetRegion (MKCoordinateRegion.FromDistance (mapView.UserLocation.Coordinate, 1, 1), true);
 								}
 							} catch (Exception exx) {
 								new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
-								Console.WriteLine(exx.Message);
+								Console.WriteLine (exx.Message);
 							}
 						});
 						userLocationFirstUpdate = false;

@@ -32,6 +32,8 @@ namespace QMobile
 		public string entryLatitude { get; set;}
 		public string entryLongitude { get; set;}
 		public string image_icon { get; set;}
+		public string reservation_time_string {get;set;}
+		public string local_guid {get;set;}
 	}
 }
 

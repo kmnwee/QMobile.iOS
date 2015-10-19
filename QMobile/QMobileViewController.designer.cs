@@ -22,6 +22,10 @@ namespace QMobile
 		[GeneratedCode ("iOS Designer", "1.0")]
 		UIButton gpButton { get; set; }
 
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
+		UITableView testTableView { get; set; }
+
 		void ReleaseDesignerOutlets ()
 		{
 			if (fbButton != null) {
@@ -31,6 +35,10 @@ namespace QMobile
 			if (gpButton != null) {
 				gpButton.Dispose ();
 				gpButton = null;
+			}
+			if (testTableView != null) {
+				testTableView.Dispose ();
+				testTableView = null;
 			}
 		}
 	}
