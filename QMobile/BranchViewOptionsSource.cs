@@ -33,7 +33,7 @@ namespace QMobile
 			CurrentServingViewController servingView = viewControllerLocal.Storyboard.InstantiateViewController ("CurrentServingViewController") as CurrentServingViewController;
 
 			InvokeOnMainThread (() => {
-				if (!tableItems [indexPath.Row].action.Equals ("CURRENTSERVING")) {
+				if (!tableItems [indexPath.Row].action.Equals ("CURRENTSERVING") && !tableItems [indexPath.Row].action.Equals ("ABOUT")) {
 					if (!tableItems [indexPath.Row].merchant.edition.Equals ("DEMO") && !tableItems [indexPath.Row].merchant.edition.Equals ("DESKTOP")) {
 						appointmentView.merchant = tableItems [indexPath.Row].merchant;
 						appointmentView.action = tableItems [indexPath.Row].action;
@@ -48,9 +48,13 @@ namespace QMobile
 					}
 				} else {
 					if (!tableItems [indexPath.Row].merchant.edition.Equals ("DEMO") && !tableItems [indexPath.Row].merchant.edition.Equals ("DESKTOP")) {
-						servingView.merchant = tableItems [indexPath.Row].merchant;
-						Console.WriteLine (tableItems [indexPath.Row].merchant.COMPANY_NAME + " - " + tableItems [indexPath.Row].merchant.BRANCH_NAME);
-						viewControllerLocal.NavigationController.PushViewController (servingView, true);	
+						if (!tableItems [indexPath.Row].action.Equals ("ABOUT")) {
+							servingView.merchant = tableItems [indexPath.Row].merchant;
+							Console.WriteLine (tableItems [indexPath.Row].merchant.COMPANY_NAME + " - " + tableItems [indexPath.Row].merchant.BRANCH_NAME);
+							viewControllerLocal.NavigationController.PushViewController (servingView, true);	
+						}else{
+							new UIAlertView ("Store Info", "Address: " + tableItems [indexPath.Row].merchant.address + "\n" + "Contact: " + tableItems [indexPath.Row].merchant.contact_no, null, "Got It!", null).Show ();
+						}
 					} else {
 						new UIAlertView ("Alert", "This site is running QApps " + tableItems [indexPath.Row].merchant.edition + " Edition! Mobile Transactions are not yet supported.", null, "Got It!", null).Show ();
 					}

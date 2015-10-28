@@ -348,7 +348,7 @@ namespace QMobile
 									Console.WriteLine ("Proceed with Reservation");
 									addTFOLReservation ();
 									//update qpad count
-									sendSignalRBCast(merchant.COMPANY_NO, merchant.BRANCH_NO);
+									sendSignalRBCast (merchant.COMPANY_NO, merchant.BRANCH_NO, Convert.ToInt32((viewControllerLocal as AppointmentViewController).schedTranTypeId));
 
 								} else if (b.ButtonIndex.ToString ().Equals ("1")) {
 									Console.WriteLine ("Cancel");
@@ -528,11 +528,11 @@ namespace QMobile
 			dateNow = DateTime.ParseExact (dateNowString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 			Console.WriteLine ("DateNOW: " + dateNowString + " or " + dateNow.ToString ());
 			int tixCount = 0;
-			List<TFScheduledReservation> TFReserveList = new List<TFScheduledReservation>();
+			List<TFScheduledReservation> TFReserveList = new List<TFScheduledReservation> ();
 			TFReserveList = await AppDelegate.MobileService.GetTable<TFScheduledReservation> ().Take (3)
 				.Where (TFScheduledReservation => TFScheduledReservation.email.Contains (AppDelegate.tfAccount.email) &&
-					TFScheduledReservation.company_id == merchant.COMPANY_NO &&
-					TFScheduledReservation.branch_id == merchant.BRANCH_NO)
+			TFScheduledReservation.company_id == merchant.COMPANY_NO &&
+			TFScheduledReservation.branch_id == merchant.BRANCH_NO)
 				.OrderByDescending (TFScheduledReservation => TFScheduledReservation.reservation_date)
 				.ThenBy (TFScheduledReservation => TFScheduledReservation.reservation_time)
 				.ToListAsync ();
@@ -550,19 +550,19 @@ namespace QMobile
 			} else {
 				try {
 					string url = String.Format ("https://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/addTFUserScheduleJSON/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/{9}/{10}/{11}/{12}/", 
-						            merchant.COMPANY_NO, 
-						            merchant.BRANCH_NO,
-						            "-",
-						            AppDelegate.tfAccount.email, 
-						            AppDelegate.tfAccount.name,
-						            (viewControllerLocal as AppointmentViewController).schedTranType,
-						            (viewControllerLocal as AppointmentViewController).schedTranTypeId,
-						            "-", 
-						            (viewControllerLocal as AppointmentViewController).schedDate, 
-						            (viewControllerLocal as AppointmentViewController).schedTimeKey, 
-						            (viewControllerLocal as AppointmentViewController).userLocation.Latitude, 
-						            (viewControllerLocal as AppointmentViewController).userLocation.Longitude,
-						            merchant.icon_image.Replace ("/", ";").Replace (":", "~"));
+						             merchant.COMPANY_NO, 
+						             merchant.BRANCH_NO,
+						             "-",
+						             AppDelegate.tfAccount.email, 
+						             AppDelegate.tfAccount.name,
+						             (viewControllerLocal as AppointmentViewController).schedTranType,
+						             (viewControllerLocal as AppointmentViewController).schedTranTypeId,
+						             "-", 
+						             (viewControllerLocal as AppointmentViewController).schedDate, 
+						             (viewControllerLocal as AppointmentViewController).schedTimeKey, 
+						             (viewControllerLocal as AppointmentViewController).userLocation.Latitude, 
+						             (viewControllerLocal as AppointmentViewController).userLocation.Longitude,
+						             merchant.icon_image.Replace ("/", ";").Replace (":", "~"));
 				
 					if (merchant.COMPANY_NO == 7) //if SMART
 					url += String.Format ("{0}/", (viewControllerLocal as AppointmentViewController).schedTimeString.Replace (":", ";"));
@@ -699,16 +699,27 @@ namespace QMobile
 				(date - reference).TotalSeconds);
 		}
 
-		public async void sendSignalRBCast(int company_id, int branch_id)
+		public async void sendSignalRBCast (int company_id, int branch_id, int tranTypeId)
 		{
-			Console.WriteLine ("SignalR Init");
-			var hubConnection = new HubConnection ("http://tfqapps-n.azurewebsites.net/signalr/hubs");
-			var chatHubProxy = hubConnection.CreateHubProxy ("ChatHub");
-			chatHubProxy.On<string> ("broadcastMessage", message => Toast.MakeText ("Received : " + message));
-			await hubConnection.Start ();
-			Console.WriteLine ("SignalR Sending to " + company_id + ", " + branch_id);
-			await chatHubProxy.Invoke ("Send", branch_id, company_id);
-			hubConnection.Stop ();
+			try {
+				Console.WriteLine ("SignalR Init");
+				var hubConnection = new HubConnection ("https://tfqapps-n.azurewebsites.net/signalr/hubs");
+				hubConnection.ConnectionSlow += () => Console.WriteLine("SignalR: Conn Slow");
+				hubConnection.Reconnecting += () => Console.WriteLine("SignalR: Reconnecting");
+				hubConnection.Reconnected += () => Console.WriteLine("SignalR: Reconnected");
+				//hubConnection.StateChanged += () => Console.WriteLine("SignalR: StateChanged");
+				hubConnection.Closed += () => Console.WriteLine("SignalR: Closed");
+
+				var chatHubProxy = hubConnection.CreateHubProxy ("chatHub");
+				chatHubProxy.On<string> ("broadcastMessage", message => Toast.MakeText ("Received : " + message));
+				await hubConnection.Start ();
+				Console.WriteLine ("SignalR Sending to " + company_id + ", " + branch_id);
+				await chatHubProxy.Invoke ("send", branch_id, company_id, tranTypeId);
+				hubConnection.Stop ();
+			} catch (Exception ex) {
+				Console.WriteLine ("SignalR: " + ex.Message);
+				Console.WriteLine ("SignalR: " + ex.StackTrace);
+			}
 		}
 
 		public async void addTFOLReservation ()
@@ -722,11 +733,12 @@ namespace QMobile
 			dateNow = DateTime.ParseExact (dateNowString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 			Console.WriteLine ("DateNOW: " + dateNowString + " or " + dateNow.ToString ());
 			int tixCount = 0;
-			List<TFOLReservation> TFReserveList = new List<TFOLReservation>();
+			List<TFOLReservation> TFReserveList = new List<TFOLReservation> ();
 			TFReserveList = await AppDelegate.MobileService.GetTable<TFOLReservation> ().Take (3)
 				.Where (TFOLReservation => TFOLReservation.remarks.Contains (AppDelegate.tfAccount.email) &&
-					TFOLReservation.company_id == merchant.COMPANY_NO &&
-					TFOLReservation.branch_id == merchant.BRANCH_NO)
+			TFOLReservation.company_id == merchant.COMPANY_NO &&
+			TFOLReservation.branch_id == merchant.BRANCH_NO &&
+			TFOLReservation.status == "PENDING")
 				.OrderByDescending (TFOLReservation => TFOLReservation.date_in)
 				.ToListAsync ();
 			foreach (TFOLReservation sr in TFReserveList) {
@@ -737,7 +749,7 @@ namespace QMobile
 			}
 
 			if (tixCount > 0) {
-				new UIAlertView ("Oops!", "You still have an active ticket for this merchant. \nTicket No. " + TFReserveList.First().queue_no, null, "OK", null).Show ();
+				new UIAlertView ("Oops!", "You already have an active ticket for this merchant. \nTicket No. " + TFReserveList.First ().queue_no, null, "OK", null).Show ();
 			} else {
 				string url = "";
 				if (merchant.edition.Equals ("CLOUD-SAAS")) {
@@ -847,7 +859,7 @@ namespace QMobile
 										});
 									} else {
 										new UIAlertView ("Oops!", "Can't seem to get a ticket now.\nMessage: "
-											+ qmobileticketResponse.addTFUserQMobileJSONResult.ResponseMessage, null, "OK", null).Show ();
+										+ qmobileticketResponse.addTFUserQMobileJSONResult.ResponseMessage, null, "OK", null).Show ();
 									}
 								}
 							}

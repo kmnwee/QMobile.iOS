@@ -218,6 +218,7 @@ namespace QMobile
 
 						FeaturedViewController featuredView = this.Storyboard.InstantiateViewController ("FeaturedViewController") as FeaturedViewController;
 
+						auth.AllowCancel = true;
 						auth.Completed += (sender2, eventArgs) => {
 							DismissViewController (true, null);
 

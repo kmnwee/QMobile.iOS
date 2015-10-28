@@ -171,6 +171,7 @@ namespace QMobile
 			TFBranchOption option1 = new TFBranchOption ();
 			TFBranchOption option2 = new TFBranchOption ();
 			TFBranchOption option3 = new TFBranchOption ();
+			TFBranchOption option4 = new TFBranchOption ();
 			options = new List<TFBranchOption> ();
 
 			if (merchant.regReserve_flag == 1) {
@@ -197,6 +198,13 @@ namespace QMobile
 			option3.image = "";
 			option3.merchant = merchant;
 			options.Add (option3); 
+
+			option4.title = "About";
+			option4.action = "ABOUT";
+			option4.info = "View branch information";
+			option4.image = "";
+			option4.merchant = merchant;
+			options.Add (option4); 
 
 			InvokeOnMainThread (() => {
 				BranchViewOptionsTable.TableFooterView = new UIView (CGRect.Empty);
