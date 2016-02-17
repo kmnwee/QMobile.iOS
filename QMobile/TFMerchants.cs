@@ -2,6 +2,11 @@
 
 namespace QMobile
 {
+	public class TFQMobileLatestVersion
+	{
+		public string getLatestQMobileVersionResult { get; set; }
+	}
+
 	public class TFMerchants
 	{
 		public int id { get; set; }

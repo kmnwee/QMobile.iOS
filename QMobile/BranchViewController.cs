@@ -2,7 +2,6 @@ using Foundation;
 using System;
 using System.CodeDom.Compiler;
 using UIKit;
-using Google.Maps;
 using CoreLocation;
 using CoreGraphics;
 using MapKit;
@@ -54,7 +53,7 @@ namespace QMobile
 					.ToListAsync () as ITotalCountProvider).TotalCount;
 					if (favCount > 0) {
 						isFavorite = true;
-						favButton.TintColor = UIColor.Yellow;
+						favButton.TintColor = TFColor.FromHexString("#ff7640", 1.0f);
 						Console.WriteLine ("This branch is fav!");
 					} else {
 						isFavorite = false;
@@ -124,7 +123,7 @@ namespace QMobile
 									memberFavorite.__deleted = "FALSE";
 
 									await AppDelegate.MobileService.GetTable<TFMemberFavorites> ().InsertAsync (memberFavorite);
-									favButton.TintColor = UIColor.Yellow;
+									favButton.TintColor = TFColor.FromHexString("#ff7640", 1.0f);
 									isFavorite = true;
 								} catch (Exception eeee) {
 									Console.WriteLine (eeee.Message + " - " + eeee.StackTrace);
@@ -172,12 +171,13 @@ namespace QMobile
 			TFBranchOption option2 = new TFBranchOption ();
 			TFBranchOption option3 = new TFBranchOption ();
 			TFBranchOption option4 = new TFBranchOption ();
+			TFBranchOption option5 = new TFBranchOption ();
 			options = new List<TFBranchOption> ();
 
 			if (merchant.regReserve_flag == 1) {
 				option1.title = "Get Ticket";
 				option1.action = "RESERVATION";
-				option1.info = "Reserve a ticket for today";
+				option1.info = "Get a ticket for today";
 				option1.image = "";
 				option1.merchant = merchant;
 				options.Add (option1);
@@ -186,11 +186,18 @@ namespace QMobile
 			if (merchant.schedReserve_flag == 1) {
 				option2.title = "Schedule Appointment";
 				option2.action = "APPOINTMENT";
-				option2.info = "Schedule an appointment for upcoming days";
+				option2.info = "Schedule an appointment for a future date";
 				option2.image = "";
 				option2.merchant = merchant;
 				options.Add (option2);
 			}
+
+			option5.title = "Scan QR Code";
+			option5.action = "QR";
+			option5.info = "Scan QR Code from ticket to be notified when your turn is near";
+			option5.image = "";
+			option5.merchant = merchant;
+			options.Add (option5); 
 
 			option3.title = "View Store Status";
 			option3.action = "CURRENTSERVING";

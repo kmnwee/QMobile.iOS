@@ -16,39 +16,11 @@ namespace QMobile
 	{
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel appointmentCount { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel appointmentsLabel { get; set; }
+		UIImageView coverPhoto { get; set; }
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
 		UILabel emailLabel { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel favoritesCount { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel favoritesLabel { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UIButton loginAnonymousButton { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UIButton logoutButton { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel notifCount { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel notifLabel { get; set; }
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
@@ -60,49 +32,17 @@ namespace QMobile
 
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel ticketCount { get; set; }
-
-		[Outlet]
-		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel ticketsLabel { get; set; }
+		UITableView profileOptionsTable { get; set; }
 
 		void ReleaseDesignerOutlets ()
 		{
-			if (appointmentCount != null) {
-				appointmentCount.Dispose ();
-				appointmentCount = null;
-			}
-			if (appointmentsLabel != null) {
-				appointmentsLabel.Dispose ();
-				appointmentsLabel = null;
+			if (coverPhoto != null) {
+				coverPhoto.Dispose ();
+				coverPhoto = null;
 			}
 			if (emailLabel != null) {
 				emailLabel.Dispose ();
 				emailLabel = null;
-			}
-			if (favoritesCount != null) {
-				favoritesCount.Dispose ();
-				favoritesCount = null;
-			}
-			if (favoritesLabel != null) {
-				favoritesLabel.Dispose ();
-				favoritesLabel = null;
-			}
-			if (loginAnonymousButton != null) {
-				loginAnonymousButton.Dispose ();
-				loginAnonymousButton = null;
-			}
-			if (logoutButton != null) {
-				logoutButton.Dispose ();
-				logoutButton = null;
-			}
-			if (notifCount != null) {
-				notifCount.Dispose ();
-				notifCount = null;
-			}
-			if (notifLabel != null) {
-				notifLabel.Dispose ();
-				notifLabel = null;
 			}
 			if (profileImageView != null) {
 				profileImageView.Dispose ();
@@ -112,13 +52,9 @@ namespace QMobile
 				profileNameLabel.Dispose ();
 				profileNameLabel = null;
 			}
-			if (ticketCount != null) {
-				ticketCount.Dispose ();
-				ticketCount = null;
-			}
-			if (ticketsLabel != null) {
-				ticketsLabel.Dispose ();
-				ticketsLabel = null;
+			if (profileOptionsTable != null) {
+				profileOptionsTable.Dispose ();
+				profileOptionsTable = null;
 			}
 		}
 	}

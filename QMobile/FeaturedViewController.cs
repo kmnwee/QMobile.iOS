@@ -7,6 +7,9 @@ using System.Linq;
 using CoreGraphics;
 using System.Globalization;
 using MBProgressHUD;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace QMobile
 {
@@ -38,6 +41,8 @@ namespace QMobile
 				Opacity = 60,
 				DimBackground = true
 			};
+
+			getLatesQMobileVersion (); //check version
 
 //			//------LOADING Screen--------------------------
 //			// Determine the correct size to start the overlay (depending on device orientation)
@@ -79,7 +84,56 @@ namespace QMobile
 //			});
 		}
 
+		public async void getLatesQMobileVersion ()
+		{
+			//check latest version of QMobile
+			string ver = NSBundle.MainBundle.InfoDictionary["CFBundleVersion"].ToString();
+			Console.WriteLine("QMobile Version " + NSBundle.MainBundle.InfoDictionary["CFBundleVersion"]);
+			Console.WriteLine("QMobile Version " + NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"]);
+			//call version check
+			string url = "https://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/getLatestQMobileVersion/iOS/";
+			TFQMobileLatestVersion latestVer = new TFQMobileLatestVersion ();
+			try {
+				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
+				request.ContentType = "application/json";
+				request.Method = "GET";
+				using (HttpWebResponse response = await request.GetResponseAsync () as HttpWebResponse) {
+					if (response.StatusCode != HttpStatusCode.OK) {
+						Console.Out.WriteLine ("Error fetching data. Server returned status code: {0}", response.StatusCode);
+						//new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet.", null, "OK", null).Show ();
+					} else {
+						using (StreamReader reader = new StreamReader (response.GetResponseStream ())) {
+							var content = reader.ReadToEnd ();
+							if (string.IsNullOrWhiteSpace (content)) {
+								Console.Out.WriteLine ("Response contained empty body...");
+							} else {
+								Console.Out.WriteLine ("Response Body: \r\n {0}", content);
+								latestVer = JsonConvert.DeserializeObject<TFQMobileLatestVersion> (content);
+								Console.Out.WriteLine("QMobile Latest " + latestVer.getLatestQMobileVersionResult);
 
+								if(!ver.Equals(latestVer.getLatestQMobileVersionResult)){
+									Console.WriteLine("Must Update!");
+									var proceedAlert = new UIAlertView ("Update Available", "A new version of QMobile is available in the App Store!", null, "Update Now", new string[] { "Later" });
+									proceedAlert.Clicked += (s, b) => {
+										if (b.ButtonIndex.ToString ().Equals ("0")) {
+											//Rivets.AppLinks.Navigator.Navigate("itms://itunes.apple.com/app/id986245271?mt=8");
+											UIApplication.SharedApplication.OpenUrl(new NSUrl("itms://itunes.apple.com/app/id986245271?mt=8"));
+											Console.WriteLine ("Now");
+										} else if (b.ButtonIndex.ToString ().Equals ("1")) {
+											Console.WriteLine ("Later");
+										}
+									};
+									proceedAlert.Show ();
+								}
+							}
+						}
+					}
+				}
+			}catch(Exception e){
+					
+			}
+
+		}
 
 		public override void ViewWillAppear (bool animated)
 		{
@@ -134,7 +188,7 @@ namespace QMobile
 		{
 			base.ViewDidLayoutSubviews ();
 			if (featuredTable != null)
-				featuredTable.ContentInset = new UIEdgeInsets (0, 0, 0, 0);
+				featuredTable.ContentInset = new UIEdgeInsets (0, 0, 8, 0);
 			
 		}
 

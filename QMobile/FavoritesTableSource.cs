@@ -11,6 +11,8 @@ using CoreLocation;
 using System.Runtime.InteropServices;
 using System.Linq;
 using ToastIOS;
+//using SDWebImage;
+using CoreGraphics;
 
 namespace QMobile
 {
@@ -99,13 +101,15 @@ namespace QMobile
 //			if (cell == null)
 //				cell = new UITableViewCell (UITableViewCellStyle.Subtitle, cellId);
 
-						
-			cell.TextLabel.Text = Convert.ToString (tableItems [indexPath.Row].branch_name);
-			cell.DetailTextLabel.Text = Convert.ToString (tableItems [indexPath.Row].company_name);
+			TFBusinessTypes bt = new TFBusinessTypes ();
+			cell.TextLabel.Text = Convert.ToString (tableItems [indexPath.Row].branch_name) + " | " + Convert.ToString (tableItems [indexPath.Row].company_name);;
+			//cell.DetailTextLabel.Text = Convert.ToString (tableItems [indexPath.Row].company_name);
 			InvokeOnMainThread (async () => {
 				long ticketsRes = 0;
 				long ticketsAppt = 0;
 				try {
+					bt = await AppDelegate.MobileService.GetTable<TFBusinessTypes> ().LookupAsync (tableItems [indexPath.Row].merchant.businesstype_id);
+					Console.WriteLine("BTypeIcon : " + bt.icon_image);
 					ticketsRes = (await AppDelegate.MobileService.GetTable<TFOLReservation> ().Take (0).IncludeTotalCount ()
 					.Where (TFOLReservation => TFOLReservation.mobile_userid == tableItems [indexPath.Row].email
 					&& TFOLReservation.company_id == tableItems [indexPath.Row].company_id
@@ -116,7 +120,14 @@ namespace QMobile
 					&& TFScheduledReservation.company_id == tableItems [indexPath.Row].company_id
 					&& TFScheduledReservation.branch_id == tableItems [indexPath.Row].branch_id)
 					.ToListAsync () as ITotalCountProvider).TotalCount;
-					cell.DetailTextLabel.Text += String.Format (" | You had {0} ticket/s here", ticketsRes + ticketsAppt);
+					//cell.DetailTextLabel.Text += String.Format (" | You had {0} ticket/s here", ticketsRes + ticketsAppt);
+					cell.DetailTextLabel.Text = String.Format ("You had {0} ticket/s here", ticketsRes + ticketsAppt);
+					cell.ImageView.Image = FeaturedTableSource.MaxResizeImage(FromURL (bt.icon_image), 30, 30);
+//					cell.ImageView.SetImage (
+//						url: new NSUrl (bt.icon_image),
+//						placeholder: UIImage.FromBundle ("placeholder_store.jpg"),
+//						options: SDWebImageOptions.RefreshCached
+//					);
 				} catch (Exception e) {
 					Console.WriteLine ("Problem loading Tickets Count...");
 					Console.WriteLine (e.Message);

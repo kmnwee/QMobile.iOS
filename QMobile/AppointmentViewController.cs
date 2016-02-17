@@ -78,16 +78,20 @@ namespace QMobile
 			branchDetailsView.BackgroundColor = TFColor.FromHexString ("#0097a9", 1.0f);
 			companyLabel.Text = merchant.COMPANY_NAME + " | " + merchant.BRANCH_NAME;
 			if (action.Equals ("APPOINTMENT"))
-				branchLabel.Text = "Schedule an Appointment";
+				branchLabel.Text = "Schedule Appointment";
 			else if (action.Equals ("RESERVATION"))
-				branchLabel.Text = "Reserve a Ticket";
+				branchLabel.Text = "Get Ticket";
 			
 			DateTime initDate = new DateTime ();
 
-			if(merchant.schedReserve_sameDay)
+			if (action.Equals ("RESERVATION"))
 				initDate = DateTime.Now;
-			else
-				initDate = DateTime.Now.AddDays(1);
+			else {
+				if (merchant.schedReserve_sameDay)
+					initDate = DateTime.Now;
+				else
+					initDate = DateTime.Now.AddDays (1);
+			}
 				
 
 //			TFProcessOption option1 = new TFProcessOption ();
@@ -140,6 +144,7 @@ namespace QMobile
 			TFProcessOption option2 = new TFProcessOption ();
 			TFProcessOption option3 = new TFProcessOption ();
 			TFProcessOption option4 = new TFProcessOption ();
+			TFProcessOption option5 = new TFProcessOption ();
 			options = new List<TFProcessOption> ();
 
 			//---------------------------------------------------------
@@ -158,30 +163,37 @@ namespace QMobile
 				option2.type = "Time";
 				option2.value = schedTimeKey;
 				options.Add (option2);
-			} else if (action.Equals ("RESERVATION")) {
-				option2.title = "Mobile No";
-				option2.valueDisplay = "Optional";//should be 1st available time slot
-				option2.type = "Mobile";
-				option2.value = option2.valueDisplay;
-				options.Add (option2);
 			}
+//			} else if (action.Equals ("RESERVATION")) {
+//				option2.title = "Mobile No";
+//				option2.valueDisplay = "Optional";//should be 1st available time slot
+//				option2.type = "Mobile";
+//				option2.value = option2.valueDisplay;
+//				options.Add (option2);
+//			}
 
-			option3.title = "Service Type";
+			option3.title = "Transaction Type";
 			option3.valueDisplay = schedTranType;//should be 1st trantype from json
 			option3.type = "Transaction";
 			option3.value = option1.valueDisplay;//same as value display
 			option3.valueId = schedTranTypeId; //tranype id
 			options.Add (option3);
 
-			option4.title = "Proceed";
-			option4.valueDisplay = "";
-			option4.type = "Proceed";
-			option4.value = "";
+			option4.title = "Mobile No";
+			option4.valueDisplay = "Optional";//should be 1st available time slot
+			option4.type = "Mobile";
+			option4.value = option2.valueDisplay;
 			options.Add (option4);
+
+			option5.title = "Proceed";
+			option5.valueDisplay = "";
+			option5.type = "Proceed";
+			option5.value = "";
+			options.Add (option5);
 
 			InvokeOnMainThread (() => {
 				//this.NavigationItem.TitleView = new UIImageView (UIImage.FromBundle ("iconx30.png"));
-				this.NavigationItem.TitleView = new UIImageView (FeaturedTableSource.MaxResizeImage(UIImage.FromBundle ("LogoWithOutBackground.png"), 50, 50));
+				this.NavigationItem.TitleView = new UIImageView (FeaturedTableSource.MaxResizeImage (UIImage.FromBundle ("LogoWithOutBackground.png"), 50, 50));
 				appointmentOptionsTable.TableFooterView = new UIView (CGRect.Empty);
 				appointmentOptionsTable.Source = new AppointmentOptionsSource (options.ToArray (), merchant, this);
 				appointmentOptionsTable.ReloadData ();

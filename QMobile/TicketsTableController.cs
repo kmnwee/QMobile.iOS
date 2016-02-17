@@ -59,7 +59,7 @@ namespace QMobile
 
 			RefreshControl = new UIRefreshControl ();
 			RefreshControl.ValueChanged += (object sender, EventArgs e) => {
-				Console.WriteLine ("Refresh Initiated");	
+				Console.WriteLine ("Refresh Initiated - pull down");	
 				RefreshTicketsTable (AppDelegate.tfAccount.email);
 				InvokeOnMainThread (() => {
 					RefreshControl.EndRefreshing ();
@@ -145,13 +145,13 @@ namespace QMobile
 						}
 					}
 
-					TFTickets = TFTickets.OrderBy (t => t.date).ThenBy(q => q.queue_no).ToList ();
+					TFTickets = TFTickets.OrderByDescending (t => t.date).ThenBy(q => q.queue_no).ToList ();
 					ticketsTable.Source = new TicketsTableSource (TFTickets.ToArray (), this);
 					ticketsTable.ReloadData ();
 
 					if (!TFTickets.Any ()) {
 						//new UIAlertView ("No Tickets!", "You currently have no active tickets.", null, "OK", null).Show ();
-						Toast.MakeText ("You currently have no active tickets.").SetDuration (4000).Show ();
+						Toast.MakeText ("You currently have no active tickets.").SetDuration (4000).SetGravity(ToastGravity.Center).Show ();
 					}
 				} catch (Exception exex) {
 					new UIAlertView ("Problem Connecting", "We can't seem to connect to the internet right now.", null, "OK", null).Show ();
@@ -243,7 +243,45 @@ namespace QMobile
 								Toast.MakeText (addUserFromQRResp.addUserFromQRResult.ResponseMessage)
 									.SetDuration (5000)
 									.Show ();
-								RefreshTicketsTable (AppDelegate.tfAccount.email);
+
+								if (addUserFromQRResp.addUserFromQRResult.ResponseCode.Equals ("00")) {
+									List<TFOLReservation> ticketRaw = new List<TFOLReservation> ();
+									List<TFMerchants> merchants = new List<TFMerchants>();
+									TFMerchants merchant = new TFMerchants();
+									TFTicket tix = new TFTicket ();
+									int company_id2 = Convert.ToInt32 (addUserFromQRResp.addUserFromQRResult.company_id);
+									int branch_id2 = Convert.ToInt32 (addUserFromQRResp.addUserFromQRResult.branch_id);
+									string refNo2 = addUserFromQRResp.addUserFromQRResult.refNo;
+									merchants = await AppDelegate.MobileService.GetTable<TFMerchants> ().Take (1)
+										.Where (m => m.COMPANY_NO == company_id2 && m.BRANCH_NO == branch_id2).ToListAsync ();
+									ticketRaw = await AppDelegate.MobileService.GetTable<TFOLReservation> ().Take (1)
+										.Where (tf => tf.company_id == company_id2 && tf.branch_id == branch_id2 && tf.user_refno == refNo2).ToListAsync ();
+
+									merchant = merchants.ToArray()[0];
+									foreach (TFOLReservation sr in ticketRaw) {
+										tix = new TFTicket();
+										tix.branch_id = sr.branch_id;
+										tix.company_id = sr.company_id;
+										tix.id = Convert.ToString (sr.id);
+										tix.cust_name = sr.cust_name;
+										tix.queue_no = sr.queue_no;
+										tix.status = sr.status;
+										tix.date = DateTime.ParseExact (sr.date_in, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture).ToString ("yyyy-MM-dd");
+										tix.image_icon = sr.image_icon;
+										tix.tran_type_name = sr.tran_type;
+										tix.tran_id_local = sr.tran_id_local;
+										tix.type = "RESERVATION";
+									}
+									tix.merchant = merchant;
+									TicketViewController ticketView = this.Storyboard.InstantiateViewController ("TicketViewController") as TicketViewController;
+									ticketView.ticket = tix;
+
+									InvokeOnMainThread (() => this.NavigationController.PushViewController (ticketView, true));
+								}
+								//Console.WriteLine ("Refresh Initiated - QR blank ");	
+								//RefreshTicketsTable ("");//clear first
+								//Console.WriteLine ("Refresh Initiated - QR ");	
+								//RefreshTicketsTable (AppDelegate.tfAccount.email);
 							}
 						}
 					}
@@ -263,7 +301,7 @@ namespace QMobile
 			InvokeOnMainThread (() => {
 				Console.WriteLine ("Tickets Table!");
 				this.ParentViewController.NavigationItem.SetRightBarButtonItem 
-				(new UIBarButtonItem (FeaturedTableSource.MaxResizeImage (UIImage.FromBundle ("Icons3/qr.png"), 30, 30), 
+				(new UIBarButtonItem (FeaturedTableSource.MaxResizeImage (UIImage.FromBundle ("icons_f/qrwhite.png"), 30, 30), 
 					UIBarButtonItemStyle.Plain, (sender, args) => {
 					Console.WriteLine ("Scan Button was pressed!");
 					scanQR ();
@@ -284,6 +322,7 @@ namespace QMobile
 //			}
 
 			if (AppDelegate.tfAccount.loggedIn) {
+				Console.WriteLine ("Refresh Initiated - ViewDidAppear ");	
 				RefreshTicketsTable (AppDelegate.tfAccount.email);
 				AppDelegate.initialLoadTix = false;
 			} else {

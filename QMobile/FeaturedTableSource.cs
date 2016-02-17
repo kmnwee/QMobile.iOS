@@ -52,6 +52,11 @@ namespace QMobile
 //			InvokeOnMainThread (() => viewControllerLocal.NavigationController.PushViewController (qview, true));
 		}
 
+		public override nfloat GetHeightForRow (UITableView tableview, Foundation.NSIndexPath indexPath)
+		{
+			return 92;
+		}
+
 		public override UITableViewCell GetCell (UITableView tableView, Foundation.NSIndexPath indexPath)
 		{
 //			UITableViewCell cell = tableView.DequeueReusableCell (cellId);
@@ -64,30 +69,39 @@ namespace QMobile
 			//cell.TextLabel.Text = tableItems [indexPath.Row].COMPANY_NAME;
 
 			InvokeOnMainThread (async () => {
-				cell.setFeaturedMainTitle(tableItems [indexPath.Row].COMPANY_NAME);
-				cell.setFeaturedImageView(tableItems [indexPath.Row].icon_image);
+				cell.setContainerView();
+				cell.setFeaturedMainTitle (tableItems [indexPath.Row].COMPANY_NAME);
+				cell.setFeaturedImageView (tableItems [indexPath.Row].icon_image);
 
 				TFBusinessTypes bt = new TFBusinessTypes ();
 				long visitCountRes = 0;
 				long visitCountAppt = 0;
+				long branchCount = 0;
 				try {
 					bt = await AppDelegate.MobileService.GetTable<TFBusinessTypes> ().LookupAsync (tableItems [indexPath.Row].businesstype_id);
 					visitCountRes = (await AppDelegate.MobileService.GetTable<TFOLReservation> ().Take (0).IncludeTotalCount ()
-					.Where (TFOLReservation => TFOLReservation.company_id == tableItems [indexPath.Row].COMPANY_NO)
-					.ToListAsync () as ITotalCountProvider).TotalCount;
+						.Where (TFOLReservation => TFOLReservation.company_id == tableItems [indexPath.Row].COMPANY_NO)
+						.ToListAsync () as ITotalCountProvider).TotalCount;
 					visitCountAppt = (await AppDelegate.MobileService.GetTable<TFScheduledReservation> ().Take (0).IncludeTotalCount ()
-					.Where (TFScheduledReservation => TFScheduledReservation.company_id == tableItems [indexPath.Row].COMPANY_NO)
-					.ToListAsync () as ITotalCountProvider).TotalCount;
+						.Where (TFScheduledReservation => TFScheduledReservation.company_id == tableItems [indexPath.Row].COMPANY_NO)
+						.ToListAsync () as ITotalCountProvider).TotalCount;
+					branchCount = (await AppDelegate.MobileService.GetTable<TFMerchants> ().Take (0).IncludeTotalCount ()
+						.Where (TFMerchants => TFMerchants.COMPANY_NO == tableItems [indexPath.Row].COMPANY_NO && !TFMerchants._unlisted)
+						.ToListAsync () as ITotalCountProvider).TotalCount;
+					Console.WriteLine ("Branches : " + branchCount);
 					if (bt != null) {
 						cell.setFeaturedDetails (bt.businesstype_name);
 						//cell.DetailTextLabel.Text = bt.businesstype_name;
 						//cell.setBranchName (bt.businesstype_name);
 					} else {
-						cell.setFeaturedDetails( " ");
-					//	cell.DetailTextLabel.Text = " ";
+						cell.setFeaturedDetails ("STORE");
+						//	cell.DetailTextLabel.Text = " ";
 						//cell.setBranchName (" ");
 					}
-					cell.setFeaturedDetails(cell.getFeaturedDetails() + String.Format (" | {0} Mobile Visitors", visitCountRes + visitCountAppt));
+					//cell.setFeaturedDetails(cell.getFeaturedDetails() + String.Format (" | {0} Mobile Visitors", visitCountRes + visitCountAppt));
+					cell.setFeaturedDetails2(String.Format ("{0} " + ((branchCount > 1) ? "Branches" : "Branch"), branchCount));
+					cell.setFeaturedDetails3(String.Format ("{0} " + ((visitCountRes + visitCountAppt > 1) ? "Mobile Users" : "Mobile User"), visitCountAppt + visitCountRes));
+
 					//cell.DetailTextLabel.Text += String.Format (" | {0} Mobile Visitors", visitCountRes + visitCountAppt);
 					//cell.setBranchName (String.Format ("{0} | {1} Mobile Visitors", bt.businesstype_name, visitCountRes + visitCountAppt));
 
@@ -109,13 +123,13 @@ namespace QMobile
 //					CALayer merchantLogoView = cell.ImageView.Layer;
 //					merchantLogoView.CornerRadius = 8.77f;//60;
 //					merchantLogoView.MasksToBounds = true;
-					//merchantLogoView.ShadowColor = UIColor.DarkGray.CGColor;
+			//merchantLogoView.ShadowColor = UIColor.DarkGray.CGColor;
 //					merchantLogoView.ShadowOpacity = 0.8f;
 //					merchantLogoView.ShadowRadius = 3.0f;
 //					merchantLogoView.BorderColor = UIColor.Gray.CGColor;
 //					merchantLogoView.BorderWidth = 1;
 
-					//cell.ImageView.Frame = new RectangleF (0, 0, 50, 50);
+			//cell.ImageView.Frame = new RectangleF (0, 0, 50, 50);
 //					cell.ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
 //					cell.ImageView.SetImage (
 //						url: new NSUrl (tableItems [indexPath.Row].icon_image),
@@ -135,11 +149,11 @@ namespace QMobile
 
 
 
-					//cell.ImageView.Image = FromURL(tableItems [indexPath.Row].icon_image.Replace("merchantlogos", "merchantlogos-ios"));
-					//cell.ImageView.Image = await LoadImage (tableItems [indexPath.Row].icon_image.Replace ("merchantlogos", "merchantlogos-ios"));
-					//cell.ImageView.SetImage(await LoadImage (tableItems [indexPath.Row].icon_image));
-					//cell.ImageView.Image = await LoadImage (tableItems [indexPath.Row].icon_image);
-					//cell.ImageView.Image = MaxResizeImage (FromURL (tableItems [indexPath.Row].icon_image), 50, 50);
+			//cell.ImageView.Image = FromURL(tableItems [indexPath.Row].icon_image.Replace("merchantlogos", "merchantlogos-ios"));
+			//cell.ImageView.Image = await LoadImage (tableItems [indexPath.Row].icon_image.Replace ("merchantlogos", "merchantlogos-ios"));
+			//cell.ImageView.SetImage(await LoadImage (tableItems [indexPath.Row].icon_image));
+			//cell.ImageView.Image = await LoadImage (tableItems [indexPath.Row].icon_image);
+			//cell.ImageView.Image = MaxResizeImage (FromURL (tableItems [indexPath.Row].icon_image), 50, 50);
 //				} catch (Exception ex) {
 //					//cell.ImageView.Image = MaxResizeImage (UIImage.FromBundle ("placeholder_store.jpg"), 50, 50);
 //					Console.Out.WriteLine (ex.Message);
@@ -188,7 +202,7 @@ namespace QMobile
 			return resultImage;
 		}
 
-		static UIImage FromURL (string uri)
+		public static UIImage FromURL (string uri)
 		{
 			using (var url = new NSUrl (uri))
 			using (var data = NSData.FromUrl (url))
@@ -207,35 +221,6 @@ namespace QMobile
 			// load from bytes
 			return MaxResizeImage (UIImage.LoadFromData (NSData.FromArray (contents)), 50, 50);
 		}
-
-
-		//		public static UIImage resizeImage(UIImage source, CGSize newSize)
-		//		{
-		//			CGContext context = UIGraphics.GetCurrentContext ();
-		//			context.InterpolationQuality = CGInterpolationQuality.None;
-		//
-		//
-		//			context.TranslateCTM (0, newSize.Height);
-		//			context.ScaleCTM (1f, -1f);
-		//
-		//			context.DrawImage (new RectangleF (0, 0, newSize.Width, newSize.Height), source.CGImage);
-		//
-		//			var scaledImage = UIGraphics.GetImageFromCurrentImageContext();
-		//			UIGraphics.EndImageContext();
-		//
-		//			return scaledImage;
-		//		}
-
-		//		- (UIImage*)imageWithImage:(UIImage*)image
-		//		scaledToSize:(CGSize)newSize;
-		//		{
-		//			UIGraphicsBeginImageContext( newSize );
-		//			[image drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
-		//			UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
-		//			UIGraphicsEndImageContext();
-		//
-		//			return newImage;
-		//		}
 
 	}
 }

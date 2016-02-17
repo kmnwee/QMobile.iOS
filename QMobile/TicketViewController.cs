@@ -61,7 +61,7 @@ namespace QMobile
 					option3.valueDisplay = DateTime.ParseExact (ticket.time, "HHmm", CultureInfo.InvariantCulture).ToString ("hh:mm tt") + " - "
 					+ DateTime.ParseExact (ticket.time, "HHmm", CultureInfo.InvariantCulture).AddMinutes (ticket.merchant.schedReserve_interval).ToString ("hh:mm tt");
 				} else {
-					option3.valueDisplay = ticket.timeString.Replace(";",":");
+					option3.valueDisplay = ticket.timeString.Replace(";",":"); //SMART
 				}
 				option3.type = "Time";
 				option3.value = ticket.time;

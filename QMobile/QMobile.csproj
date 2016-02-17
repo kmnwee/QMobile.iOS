@@ -104,9 +104,6 @@
     </Reference>
     <Reference Include="System.Json" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="GoogleMaps">
-      <HintPath>..\..\..\..\Downloads\googlemapsios-1.9.1\lib\ios-unified\GoogleMaps.dll</HintPath>
-    </Reference>
     <Reference Include="TimesSquare.iOS">
       <HintPath>..\..\..\..\Downloads\timessquare-1.0.5\lib\ios-unified\TimesSquare.iOS.dll</HintPath>
     </Reference>
@@ -176,15 +173,20 @@
     <Reference Include="System.Net.Http.Primitives">
       <HintPath>..\Components\signalr-2.1.2.2\lib\ios-unified\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
+    <Reference Include="Rivets">
+      <HintPath>..\Components\rivets-1.0.5.1\lib\ios-unified\Rivets.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
-    <InterfaceDefinition Include="MainStoryboard.storyboard" />
     <InterfaceDefinition Include="MerchantCustomCell_iPhone.xib" />
     <InterfaceDefinition Include="MerchantCustomCell_iPad.xib" />
+    <InterfaceDefinition Include="MainStoryboard.storyboard" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -286,6 +288,8 @@
     <Compile Include="QTableSource.cs" />
     <Compile Include="FeaturedViewCell.cs" />
     <Compile Include="TFBranchStatus.cs" />
+    <Compile Include="ProfileViewOptionsSource.cs" />
+    <Compile Include="TFProfileOption.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -298,6 +302,7 @@
     <Folder Include="Resources\ticketcolors\" />
     <Folder Include="Sounds\" />
     <Folder Include="Resources\action\" />
+    <Folder Include="Resources\icons_f\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\socialicons\signinfb.png" />
@@ -383,6 +388,16 @@
     <BundleResource Include="Resources\action\ic_local_offer_white_24dp.png" />
     <BundleResource Include="Resources\action\ic_local_offer_white_48dp.png" />
     <BundleResource Include="Resources\Icons3\qr.png" />
+    <BundleResource Include="Resources\icons_f\featured.png" />
+    <BundleResource Include="Resources\icons_f\profile.png" />
+    <BundleResource Include="Resources\icons_f\QR.png" />
+    <BundleResource Include="Resources\icons_f\search.png" />
+    <BundleResource Include="Resources\icons_f\signout.png" />
+    <BundleResource Include="Resources\icons_f\tickets.png" />
+    <BundleResource Include="Resources\icons_f\qrwhite.png" />
+    <BundleResource Include="Resources\icons_f\favorites.png" />
+    <BundleResource Include="Resources\icons_f\guest.png" />
+    <BundleResource Include="Resources\icons_f\facebook.png" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="azure-messaging">

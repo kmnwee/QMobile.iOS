@@ -1,26 +1,34 @@
 ﻿using System;
 using UIKit;
-using Foundation;
-using CoreGraphics;
-using System.Net;
-using System.IO;
+using MBProgressHUD;
 using ToastIOS;
 using Newtonsoft.Json;
-using MBProgressHUD;
+using System.Net;
+using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
+using Xamarin.Auth;
+using Newtonsoft.Json.Linq;
+using System.Web;
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace QMobile
 {
-	public class BranchViewOptionsSource : UITableViewSource
+	public class ProfileViewOptionsSource: UITableViewSource
 	{
-		TFBranchOption[] tableItems;
+		TFProfileOption[] tableItems;
 		string cellId = "TableCell";
 		private UIViewController viewControllerLocal;
-		LoadingOverlay _loadPop;
+		//LoadingOverlay _loadPop;
 		MTMBProgressHUD hud2;
+		MTMBProgressHUD hud;
 
-		public BranchViewOptionsSource (TFBranchOption[] items, UIViewController viewController)
+		bool loggedIn;
+		TFMemberRegistry memberRegistry;
+		List<TFProfileOption> options;
+		DashTabController dashTab;
+
+		public ProfileViewOptionsSource (TFProfileOption[] items, UIViewController viewController)
 		{
 			tableItems = items;
 			viewControllerLocal = viewController;
@@ -36,85 +44,41 @@ namespace QMobile
 		public override void RowSelected (UITableView tableView, Foundation.NSIndexPath indexPath)
 		{			
 			tableView.DeselectRow (indexPath, true);
-
-			AppointmentViewController appointmentView = viewControllerLocal.Storyboard.InstantiateViewController ("AppointmentViewController") as AppointmentViewController;
-			CurrentServingViewController servingView = viewControllerLocal.Storyboard.InstantiateViewController ("CurrentServingViewController") as CurrentServingViewController;
+			dashTab = viewControllerLocal.ParentViewController as DashTabController;
+			//AppointmentViewController appointmentView = viewControllerLocal.Storyboard.InstantiateViewController ("AppointmentViewController") as AppointmentViewController;
+			//CurrentServingViewController servingView = viewControllerLocal.Storyboard.InstantiateViewController ("CurrentServingViewController") as CurrentServingViewController;
 
 			InvokeOnMainThread (() => {
-				if (tableItems [indexPath.Row].action.Equals ("QR")) {
-					//new UIAlertView ("Scan QR!", "You want to scan qr code!", null, "Got It!", null).Show ();
-					scanQR ();
-				} else if (!tableItems [indexPath.Row].action.Equals ("CURRENTSERVING") && !tableItems [indexPath.Row].action.Equals ("ABOUT")) {
-					if (!tableItems [indexPath.Row].merchant.edition.Equals ("DEMO") && !tableItems [indexPath.Row].merchant.edition.Equals ("DESKTOP")) {
-						var dsDate = new DateTime ();
-						dsDate = DateTime.Now;
-
-						switch (tableItems [indexPath.Row].merchant.schedReserveWeekend_flag) { //change to regReserveFlag later
-						case 0:
-							if (!(dsDate.DayOfWeek == DayOfWeek.Saturday) && !(dsDate.DayOfWeek == DayOfWeek.Sunday)) {
-								appointmentView.merchant = tableItems [indexPath.Row].merchant;
-								appointmentView.action = tableItems [indexPath.Row].action;
-								appointmentView.userLocation = (viewControllerLocal as BranchViewController).coords;
-								viewControllerLocal.NavigationController.PushViewController (appointmentView, true);	
-							} else {
-								new UIAlertView ("Info", "This branch is closed on weekends.", null, "Got It!", null).Show ();
-							}
-							break;
-						case 1:
-							if (!(dsDate.DayOfWeek == DayOfWeek.Sunday)) { //closed on sundays only
-								appointmentView.merchant = tableItems [indexPath.Row].merchant;
-								appointmentView.action = tableItems [indexPath.Row].action;
-								appointmentView.userLocation = (viewControllerLocal as BranchViewController).coords;
-								viewControllerLocal.NavigationController.PushViewController (appointmentView, true);	
-							} else {
-								new UIAlertView ("Info", "This branch is closed on Sundays.", null, "Got It!", null).Show ();
-							}
-							break;
-						case 2:
-							if (!(dsDate.DayOfWeek == DayOfWeek.Saturday)) {//closed on saturdays only
-								appointmentView.merchant = tableItems [indexPath.Row].merchant;
-								appointmentView.action = tableItems [indexPath.Row].action;
-								appointmentView.userLocation = (viewControllerLocal as BranchViewController).coords;
-								viewControllerLocal.NavigationController.PushViewController (appointmentView, true);	
-							} else {
-								new UIAlertView ("Info", "This branch is closed on Saturdays.", null, "Got It!", null).Show ();
-							}
-							break;
-						default: //open 7 days a week
-							appointmentView.merchant = tableItems [indexPath.Row].merchant;
-							appointmentView.action = tableItems [indexPath.Row].action;
-							appointmentView.userLocation = (viewControllerLocal as BranchViewController).coords;
-							viewControllerLocal.NavigationController.PushViewController (appointmentView, true);	
-							break;
-
-						}
-						//new UIAlertView("Alert", tableItems[indexPath.Row].title + " | " + tableItems[indexPath.Row].action + " | " + tableItems[indexPath.Row].merchant.BRANCH_NAME, null, "Got It!", null).Show ();
-
-					} else {
-						new UIAlertView ("Alert", "This site is running QApps " + tableItems [indexPath.Row].merchant.edition + " Edition! Mobile Transactions are not yet supported.", null, "Got It!", null).Show ();
-
-					}
-				} else {
-					if (!tableItems [indexPath.Row].merchant.edition.Equals ("DEMO") && !tableItems [indexPath.Row].merchant.edition.Equals ("DESKTOP")) {
-						if (!tableItems [indexPath.Row].action.Equals ("ABOUT")) {
-							servingView.merchant = tableItems [indexPath.Row].merchant;
-							Console.WriteLine (tableItems [indexPath.Row].merchant.COMPANY_NAME + " - " + tableItems [indexPath.Row].merchant.BRANCH_NAME);
-							viewControllerLocal.NavigationController.PushViewController (servingView, true);	
-						} else {
-							new UIAlertView ("Store Info", "Address: " + tableItems [indexPath.Row].merchant.address + "\n" + "Contact: " + tableItems [indexPath.Row].merchant.contact_no, null, "Got It!", null).Show ();
-						}
-					} else {
-						new UIAlertView ("Alert", "This site is running QApps " + tableItems [indexPath.Row].merchant.edition + " Edition! Mobile Transactions are not yet supported.", null, "Got It!", null).Show ();
-					}
-
-					//new UIAlertView ("Launch Current Serving Window", "View Counter Activity!", null, "Got It!", null).Show ();
+				//if (tableItems [indexPath.Row].action.Equals ("QR")) 
+				switch(tableItems [indexPath.Row].action){
+				case "SIFB":
+					(viewControllerLocal as ProfileViewController).signIn();
+					break;
+				case "SIG":
+					(viewControllerLocal as ProfileViewController).signInGuest();
+					break;
+				case "Search":
+					(viewControllerLocal as ProfileViewController).setTabIndex(1);
+					break;
+				case "Favorites":
+					(viewControllerLocal as ProfileViewController).setTabIndex(2);
+					break;
+				case "Tickets":
+					(viewControllerLocal as ProfileViewController).setTabIndex(3);
+					break;
+				case "SignOut":
+					(viewControllerLocal as ProfileViewController).signOut();
+					break;
+				case "QR":
+					Console.WriteLine(tableItems [indexPath.Row].action);
+					scanQR();
+					break;
+				default:
+					Console.WriteLine(tableItems [indexPath.Row].action);
+					break;
 				}
 
 			});
-
-			//			TestViewController test = viewControllerLocal.Storyboard.InstantiateViewController ("TestViewController") as TestViewController;
-			//			InvokeOnMainThread (() => viewControllerLocal.NavigationController.PushViewController (test, true));
-
 		}
 
 		public override UITableViewCell GetCell (UITableView tableView, Foundation.NSIndexPath indexPath)
@@ -123,22 +87,20 @@ namespace QMobile
 			if (cell == null) {
 				cell = new UITableViewCell (UITableViewCellStyle.Subtitle, cellId);
 			}
-			//			cell.merchant = tableItems [indexPath.Row];
+
+			Console.WriteLine (" >> " + tableItems [indexPath.Row].image);
 			cell.TextLabel.Text = tableItems [indexPath.Row].title;// + " | " + tableItems[indexPath.Row].BRANCH_NAME;
 			cell.DetailTextLabel.Text = tableItems [indexPath.Row].info;
+			if(!String.IsNullOrEmpty(tableItems [indexPath.Row].image))
+			cell.ImageView.Image = FeaturedTableSource.MaxResizeImage (UIImage.FromBundle (tableItems [indexPath.Row].image), 30, 30);
 			cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+
 
 			//Console.Out.WriteLine (cell.TextLabel.Text);
 			//cell.ImageView.Image = FromURL(tableItems [indexPath.Row].icon_image);// fix size. use small thumbnail only
 			return cell;
 		}
 
-		static UIImage FromURL (string uri)
-		{
-			using (var url = new NSUrl (uri))
-			using (var data = NSData.FromUrl (url))
-				return UIImage.LoadFromData (data);
-		}
 
 		public async void scanQR ()
 		{
@@ -194,7 +156,7 @@ namespace QMobile
 			//Time Slot -- add error checking for this
 			try {
 				string url = String.Format ("https://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/addUserFromQR/{0}/{1}/{2}/{3}/{4}/", 
-					             refNo, AppDelegate.tfAccount.email, AppDelegate.tfAccount.name, company_id, branch_id);
+					refNo, AppDelegate.tfAccount.email, AppDelegate.tfAccount.name, company_id, branch_id);
 				HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
 				request.ContentType = "application/json";
 				request.Method = "GET";
@@ -272,5 +234,6 @@ namespace QMobile
 		}
 
 	}
+
 }
 

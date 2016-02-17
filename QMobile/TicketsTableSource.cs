@@ -4,6 +4,7 @@ using Foundation;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace QMobile
 {
@@ -17,6 +18,11 @@ namespace QMobile
 		{
 			tableItems = items;
 			viewControllerLocal = viewController;
+		}
+
+		public override nint NumberOfSections (UITableView tableView)
+		{
+			return 1;
 		}
 
 		public override nint RowsInSection (UITableView tableview, nint section)
@@ -37,7 +43,8 @@ namespace QMobile
 			TicketViewController ticketView = viewControllerLocal.Storyboard.InstantiateViewController ("TicketViewController") as TicketViewController;
 			ticketView.ticket = tableItems [indexPath.Row];
 
-			Console.WriteLine (" >>> " + tableItems [indexPath.Row].date);
+//			Console.WriteLine (JsonConvert.SerializeObject (tableItems [indexPath.Row]));
+			//Console.WriteLine (" >>> " + tableItems [indexPath.Row].merchant.COMPANY_NAME);
 
 			InvokeOnMainThread (() => {
 				viewControllerLocal.NavigationController.PushViewController (ticketView, true);
@@ -51,15 +58,22 @@ namespace QMobile
 				cell = new UITableViewCell (UITableViewCellStyle.Subtitle, cellId);
 
 			cell.TextLabel.Text = tableItems [indexPath.Row].queue_no;// + " | " + tableItems[indexPath.Row].merchant.BRANCH_NAME + ", "+ tableItems[indexPath.Row].merchant.COMPANY_NAME;
+//			Console.WriteLine ("Tix row: " + indexPath.Row + " " + JsonConvert.SerializeObject(tableItems[indexPath.Row]));
+			int indexP = 0;
+			indexP = indexPath.Row;
 
 			InvokeOnMainThread (async () => {
 				List<TFMerchants> tfmerchants = new List<TFMerchants> ();
 				try {
 					tfmerchants = await AppDelegate.MobileService.GetTable<TFMerchants> ()
-						.Where (TFMerchants => TFMerchants.COMPANY_NO == tableItems [indexPath.Row].company_id && TFMerchants.BRANCH_NO == tableItems [indexPath.Row].branch_id).Take (1).ToListAsync ();
+						.Where (TFMerchants => TFMerchants.COMPANY_NO == tableItems [indexP].company_id && TFMerchants.BRANCH_NO == tableItems [indexP].branch_id).Take (1).ToListAsync ();
 					if (tfmerchants.Any ()) {
 						cell.TextLabel.Text += " | " + tfmerchants.ToArray () [0].BRANCH_NAME + ", " + tfmerchants.ToArray () [0].COMPANY_NAME;
-						tableItems [indexPath.Row].merchant = tfmerchants.ToArray () [0];
+						tableItems [indexP].merchant = tfmerchants.ToArray () [0];
+//						Console.WriteLine ("Tix Merchant: " + indexP + " - " + tableItems [indexP].id + " - " + tableItems [indexP].merchant.COMPANY_NAME + " | " + tableItems [indexP].merchant.BRANCH_NAME);
+//						Console.WriteLine (JsonConvert.SerializeObject (tableItems [indexP]));
+					}else{
+						Console.WriteLine ("No Merchant");
 					}
 				} catch (Exception e) {
 					Console.WriteLine ("Problem loading Merchant...");
@@ -108,7 +122,7 @@ namespace QMobile
 				ticketColor = "ticketcolors/tag_green.png";
 				break;
 			}
-			cell.ImageView.Image = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle (ticketColor), 50, 50);
+			cell.ImageView.Image = FeaturedTableSource.MaxResizeImage(UIImage.FromBundle (ticketColor), 30, 30);
 			//cell.ImageView.Image = FromURL(tableItems[indexPath.Row].icon_image);
 			return cell;
 		}

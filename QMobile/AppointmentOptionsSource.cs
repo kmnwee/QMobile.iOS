@@ -225,7 +225,7 @@ namespace QMobile
 				//TRANSACTION BUTTON WAS PRESSED -------------------------------------------------------------------------------------------------------
 				case "Transaction":
 					//new UIAlertView ("Alert", tableItems [indexPath.Row].title, null, "Got It!", null).Show ();
-					var tranActionSheet = new UIActionSheet ("Select Service Type");
+					var tranActionSheet = new UIActionSheet ("Select Transaction Type");
 					TransactionType tranType = new TransactionType ();
 					List<TransactionType> tranTypesNew = new List<TransactionType> ();
 					//add reloading of transaction types from JSON call here to make sure updated one is shown
@@ -289,10 +289,10 @@ namespace QMobile
 						Console.WriteLine ("The user entered '{0}'", textInputAlertController.TextFields [0].Text);
 						(viewControllerLocal as AppointmentViewController).reservMobileNo = textInputAlertController.TextFields [0].Text;
 						Console.WriteLine ("The user entered '{0}'", (viewControllerLocal as AppointmentViewController).reservMobileNo);
-						if ((viewControllerLocal as AppointmentViewController).action.Equals ("RESERVATION")) {
+						//if ((viewControllerLocal as AppointmentViewController).action.Equals ("RESERVATION")) {
 							tableItems [indexPath.Row].valueDisplay = (viewControllerLocal as AppointmentViewController).reservMobileNo;
 							tableItems [indexPath.Row].value = (viewControllerLocal as AppointmentViewController).reservMobileNo;
-						}
+						//}
 						tableView.ReloadData ();
 					});
 
@@ -310,14 +310,16 @@ namespace QMobile
 						Console.WriteLine ("Confirm Date: " + (viewControllerLocal as AppointmentViewController).schedDate);
 						Console.WriteLine ("Confirm Time: " + (viewControllerLocal as AppointmentViewController).schedTimeKey);
 						Console.WriteLine ("Confirm Tran: " + (viewControllerLocal as AppointmentViewController).schedTranType);
+						Console.WriteLine ("Confirm Mobile: " + (viewControllerLocal as AppointmentViewController).reservMobileNo);
 
 						if (!String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).schedDate) &&
 						    !String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).schedTimeKey) &&
 						    !String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).schedTranType)) {
-							string confirmationString = String.Format ("Date : {0}\nTime : {1}\nService : {2}", 
+							string confirmationString = String.Format ("Date : {0}\nTime : {1}\nTransaction: {2}\nMobile No : {3}", 
 								                            DateTime.ParseExact ((viewControllerLocal as AppointmentViewController).schedDate, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString ("ddd, MMMM dd"),
 								                            (viewControllerLocal as AppointmentViewController).schedTimeString, 
-								                            (viewControllerLocal as AppointmentViewController).schedTranType);
+								                            (viewControllerLocal as AppointmentViewController).schedTranType,
+															(viewControllerLocal as AppointmentViewController).reservMobileNo);
 							var proceedAlert = new UIAlertView ("Please Confirm Details:", confirmationString, null, "Proceed", new string[] { "Cancel" });
 							proceedAlert.Clicked += (s, b) => {
 								if (b.ButtonIndex.ToString ().Equals ("0")) {
@@ -337,7 +339,7 @@ namespace QMobile
 						if (!String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).schedTranType)
 						    && !String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).schedTranTypeId)) {
 
-							string confirmationString = String.Format ("Date : {0}\nMobile No: {1}\nService : {2}", 
+							string confirmationString = String.Format ("Date : {0}\nTransaction : {2}\nMobile No: {1}", 
 								                            DateTime.ParseExact ((viewControllerLocal as AppointmentViewController).schedDate, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString ("ddd, MMMM dd"),
 								                            (viewControllerLocal as AppointmentViewController).reservMobileNo, 
 								                            (viewControllerLocal as AppointmentViewController).schedTranType);
@@ -552,7 +554,7 @@ namespace QMobile
 					string url = String.Format ("https://tfsmsgatesit.azurewebsites.net/TFGatewayJSON.svc/addTFUserScheduleJSON/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/{9}/{10}/{11}/{12}/", 
 						             merchant.COMPANY_NO, 
 						             merchant.BRANCH_NO,
-						             "-",
+									 String.IsNullOrEmpty ((viewControllerLocal as AppointmentViewController).reservMobileNo) ? "-" : (viewControllerLocal as AppointmentViewController).reservMobileNo,//"-", //mobile no
 						             AppDelegate.tfAccount.email, 
 						             AppDelegate.tfAccount.name,
 						             (viewControllerLocal as AppointmentViewController).schedTranType,

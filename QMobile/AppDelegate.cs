@@ -5,11 +5,11 @@ using Microsoft.WindowsAzure.MobileServices;
 using WindowsAzure.Messaging;
 using Foundation;
 using UIKit;
-using Google.Maps;
 using Xamarin.Auth;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 using AudioToolbox;
+using System.Web;
 
 namespace QMobile
 {
@@ -71,7 +71,7 @@ namespace QMobile
 					"brFnSUNYklwSVFQhCoOvnORrxhKWur79"
 				);
 
-				MapServices.ProvideAPIKey (MapsApiKey);
+				//MapServices.ProvideAPIKey (MapsApiKey);
 			} catch (Exception e) {
 				//new UIAlertView ("Azure Prompt", e.Message, null, "OK", null).Show ();
 				//new UIAlertView ("Azure Prompt", e.StackTrace, null, "OK", null).Show ();
@@ -137,9 +137,14 @@ namespace QMobile
 									tfAccount.account = currentAcct;
 									tfAccount.id = Convert.ToString (parsed ["id"]);
 									tfAccount.loginType = 1;
+									string param1 = HttpUtility.ParseQueryString(currentAcct.ToString ()).Get("access_token");
+									tfAccount.access_token = param1;
+									Console.WriteLine("ACCESS TOKEN : " + tfAccount.access_token);
 								});
 							} catch (Exception ex) {
 								tfAccount.loggedIn = false;
+								Console.WriteLine("Login failed - FB " + ex.StackTrace);
+								Console.WriteLine("Login failed - FB " + ex.Message);
 							}
 
 						}

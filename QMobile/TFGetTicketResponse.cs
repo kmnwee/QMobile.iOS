@@ -50,6 +50,9 @@ namespace QMobile
 	{
 		public string ResponseCode { get; set; }
 		public string ResponseMessage { get; set; }
+		public string refNo { get; set; }
+		public string branch_id { get; set; }
+		public string company_id { get; set; }
 	}
 
 	public class AddUserFromQRResponse

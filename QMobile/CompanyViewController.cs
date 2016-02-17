@@ -50,7 +50,7 @@ namespace QMobile
 
 			//GET ALL BRANCHES
 			hud = new MTMBProgressHUD (View) {
-				LabelText = "Fetching Stores...",
+				LabelText = "Fetching Branches...",
 				RemoveFromSuperViewOnHide = true,
 				AnimationType = MBProgressHUDAnimation.Fade,
 				//DetailsLabelText = "loading profile details...",
